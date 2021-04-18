@@ -1,12 +1,12 @@
 ﻿#if UNITY_EDITOR
 
-using UnityEngine;
-using UnityEditor;
-using ParadoxNotion;
-using System.Collections.Generic;
-using ParadoxNotion.Design;
 using NodeCanvas.Framework;
+using ParadoxNotion;
+using ParadoxNotion.Design;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 namespace NodeCanvas.Editor
 {
@@ -24,12 +24,14 @@ namespace NodeCanvas.Editor
         ///----------------------------------------------------------------------------------------------
 
         ///Show the finder window
-        public static void ShowWindow() {
+        public static void ShowWindow()
+        {
             GetWindow<ActiveOwnersOverview>().Show();
         }
 
         //...
-        void OnEnable() {
+        private void OnEnable()
+        {
             titleContent = new GUIContent("Overview", StyleSheet.canvasIcon);
             wantsMouseMove = true;
             wantsMouseEnterLeaveWindow = true;
@@ -37,9 +39,11 @@ namespace NodeCanvas.Editor
             scrollPos = default(Vector2);
 
             activeOwners = new List<GraphOwner>();
-            if ( Application.isPlaying ) {
-                foreach ( var owner in FindObjectsOfType<GraphOwner>().Where(o => o.isRunning) ) {
-                    if ( !activeOwners.Contains(owner) ) { activeOwners.Add(owner); }
+            if (Application.isPlaying)
+            {
+                foreach (GraphOwner owner in FindObjectsOfType<GraphOwner>().Where(o => o.isRunning))
+                {
+                    if (!activeOwners.Contains(owner)) { activeOwners.Add(owner); }
                 }
             }
 
@@ -50,20 +54,26 @@ namespace NodeCanvas.Editor
             RemoveNotification();
         }
 
-        void OnDisable() {
+        private void OnDisable()
+        {
             GraphOwner.onOwnerBehaviourStateChange -= OwnerBehaviourChange;
             activeOwners = null;
         }
 
         //...
-        void OwnerBehaviourChange(GraphOwner owner) {
-            if ( !Application.isPlaying ) { return; }
-            if ( owner.isRunning ) {
+        private void OwnerBehaviourChange(GraphOwner owner)
+        {
+            if (!Application.isPlaying) { return; }
+            if (owner.isRunning)
+            {
                 //we check contains for case of paused
-                if ( !activeOwners.Contains(owner) ) {
+                if (!activeOwners.Contains(owner))
+                {
                     activeOwners.Add(owner);
                 }
-            } else {
+            }
+            else
+            {
                 activeOwners.Remove(owner);
             }
 
@@ -73,15 +83,18 @@ namespace NodeCanvas.Editor
         ///----------------------------------------------------------------------------------------------
 
         //...
-        void Update() {
-            if ( willRepaint ) {
+        private void Update()
+        {
+            if (willRepaint)
+            {
                 willRepaint = false;
                 Repaint();
             }
         }
 
         //...
-        void OnGUI() {
+        private void OnGUI()
+        {
 
 
             EditorGUILayout.HelpBox("In PlayMode only, you can use this Utility, to search and find GraphOwners in the scene which are actively running.", MessageType.Info);
@@ -91,15 +104,18 @@ namespace NodeCanvas.Editor
 
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, false);
 
-            var hasResult = false;
-            foreach ( var owner in activeOwners ) {
-                if ( owner == null ) { continue; }
+            bool hasResult = false;
+            foreach (GraphOwner owner in activeOwners)
+            {
+                if (owner == null) { continue; }
                 hasResult = true;
 
-                var displayName = string.Format("<size=9><b>{0}</b> ({1})</size>", owner.name, owner.graphType.FriendlyName());
+                string displayName = string.Format("<size=9><b>{0}</b> ({1})</size>", owner.name, owner.graphType.FriendlyName());
 
-                if ( !string.IsNullOrEmpty(search) ) {
-                    if ( !StringUtils.SearchMatch(search, displayName) ) {
+                if (!string.IsNullOrEmpty(search))
+                {
+                    if (!StringUtils.SearchMatch(search, displayName))
+                    {
                         continue;
                     }
                 }
@@ -108,19 +124,23 @@ namespace NodeCanvas.Editor
                 GUILayout.Label(displayName);
                 GUILayout.EndHorizontal();
 
-                var elementRect = GUILayoutUtility.GetLastRect();
+                Rect elementRect = GUILayoutUtility.GetLastRect();
                 EditorGUIUtility.AddCursorRect(elementRect, MouseCursor.Link);
-                if ( elementRect.Contains(Event.current.mousePosition) ) {
-                    if ( Event.current.type == EventType.MouseMove ) {
+                if (elementRect.Contains(Event.current.mousePosition))
+                {
+                    if (Event.current.type == EventType.MouseMove)
+                    {
                         willRepaint = true;
                     }
                     GUI.color = new Color(0.5f, 0.5f, 1, 0.3f);
                     GUI.DrawTexture(elementRect, EditorGUIUtility.whiteTexture);
                     GUI.color = Color.white;
-                    if ( Event.current.type == EventType.MouseDown ) {
+                    if (Event.current.type == EventType.MouseDown)
+                    {
                         Selection.activeObject = owner;
                         EditorGUIUtility.PingObject(owner);
-                        if ( Event.current.clickCount >= 2 ) {
+                        if (Event.current.clickCount >= 2)
+                        {
                             GraphEditor.OpenWindow(owner);
                         }
                         Event.current.Use();
@@ -130,11 +150,13 @@ namespace NodeCanvas.Editor
 
             EditorGUILayout.EndScrollView();
 
-            if ( !hasResult ) {
+            if (!hasResult)
+            {
                 ShowNotification(new GUIContent(Application.isPlaying ? "No GraphOwner is actively running." : "Application is not playing."));
             }
 
-            if ( Event.current.type == EventType.MouseLeaveWindow ) {
+            if (Event.current.type == EventType.MouseLeaveWindow)
+            {
                 willRepaint = true;
             }
         }

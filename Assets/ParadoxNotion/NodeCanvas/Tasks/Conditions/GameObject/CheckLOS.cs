@@ -14,24 +14,28 @@ namespace NodeCanvas.Tasks.Conditions
 
         [RequiredField]
         public BBParameter<GameObject> LOSTarget;
-        public BBParameter<LayerMask> layerMask = (LayerMask)( -1 );
+        public BBParameter<LayerMask> layerMask = (LayerMask)(-1);
         public Vector3 offset;
         [BlackboardOnly]
         public BBParameter<float> saveDistanceAs;
 
         private RaycastHit hit = new RaycastHit();
 
-        protected override string info {
+        protected override string info
+        {
             get { return "LOS with " + LOSTarget.ToString(); }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
 
-            var t = LOSTarget.value.transform;
+            Transform t = LOSTarget.value.transform;
 
-            if ( Physics.Linecast(agent.position + offset, t.position + offset, out hit, layerMask.value) ) {
-                var targetCollider = t.GetComponent<Collider>();
-                if ( targetCollider == null || hit.collider != targetCollider ) {
+            if (Physics.Linecast(agent.position + offset, t.position + offset, out hit, layerMask.value))
+            {
+                Collider targetCollider = t.GetComponent<Collider>();
+                if (targetCollider == null || hit.collider != targetCollider)
+                {
                     saveDistanceAs.value = hit.distance;
                     return false;
                 }
@@ -40,8 +44,10 @@ namespace NodeCanvas.Tasks.Conditions
             return true;
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent && LOSTarget.value ) {
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent && LOSTarget.value)
+            {
                 Gizmos.DrawLine(agent.position + offset, LOSTarget.value.transform.position + offset);
             }
         }

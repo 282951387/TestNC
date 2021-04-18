@@ -1,12 +1,12 @@
 ﻿#if UNITY_EDITOR
 
-using UnityEngine;
-using UnityEditor;
+using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization;
 using ParadoxNotion.Serialization.FullSerializer;
 using System.Collections.Generic;
-using NodeCanvas.Framework;
+using UnityEditor;
+using UnityEngine;
 
 namespace NodeCanvas.Editor
 {
@@ -16,7 +16,8 @@ namespace NodeCanvas.Editor
     {
 
         //...
-        public static void ShowWindow() {
+        public static void ShowWindow()
+        {
             GetWindow<GraphRefactor>().Show();
         }
 
@@ -28,7 +29,8 @@ namespace NodeCanvas.Editor
 
         ///----------------------------------------------------------------------------------------------
 
-        void Flush() {
+        private void Flush()
+        {
             recoverablesMap = null;
             reflectedChangesMap = null;
             recoverablesMap = null;
@@ -36,7 +38,8 @@ namespace NodeCanvas.Editor
         }
 
         //...
-        void Gather() {
+        private void Gather()
+        {
 
             EditorGUIUtility.keyboardControl = 0;
             EditorGUIUtility.hotControl = 0;
@@ -46,16 +49,19 @@ namespace NodeCanvas.Editor
         }
 
         //...
-        void GatherRecoverables() {
+        private void GatherRecoverables()
+        {
             recoverablesMap = new Dictionary<string, List<IMissingRecoverable>>();
             recoverableChangesMap = new Dictionary<string, string>();
 
-            var graph = GraphEditor.currentGraph;
-            var metaGraph = graph.GetFlatMetaGraph();
-            var recoverables = metaGraph.GetAllChildrenReferencesOfType<IMissingRecoverable>();
-            foreach ( var recoverable in recoverables ) {
+            Graph graph = GraphEditor.currentGraph;
+            ParadoxNotion.HierarchyTree.Element metaGraph = graph.GetFlatMetaGraph();
+            IEnumerable<IMissingRecoverable> recoverables = metaGraph.GetAllChildrenReferencesOfType<IMissingRecoverable>();
+            foreach (IMissingRecoverable recoverable in recoverables)
+            {
                 List<IMissingRecoverable> collection;
-                if ( !recoverablesMap.TryGetValue(recoverable.missingType, out collection) ) {
+                if (!recoverablesMap.TryGetValue(recoverable.missingType, out collection))
+                {
                     collection = new List<IMissingRecoverable>();
                     recoverablesMap[recoverable.missingType] = collection;
                     recoverableChangesMap[recoverable.missingType] = recoverable.missingType;
@@ -65,20 +71,25 @@ namespace NodeCanvas.Editor
         }
 
         //...
-        void GatherReflected() {
+        private void GatherReflected()
+        {
             reflectedMap = new Dictionary<string, List<ISerializedReflectedInfo>>();
             reflectedChangesMap = new Dictionary<string, fsData>();
-            var graph = GraphEditor.currentGraph;
+            Graph graph = GraphEditor.currentGraph;
             JSONSerializer.SerializeAndExecuteNoCycles(typeof(NodeCanvas.Framework.Internal.GraphSource), graph.GetGraphSource(), DoCollect);
         }
 
         //...
-        void DoCollect(object o, fsData d) {
-            if ( o is ISerializedReflectedInfo ) {
-                var reflect = (ISerializedReflectedInfo)o;
-                if ( reflect.AsMemberInfo() == null ) {
+        private void DoCollect(object o, fsData d)
+        {
+            if (o is ISerializedReflectedInfo)
+            {
+                ISerializedReflectedInfo reflect = (ISerializedReflectedInfo)o;
+                if (reflect.AsMemberInfo() == null)
+                {
                     List<ISerializedReflectedInfo> collection;
-                    if ( !reflectedMap.TryGetValue(reflect.AsString(), out collection) ) {
+                    if (!reflectedMap.TryGetValue(reflect.AsString(), out collection))
+                    {
                         collection = new List<ISerializedReflectedInfo>();
                         reflectedMap[reflect.AsString()] = collection;
                         reflectedChangesMap[reflect.AsString()] = d;
@@ -91,14 +102,18 @@ namespace NodeCanvas.Editor
         ///----------------------------------------------------------------------------------------------
 
         //...
-        void Save() {
+        private void Save()
+        {
 
-            if ( recoverableChangesMap.Count > 0 || reflectedChangesMap.Count > 0 ) {
+            if (recoverableChangesMap.Count > 0 || reflectedChangesMap.Count > 0)
+            {
 
-                if ( recoverableChangesMap.Count > 0 ) {
+                if (recoverableChangesMap.Count > 0)
+                {
                     SaveRecoverables();
                 }
-                if ( reflectedChangesMap.Count > 0 ) {
+                if (reflectedChangesMap.Count > 0)
+                {
                     SaveReflected();
                 }
 
@@ -110,19 +125,25 @@ namespace NodeCanvas.Editor
         }
 
         //...
-        void SaveRecoverables() {
-            foreach ( var pair in recoverablesMap ) {
-                foreach ( var recoverable in pair.Value ) {
+        private void SaveRecoverables()
+        {
+            foreach (KeyValuePair<string, List<IMissingRecoverable>> pair in recoverablesMap)
+            {
+                foreach (IMissingRecoverable recoverable in pair.Value)
+                {
                     recoverable.missingType = recoverableChangesMap[pair.Key];
                 }
             }
         }
 
         //...
-        void SaveReflected() {
-            foreach ( var pair in reflectedMap ) {
-                foreach ( var reflect in pair.Value ) {
-                    var data = reflectedChangesMap[pair.Key];
+        private void SaveReflected()
+        {
+            foreach (KeyValuePair<string, List<ISerializedReflectedInfo>> pair in reflectedMap)
+            {
+                foreach (ISerializedReflectedInfo reflect in pair.Value)
+                {
+                    fsData data = reflectedChangesMap[pair.Key];
                     JSONSerializer.TryDeserializeOverwrite(reflect, data.ToString(), null);
                 }
             }
@@ -131,28 +152,33 @@ namespace NodeCanvas.Editor
         ///----------------------------------------------------------------------------------------------
 
         //...
-        void OnEnable() {
+        private void OnEnable()
+        {
             titleContent = new GUIContent("Refactor", StyleSheet.canvasIcon);
             GraphEditor.onCurrentGraphChanged -= OnGraphChanged;
             GraphEditor.onCurrentGraphChanged += OnGraphChanged;
         }
 
         //...
-        void OnDisable() {
+        private void OnDisable()
+        {
             GraphEditor.onCurrentGraphChanged -= OnGraphChanged;
         }
 
-        void OnGraphChanged(Graph graph) { Flush(); Repaint(); }
+        private void OnGraphChanged(Graph graph) { Flush(); Repaint(); }
 
         //...
-        void OnGUI() {
+        private void OnGUI()
+        {
 
-            if ( Application.isPlaying ) {
+            if (Application.isPlaying)
+            {
                 ShowNotification(new GUIContent("Refactor only works in editor mode. Please exit play mode."));
                 return;
             }
 
-            if ( GraphEditor.current == null || GraphEditor.currentGraph == null ) {
+            if (GraphEditor.current == null || GraphEditor.currentGraph == null)
+            {
                 ShowNotification(new GUIContent("No Graph is currently open in the Graph Editor."));
                 return;
             }
@@ -161,10 +187,10 @@ namespace NodeCanvas.Editor
 
             EditorGUILayout.HelpBox("Batch refactor missing nodes, tasks, types as well as missing reflection based methods, properties, fields and so on references. Note that changes made here are irreversible. Please proceed with caution.\n\n1) Hit Gather to fetch missing elements from the currently viewing graph in the editor.\n2) Rename elements serialization data to their new name (keep the same format).\n3) Hit Save to commit your changes.", MessageType.Info);
 
-            if ( GUILayout.Button("Gather", GUILayout.Height(30)) ) { Gather(); }
+            if (GUILayout.Button("Gather", GUILayout.Height(30))) { Gather(); }
             EditorUtils.Separator();
 
-            if ( recoverablesMap == null || reflectedMap == null ) { return; }
+            if (recoverablesMap == null || reflectedMap == null) { return; }
 
             EditorGUI.indentLevel = 1;
             DoRecoverables();
@@ -172,27 +198,33 @@ namespace NodeCanvas.Editor
             EditorGUI.indentLevel = 1;
             DoReflected();
 
-            if ( recoverableChangesMap.Count > 0 || reflectedChangesMap.Count > 0 ) {
-                if ( GUILayout.Button("Save", GUILayout.Height(30)) ) { Save(); }
-            } else {
+            if (recoverableChangesMap.Count > 0 || reflectedChangesMap.Count > 0)
+            {
+                if (GUILayout.Button("Save", GUILayout.Height(30))) { Save(); }
+            }
+            else
+            {
                 GUILayout.Label("It's all looking good :-)");
                 EditorUtils.Separator();
             }
         }
 
         //...
-        void DoRecoverables() {
+        private void DoRecoverables()
+        {
 
-            if ( recoverablesMap.Count == 0 ) {
+            if (recoverablesMap.Count == 0)
+            {
                 GUILayout.Label("No missing recoverable elements found.");
                 return;
             }
 
-            foreach ( var pair in recoverablesMap ) {
-                var originalName = pair.Key;
+            foreach (KeyValuePair<string, List<IMissingRecoverable>> pair in recoverablesMap)
+            {
+                string originalName = pair.Key;
                 GUILayout.Label(string.Format("<b>{0} occurencies: Type '{1}'</b>", pair.Value.Count, originalName));
                 GUILayout.Space(5);
-                var typeName = recoverableChangesMap[originalName];
+                string typeName = recoverableChangesMap[originalName];
                 typeName = EditorGUILayout.TextField("Type Name", typeName);
                 recoverableChangesMap[originalName] = typeName;
                 EditorUtils.Separator();
@@ -200,23 +232,28 @@ namespace NodeCanvas.Editor
         }
 
         //...
-        void DoReflected() {
+        private void DoReflected()
+        {
 
-            if ( reflectedMap.Count == 0 ) {
+            if (reflectedMap.Count == 0)
+            {
                 GUILayout.Label("No missing reflected references found.");
                 return;
             }
 
-            foreach ( var pair in reflectedMap ) {
-                var information = pair.Key;
+            foreach (KeyValuePair<string, List<ISerializedReflectedInfo>> pair in reflectedMap)
+            {
+                string information = pair.Key;
                 GUILayout.Label(string.Format("<b>{0} occurencies: '{1}'</b>", pair.Value.Count, information));
                 GUILayout.Space(5);
                 fsData data = reflectedChangesMap[information];
-                var dict = new Dictionary<string, fsData>(data.AsDictionary);
-                foreach ( var dataPair in dict ) {
-                    var value = dataPair.Value.AsString;
-                    var newValue = EditorGUILayout.TextField(dataPair.Key, value);
-                    if ( newValue != value ) {
+                Dictionary<string, fsData> dict = new Dictionary<string, fsData>(data.AsDictionary);
+                foreach (KeyValuePair<string, fsData> dataPair in dict)
+                {
+                    string value = dataPair.Value.AsString;
+                    string newValue = EditorGUILayout.TextField(dataPair.Key, value);
+                    if (newValue != value)
+                    {
                         data.AsDictionary[dataPair.Key] = new fsData(newValue);
                     }
                 }

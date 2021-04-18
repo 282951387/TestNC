@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -23,7 +23,8 @@ namespace NodeCanvas.DialogueTrees
             public Statement statement;
             public ConditionTask condition;
             public Choice() { }
-            public Choice(Statement statement) {
+            public Choice(Statement statement)
+            {
                 this.statement = statement;
             }
         }
@@ -40,45 +41,54 @@ namespace NodeCanvas.DialogueTrees
         public override int maxOutConnections { get { return availableChoices.Count; } }
         public override bool requireActorSelection { get { return true; } }
 
-        protected override Status OnExecute(Component agent, IBlackboard bb) {
+        protected override Status OnExecute(Component agent, IBlackboard bb)
+        {
 
-            if ( outConnections.Count == 0 ) {
+            if (outConnections.Count == 0)
+            {
                 return Error("There are no connections to the Multiple Choice Node!");
             }
 
-            var finalOptions = new Dictionary<IStatement, int>();
+            Dictionary<IStatement, int> finalOptions = new Dictionary<IStatement, int>();
 
-            for ( var i = 0; i < availableChoices.Count; i++ ) {
-                var condition = availableChoices[i].condition;
-                if ( condition == null || condition.CheckOnce(finalActor.transform, bb) ) {
-                    var tempStatement = availableChoices[i].statement.BlackboardReplace(bb);
+            for (int i = 0; i < availableChoices.Count; i++)
+            {
+                ConditionTask condition = availableChoices[i].condition;
+                if (condition == null || condition.CheckOnce(finalActor.transform, bb))
+                {
+                    IStatement tempStatement = availableChoices[i].statement.BlackboardReplace(bb);
                     finalOptions[tempStatement] = i;
                 }
             }
 
-            if ( finalOptions.Count == 0 ) {
+            if (finalOptions.Count == 0)
+            {
                 ParadoxNotion.Services.Logger.Log("Multiple Choice Node has no available options. Dialogue Ends.", LogTag.EXECUTION, this);
                 DLGTree.Stop(false);
                 return Status.Failure;
             }
 
-            var optionsInfo = new MultipleChoiceRequestInfo(finalActor, finalOptions, availableTime, OnOptionSelected);
+            MultipleChoiceRequestInfo optionsInfo = new MultipleChoiceRequestInfo(finalActor, finalOptions, availableTime, OnOptionSelected);
             optionsInfo.showLastStatement = inConnections.Count > 0 && inConnections[0].sourceNode is StatementNode;
             DialogueTree.RequestMultipleChoices(optionsInfo);
             return Status.Running;
         }
 
-        void OnOptionSelected(int index) {
+        private void OnOptionSelected(int index)
+        {
 
             status = Status.Success;
 
             System.Action Finalize = () => { DLGTree.Continue(index); };
 
-            if ( saySelection ) {
-                var tempStatement = availableChoices[index].statement.BlackboardReplace(graphBlackboard);
-                var speechInfo = new SubtitlesRequestInfo(finalActor, tempStatement, Finalize);
+            if (saySelection)
+            {
+                IStatement tempStatement = availableChoices[index].statement.BlackboardReplace(graphBlackboard);
+                SubtitlesRequestInfo speechInfo = new SubtitlesRequestInfo(finalActor, tempStatement, Finalize);
                 DialogueTree.RequestSubtitles(speechInfo);
-            } else {
+            }
+            else
+            {
                 Finalize();
             }
         }
@@ -88,85 +98,102 @@ namespace NodeCanvas.DialogueTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        public override void OnConnectionInspectorGUI(int i) {
+        public override void OnConnectionInspectorGUI(int i)
+        {
             DoChoiceGUI(availableChoices[i]);
         }
 
-        public override string GetConnectionInfo(int i) {
-            if ( i >= availableChoices.Count ) {
+        public override string GetConnectionInfo(int i)
+        {
+            if (i >= availableChoices.Count)
+            {
                 return "NOT SET";
             }
-            var text = string.Format("'{0}'", availableChoices[i].statement.text);
-            if ( availableChoices[i].condition == null ) {
+            string text = string.Format("'{0}'", availableChoices[i].statement.text);
+            if (availableChoices[i].condition == null)
+            {
                 return text;
             }
             return string.Format("{0}\n{1}", text, availableChoices[i].condition.summaryInfo);
         }
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
 
-            if ( availableChoices.Count == 0 ) {
+            if (availableChoices.Count == 0)
+            {
                 GUILayout.Label("No Options Available");
                 return;
             }
 
-            for ( var i = 0; i < availableChoices.Count; i++ ) {
-                var choice = availableChoices[i];
-                var connection = i < outConnections.Count ? outConnections[i] : null;
+            for (int i = 0; i < availableChoices.Count; i++)
+            {
+                Choice choice = availableChoices[i];
+                Connection connection = i < outConnections.Count ? outConnections[i] : null;
                 GUILayout.BeginHorizontal(Styles.roundedBox);
                 GUILayout.Label(string.Format("{0} {1}", connection != null ? "■" : "□", choice.statement.text.CapLength(30)), Styles.leftLabel);
                 GUILayout.EndHorizontal();
             }
 
             GUILayout.BeginHorizontal();
-            if ( availableTime > 0 ) {
+            if (availableTime > 0)
+            {
                 GUILayout.Label(availableTime + "' Seconds");
             }
-            if ( saySelection ) {
+            if (saySelection)
+            {
                 GUILayout.Label("Say Selection");
             }
             GUILayout.EndHorizontal();
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
 
             base.OnNodeInspectorGUI();
 
-            if ( GUILayout.Button("Add Choice") ) {
+            if (GUILayout.Button("Add Choice"))
+            {
                 availableChoices.Add(new Choice(new Statement("I am a choice...")));
             }
 
-            if ( availableChoices.Count == 0 ) {
+            if (availableChoices.Count == 0)
+            {
                 return;
             }
 
             EditorUtils.ReorderableList(availableChoices, (i, picked) =>
             {
-                var choice = availableChoices[i];
+                Choice choice = availableChoices[i];
                 GUILayout.BeginHorizontal("box");
 
-                var text = string.Format("{0} {1}", choice.isUnfolded ? "▼ " : "► ", choice.statement.text);
-                if ( GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)) ) {
+                string text = string.Format("{0} {1}", choice.isUnfolded ? "▼ " : "► ", choice.statement.text);
+                if (GUILayout.Button(text, "label", GUILayout.Width(0), GUILayout.ExpandWidth(true)))
+                {
                     choice.isUnfolded = !choice.isUnfolded;
                 }
 
-                if ( GUILayout.Button("X", GUILayout.Width(20)) ) {
+                if (GUILayout.Button("X", GUILayout.Width(20)))
+                {
                     availableChoices.RemoveAt(i);
-                    if ( i < outConnections.Count ) {
+                    if (i < outConnections.Count)
+                    {
                         graph.RemoveConnection(outConnections[i]);
                     }
                 }
 
                 GUILayout.EndHorizontal();
 
-                if ( choice.isUnfolded ) {
+                if (choice.isUnfolded)
+                {
                     DoChoiceGUI(choice);
                 }
             });
 
         }
 
-        void DoChoiceGUI(Choice choice) {
+        private void DoChoiceGUI(Choice choice)
+        {
             GUILayout.BeginHorizontal();
             GUILayout.Space(10);
             GUILayout.BeginVertical("box");

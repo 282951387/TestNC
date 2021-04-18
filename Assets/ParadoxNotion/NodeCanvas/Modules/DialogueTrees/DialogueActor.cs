@@ -20,28 +20,36 @@ namespace NodeCanvas.DialogueTrees
 
         private Sprite _portraitSprite;
 
-        new public string name {
+        public new string name
+        {
             get { return _name; }
         }
 
-        public Texture2D portrait {
+        public Texture2D portrait
+        {
             get { return _portrait; }
         }
 
-        public Sprite portraitSprite {
+        public Sprite portraitSprite
+        {
             get
             {
-                if ( _portraitSprite == null && portrait != null )
+                if (_portraitSprite == null && portrait != null)
+                {
                     _portraitSprite = Sprite.Create(portrait, new Rect(0, 0, portrait.width, portrait.height), new Vector2(0.5f, 0.5f));
+                }
+
                 return _portraitSprite;
             }
         }
 
-        public Color dialogueColor {
+        public Color dialogueColor
+        {
             get { return _dialogueColor; }
         }
 
-        public Vector3 dialoguePosition {
+        public Vector3 dialoguePosition
+        {
             get { return transform.TransformPoint(_dialogueOffset); }
         }
 
@@ -52,11 +60,13 @@ namespace NodeCanvas.DialogueTrees
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        void Reset() {
+        private void Reset()
+        {
             _name = gameObject.name;
         }
 
-        void OnDrawGizmos() {
+        private void OnDrawGizmos()
+        {
             Gizmos.DrawLine(transform.position, dialoguePosition);
         }
 

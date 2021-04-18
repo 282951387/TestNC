@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using NodeCanvas.Framework;
 using System.Collections;
-using NodeCanvas.Framework;
+using UnityEngine;
 
 public class DataBindExample : MonoBehaviour
 {
@@ -12,7 +12,8 @@ public class DataBindExample : MonoBehaviour
 
 
     ///This property is Data Binded to the blackboard float variable
-    public float myFloat {
+    public float myFloat
+    {
         get { return _myFloat; }
         set
         {
@@ -22,9 +23,11 @@ public class DataBindExample : MonoBehaviour
     }
 
     ///This action is called with the "Implemented Action" action task
-    public Status WaitAction(float waitTime) {
+    public Status WaitAction(float waitTime)
+    {
 
-        if ( timer >= waitTime ) {
+        if (timer >= waitTime)
+        {
             timer = 0;
             return Status.Success;
         }

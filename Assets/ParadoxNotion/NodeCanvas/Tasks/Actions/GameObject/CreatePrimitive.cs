@@ -18,8 +18,9 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<GameObject> saveAs;
 
-        protected override void OnExecute() {
-            var newGO = GameObject.CreatePrimitive(type.value);
+        protected override void OnExecute()
+        {
+            GameObject newGO = GameObject.CreatePrimitive(type.value);
             newGO.name = objectName.value;
             newGO.transform.position = position.value;
             newGO.transform.eulerAngles = rotation.value;

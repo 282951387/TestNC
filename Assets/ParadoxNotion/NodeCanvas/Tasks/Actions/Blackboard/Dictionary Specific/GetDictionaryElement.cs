@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
-using NodeCanvas.Framework;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -19,12 +19,15 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<T> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} = {1}[{2}]", saveAs, dictionary, key); }
         }
 
-        protected override void OnExecute() {
-            if ( dictionary.value == null ) {
+        protected override void OnExecute()
+        {
+            if (dictionary.value == null)
+            {
                 EndAction(false);
                 return;
             }

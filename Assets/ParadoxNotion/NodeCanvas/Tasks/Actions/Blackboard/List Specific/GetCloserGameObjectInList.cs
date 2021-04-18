@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -18,22 +18,27 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<GameObject> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Get Closer from '" + list + "' as " + saveAs; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( list.value.Count == 0 ) {
+            if (list.value.Count == 0)
+            {
                 EndAction(false);
                 return;
             }
 
-            var closerDistance = Mathf.Infinity;
+            float closerDistance = Mathf.Infinity;
             GameObject closerGO = null;
-            foreach ( var go in list.value ) {
-                var dist = Vector3.Distance(agent.position, go.transform.position);
-                if ( dist < closerDistance ) {
+            foreach (GameObject go in list.value)
+            {
+                float dist = Vector3.Distance(agent.position, go.transform.position);
+                if (dist < closerDistance)
+                {
                     closerDistance = dist;
                     closerGO = go;
                 }

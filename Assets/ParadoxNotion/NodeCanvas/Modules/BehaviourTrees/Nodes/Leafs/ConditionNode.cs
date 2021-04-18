@@ -15,34 +15,41 @@ namespace NodeCanvas.BehaviourTrees
         [SerializeField]
         private ConditionTask _condition;
 
-        public Task task {
+        public Task task
+        {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }
 
-        public ConditionTask condition {
+        public ConditionTask condition
+        {
             get { return _condition; }
             set { _condition = value; }
         }
 
-        public override string name {
+        public override string name
+        {
             get { return base.name.ToUpper(); }
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
-            if ( condition == null ) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
+            if (condition == null)
+            {
                 return Status.Optional;
             }
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 condition.Enable(agent, blackboard);
             }
 
             return condition.Check(agent, blackboard) ? Status.Success : Status.Failure;
         }
 
-        protected override void OnReset() {
-            if ( condition != null ) { condition.Disable(); }
+        protected override void OnReset()
+        {
+            if (condition != null) { condition.Disable(); }
         }
     }
 }

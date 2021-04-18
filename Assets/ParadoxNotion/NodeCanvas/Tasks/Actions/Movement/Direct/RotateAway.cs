@@ -19,15 +19,18 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<Vector3> upVector = Vector3.up;
         public bool waitActionFinish;
 
-        protected override void OnUpdate() {
-            if ( Vector3.Angle(target.value.transform.position - agent.position, -agent.forward) <= angleDifference.value ) {
+        protected override void OnUpdate()
+        {
+            if (Vector3.Angle(target.value.transform.position - agent.position, -agent.forward) <= angleDifference.value)
+            {
                 EndAction();
                 return;
             }
 
-            var dir = target.value.transform.position - agent.position;
+            Vector3 dir = target.value.transform.position - agent.position;
             agent.rotation = Quaternion.LookRotation(Vector3.RotateTowards(agent.forward, dir, -speed.value * Time.deltaTime, 0), upVector.value);
-            if ( !waitActionFinish ) {
+            if (!waitActionFinish)
+            {
                 EndAction();
             }
         }

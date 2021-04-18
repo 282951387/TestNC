@@ -22,8 +22,9 @@ namespace NodeCanvas.Tasks.Conditions
         [BlackboardOnly]
         public BBParameter<List<Vector3>> savePathAs;
 
-        protected override bool OnCheck() {
-            var path = new NavMeshPath();
+        protected override bool OnCheck()
+        {
+            NavMeshPath path = new NavMeshPath();
             agent.CalculatePath(targetPosition.value, path);
             savePathAs.value = path.corners.ToList();
             return path.status == NavMeshPathStatus.PathComplete;

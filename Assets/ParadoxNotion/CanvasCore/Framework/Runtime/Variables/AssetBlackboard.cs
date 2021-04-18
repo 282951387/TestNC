@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using NodeCanvas.Framework.Internal;
+﻿using NodeCanvas.Framework.Internal;
 using ParadoxNotion.Serialization;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace NodeCanvas.Framework
 {
@@ -15,7 +15,7 @@ namespace NodeCanvas.Framework
 
         [SerializeField] private string _serializedBlackboard;
         [SerializeField] private List<UnityEngine.Object> _objectReferences;
-        [SerializeField] private string _UID = System.Guid.NewGuid().ToString();
+        [SerializeField] private readonly string _UID = System.Guid.NewGuid().ToString();
 
         [System.NonSerialized] private string _identifier;
         [System.NonSerialized] private BlackboardSource _blackboard = new BlackboardSource();
@@ -23,16 +23,19 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
         void ISerializationCallbackReceiver.OnBeforeSerialize() { SelfSerialize(); }
         void ISerializationCallbackReceiver.OnAfterDeserialize() { SelfDeserialize(); }
+
         ///----------------------------------------------------------------------------------------------
 
-        void SelfSerialize() {
+        private void SelfSerialize()
+        {
             _objectReferences = new List<UnityEngine.Object>();
             _serializedBlackboard = JSONSerializer.Serialize(typeof(BlackboardSource), _blackboard, _objectReferences);
         }
 
-        void SelfDeserialize() {
+        private void SelfDeserialize()
+        {
             _blackboard = JSONSerializer.Deserialize<BlackboardSource>(_serializedBlackboard, _objectReferences);
-            if ( _blackboard == null ) { _blackboard = new BlackboardSource(); }
+            if (_blackboard == null) { _blackboard = new BlackboardSource(); }
         }
 
         ///----------------------------------------------------------------------------------------------
@@ -43,17 +46,30 @@ namespace NodeCanvas.Framework
         Component IBlackboard.propertiesBindTarget => null;
         string IBlackboard.independantVariablesFieldName => null;
 
-        void IBlackboard.TryInvokeOnVariableAdded(Variable variable) { if ( onVariableAdded != null ) onVariableAdded(variable); }
-        void IBlackboard.TryInvokeOnVariableRemoved(Variable variable) { if ( onVariableRemoved != null ) onVariableRemoved(variable); }
+        void IBlackboard.TryInvokeOnVariableAdded(Variable variable)
+        {
+            if (onVariableAdded != null)
+            {
+                onVariableAdded(variable);
+            }
+        }
+        void IBlackboard.TryInvokeOnVariableRemoved(Variable variable)
+        {
+            if (onVariableRemoved != null)
+            {
+                onVariableRemoved(variable);
+            }
+        }
 
         public string identifier => _identifier;
         public string UID => _UID;
 
         [ContextMenu("Show Json")]
-        void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, this.name); }
+        private void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, name); }
 
         public override string ToString() { return identifier; }
-        void OnValidate() { _identifier = this.name; }
+
+        private void OnValidate() { _identifier = name; }
 
         ///----------------------------------------------------------------------------------------------
 
@@ -63,13 +79,16 @@ namespace NodeCanvas.Framework
         private bool bindingInit;
 
         //...
-        void PlayModeChange(UnityEditor.PlayModeStateChange state) {
-            if ( state == UnityEditor.PlayModeStateChange.EnteredPlayMode ) {
+        private void PlayModeChange(UnityEditor.PlayModeStateChange state)
+        {
+            if (state == UnityEditor.PlayModeStateChange.EnteredPlayMode)
+            {
                 tempJson = _serializedBlackboard;
                 tempObjects = _objectReferences;
-                if ( !bindingInit ) { this.InitializePropertiesBinding(null, false); }
+                if (!bindingInit) { this.InitializePropertiesBinding(null, false); }
             }
-            if ( state == UnityEditor.PlayModeStateChange.ExitingPlayMode ) {
+            if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+            {
                 _serializedBlackboard = tempJson;
                 _objectReferences = tempObjects;
                 bindingInit = false;
@@ -80,12 +99,14 @@ namespace NodeCanvas.Framework
 
 
         //...
-        void OnEnable() {
+        private void OnEnable()
+        {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.playModeStateChanged -= PlayModeChange;
             UnityEditor.EditorApplication.playModeStateChanged += PlayModeChange;
 #endif
-            if ( ParadoxNotion.Services.Threader.applicationIsPlaying ) {
+            if (ParadoxNotion.Services.Threader.applicationIsPlaying)
+            {
                 this.InitializePropertiesBinding(null, false);
 #if UNITY_EDITOR
                 bindingInit = true;

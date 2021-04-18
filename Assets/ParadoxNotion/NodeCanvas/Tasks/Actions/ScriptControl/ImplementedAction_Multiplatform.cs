@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 
@@ -28,68 +28,81 @@ namespace NodeCanvas.Tasks.Actions
 
         private MethodInfo targetMethod => method;
 
-        public override System.Type agentType {
+        public override System.Type agentType
+        {
             get
             {
-                if ( targetMethod == null ) { return typeof(Transform); }
+                if (targetMethod == null) { return typeof(Transform); }
                 return targetMethod.IsStatic ? null : targetMethod.RTReflectedOrDeclaredType();
             }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( method == null ) { return "No Action Selected"; }
-                if ( targetMethod == null ) { return method.AsString().FormatError(); }
-                var mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
+                if (method == null) { return "No Action Selected"; }
+                if (targetMethod == null) { return method.AsString().FormatError(); }
+                string mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
                 return string.Format("[ {0}.{1}({2}) ]", mInfo, targetMethod.Name, parameters.Count == 1 ? parameters[0].ToString() : "");
             }
         }
 
         ISerializedReflectedInfo IReflectedWrapper.GetSerializedInfo() { return method; }
 
-        public override void OnValidate(ITaskSystem ownerSystem) {
-            if ( method != null && method.HasChanged() ) { SetMethod(method); }
+        public override void OnValidate(ITaskSystem ownerSystem)
+        {
+            if (method != null && method.HasChanged()) { SetMethod(method); }
         }
 
-        protected override string OnInit() {
-            if ( method == null ) { return "No method selected"; }
-            if ( targetMethod == null ) { return string.Format("Missing method '{0}'", method.AsString()); }
+        protected override string OnInit()
+        {
+            if (method == null) { return "No method selected"; }
+            if (targetMethod == null) { return string.Format("Missing method '{0}'", method.AsString()); }
 
-            if ( args == null ) {
+            if (args == null)
+            {
                 args = new object[targetMethod.GetParameters().Length];
             }
             return null;
         }
 
-        protected override void OnUpdate() {
-            for ( var i = 0; i < parameters.Count; i++ ) {
+        protected override void OnUpdate()
+        {
+            for (int i = 0; i < parameters.Count; i++)
+            {
                 args[i] = parameters[i].value;
             }
 
             actionStatus = (Status)targetMethod.Invoke(targetMethod.IsStatic ? null : agent, args);
 
-            if ( actionStatus == Status.Success ) {
+            if (actionStatus == Status.Success)
+            {
                 EndAction(true);
                 return;
             }
 
-            if ( actionStatus == Status.Failure ) {
+            if (actionStatus == Status.Failure)
+            {
                 EndAction(false);
                 return;
             }
         }
 
-        protected override void OnStop() {
+        protected override void OnStop()
+        {
             actionStatus = Status.Resting;
         }
 
-        void SetMethod(MethodInfo method) {
-            if ( method != null ) {
+        private void SetMethod(MethodInfo method)
+        {
+            if (method != null)
+            {
                 this.method = new SerializedMethodInfo(method);
-                this.parameters.Clear();
-                foreach ( var p in method.GetParameters() ) {
-                    var newParam = new BBObjectParameter(p.ParameterType) { bb = blackboard };
+                parameters.Clear();
+                foreach (ParameterInfo p in method.GetParameters())
+                {
+                    BBObjectParameter newParam = new BBObjectParameter(p.ParameterType) { bb = blackboard };
                     parameters.Add(newParam);
                 }
             }
@@ -100,34 +113,42 @@ namespace NodeCanvas.Tasks.Actions
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
-            if ( !Application.isPlaying && GUILayout.Button("Select Action Method") ) {
-                var menu = new UnityEditor.GenericMenu();
-                if ( agent != null ) {
-                    foreach ( var comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags != HideFlags.HideInInspector) ) {
+            if (!Application.isPlaying && GUILayout.Button("Select Action Method"))
+            {
+                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
+                if (agent != null)
+                {
+                    foreach (Component comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags != HideFlags.HideInInspector))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(comp.GetType(), typeof(Status), typeof(object), SetMethod, 1, false, true, menu);
                     }
                     menu.AddSeparator("/");
                 }
-                foreach ( var t in TypePrefs.GetPreferedTypesList(typeof(object)) ) {
+                foreach (System.Type t in TypePrefs.GetPreferedTypesList(typeof(object)))
+                {
                     menu = EditorUtils.GetStaticMethodSelectionMenu(t, typeof(Status), typeof(object), SetMethod, 1, false, true, menu);
-                    if ( typeof(UnityEngine.Component).IsAssignableFrom(t) ) {
+                    if (typeof(UnityEngine.Component).IsAssignableFrom(t))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(t, typeof(Status), typeof(object), SetMethod, 1, false, true, menu);
                     }
                 }
-                menu.ShowAsBrowser("Select Action Method", this.GetType());
+                menu.ShowAsBrowser("Select Action Method", GetType());
                 Event.current.Use();
             }
 
-            if ( targetMethod != null ) {
+            if (targetMethod != null)
+            {
                 GUILayout.BeginVertical("box");
                 UnityEditor.EditorGUILayout.LabelField("Type", targetMethod.RTReflectedOrDeclaredType().FriendlyName());
                 UnityEditor.EditorGUILayout.LabelField("Selected Action Method:", targetMethod.Name);
                 GUILayout.EndVertical();
 
-                if ( targetMethod.GetParameters().Length == 1 ) {
-                    var paramName = targetMethod.GetParameters()[0].Name.SplitCamelCase();
+                if (targetMethod.GetParameters().Length == 1)
+                {
+                    string paramName = targetMethod.GetParameters()[0].Name.SplitCamelCase();
                     NodeCanvas.Editor.BBParameterEditor.ParameterField(paramName, parameters[0]);
                 }
             }

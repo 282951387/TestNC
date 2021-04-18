@@ -18,16 +18,20 @@ namespace NodeCanvas.Tasks.Actions
         public float secondsToRun = 1f;
         public CompactStatus finishStatus = CompactStatus.Success;
 
-        protected override string info {
-            get { return "Log '" + log + "'" + ( secondsToRun > 0 ? " for " + secondsToRun + " sec." : "" ); }
+        protected override string info
+        {
+            get { return "Log '" + log + "'" + (secondsToRun > 0 ? " for " + secondsToRun + " sec." : ""); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             ParadoxNotion.Services.Logger.Log(string.Format("<b>({0}) ({1}) | Var '{2}' = </b> {3}", agent.gameObject.name, prefix.value, log.name, log.value), LogTag.EXECUTION, this);
         }
 
-        protected override void OnUpdate() {
-            if ( elapsedTime >= secondsToRun ) {
+        protected override void OnUpdate()
+        {
+            if (elapsedTime >= secondsToRun)
+            {
                 EndAction(finishStatus == CompactStatus.Success ? true : false);
             }
         }

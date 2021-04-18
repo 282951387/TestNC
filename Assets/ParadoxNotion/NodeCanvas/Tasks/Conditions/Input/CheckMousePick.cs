@@ -23,22 +23,32 @@ namespace NodeCanvas.Tasks.Conditions
 
         private RaycastHit hit;
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                var finalString = buttonKey.ToString() + " Click";
-                if ( !string.IsNullOrEmpty(savePosAs.name) )
+                string finalString = buttonKey.ToString() + " Click";
+                if (!string.IsNullOrEmpty(savePosAs.name))
+                {
                     finalString += string.Format("\n<i>(SavePos As {0})</i>", savePosAs);
-                if ( !string.IsNullOrEmpty(saveGoAs.name) )
+                }
+
+                if (!string.IsNullOrEmpty(saveGoAs.name))
+                {
                     finalString += string.Format("\n<i>(SaveGo As {0})</i>", saveGoAs);
+                }
+
                 return finalString;
             }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
 
-            if ( Input.GetMouseButtonDown((int)buttonKey) ) {
-                if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, 1 << layer) ) {
+            if (Input.GetMouseButtonDown((int)buttonKey))
+            {
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, 1 << layer))
+                {
                     saveGoAs.value = hit.collider.gameObject;
                     saveDistanceAs.value = hit.distance;
                     savePosAs.value = hit.point;

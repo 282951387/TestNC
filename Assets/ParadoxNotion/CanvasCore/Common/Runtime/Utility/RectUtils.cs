@@ -8,13 +8,15 @@ namespace ParadoxNotion
     {
 
         //Get a rect that encapsulates all provided rects
-        public static Rect GetBoundRect(params Rect[] rects) {
-            var xMin = float.PositiveInfinity;
-            var xMax = float.NegativeInfinity;
-            var yMin = float.PositiveInfinity;
-            var yMax = float.NegativeInfinity;
+        public static Rect GetBoundRect(params Rect[] rects)
+        {
+            float xMin = float.PositiveInfinity;
+            float xMax = float.NegativeInfinity;
+            float yMin = float.PositiveInfinity;
+            float yMax = float.NegativeInfinity;
 
-            for ( var i = 0; i < rects.Length; i++ ) {
+            for (int i = 0; i < rects.Length; i++)
+            {
                 xMin = Mathf.Min(xMin, rects[i].xMin);
                 xMax = Mathf.Max(xMax, rects[i].xMax);
                 yMin = Mathf.Min(yMin, rects[i].yMin);
@@ -25,13 +27,15 @@ namespace ParadoxNotion
         }
 
         //Get a rect that encapsulates all provided positions
-        public static Rect GetBoundRect(params Vector2[] positions) {
-            var xMin = float.PositiveInfinity;
-            var xMax = float.NegativeInfinity;
-            var yMin = float.PositiveInfinity;
-            var yMax = float.NegativeInfinity;
+        public static Rect GetBoundRect(params Vector2[] positions)
+        {
+            float xMin = float.PositiveInfinity;
+            float xMax = float.NegativeInfinity;
+            float yMin = float.PositiveInfinity;
+            float yMax = float.NegativeInfinity;
 
-            for ( var i = 0; i < positions.Length; i++ ) {
+            for (int i = 0; i < positions.Length; i++)
+            {
                 xMin = Mathf.Min(xMin, positions[i].x);
                 xMax = Mathf.Max(xMax, positions[i].x);
                 yMin = Mathf.Min(yMin, positions[i].y);
@@ -42,28 +46,33 @@ namespace ParadoxNotion
         }
 
         ///Rect a fully encapsulated b?
-        public static bool Encapsulates(this Rect a, Rect b) {
+        public static bool Encapsulates(this Rect a, Rect b)
+        {
             return a.x < b.x && a.xMax > b.xMax && a.y < b.y && a.yMax > b.yMax;
         }
 
         ///Expands rect by margin
-        public static Rect ExpandBy(this Rect rect, float margin) {
+        public static Rect ExpandBy(this Rect rect, float margin)
+        {
             return rect.ExpandBy(margin, margin);
         }
 
         ///Expands rect by x-y margin
-        public static Rect ExpandBy(this Rect rect, float xMargin, float yMargin) {
+        public static Rect ExpandBy(this Rect rect, float xMargin, float yMargin)
+        {
             return rect.ExpandBy(xMargin, yMargin, xMargin, yMargin);
         }
 
         ///Expands rect by x-y margin
-        public static Rect ExpandBy(this Rect rect, float left, float top, float right, float bottom) {
+        public static Rect ExpandBy(this Rect rect, float left, float top, float right, float bottom)
+        {
             return Rect.MinMaxRect(rect.xMin - left, rect.yMin - top, rect.xMax + right, rect.yMax + bottom);
         }
 
         //Transforms rect from one container to another container rect
-        public static Rect TransformSpace(this Rect rect, Rect oldContainer, Rect newContainer) {
-            var result = new Rect();
+        public static Rect TransformSpace(this Rect rect, Rect oldContainer, Rect newContainer)
+        {
+            Rect result = new Rect();
             result.xMin = Mathf.Lerp(newContainer.xMin, newContainer.xMax, Mathf.InverseLerp(oldContainer.xMin, oldContainer.xMax, rect.xMin));
             result.xMax = Mathf.Lerp(newContainer.xMin, newContainer.xMax, Mathf.InverseLerp(oldContainer.xMin, oldContainer.xMax, rect.xMax));
             result.yMin = Mathf.Lerp(newContainer.yMin, newContainer.yMax, Mathf.InverseLerp(oldContainer.yMin, oldContainer.yMax, rect.yMin));
@@ -72,8 +81,9 @@ namespace ParadoxNotion
         }
 
         //Transforms vector from one container to another container rect
-        public static Vector2 TransformSpace(this Vector2 vector, Rect oldContainer, Rect newContainer) {
-            var result = new Vector2();
+        public static Vector2 TransformSpace(this Vector2 vector, Rect oldContainer, Rect newContainer)
+        {
+            Vector2 result = new Vector2();
             result.x = Mathf.Lerp(newContainer.xMin, newContainer.xMax, Mathf.InverseLerp(oldContainer.xMin, oldContainer.xMax, vector.x));
             result.y = Mathf.Lerp(newContainer.yMin, newContainer.yMax, Mathf.InverseLerp(oldContainer.yMin, oldContainer.yMax, vector.y));
             return result;
@@ -81,7 +91,8 @@ namespace ParadoxNotion
 
 #if UNITY_EDITOR
         ///A debug rect with values
-        public static void DrawDebugRect(Rect rect, string label = "", Color color = default(Color)) {
+        public static void DrawDebugRect(Rect rect, string label = "", Color color = default(Color))
+        {
             GUI.color = color == default(Color) ? Color.yellow : color;
             GUI.DrawTexture(rect, Texture2D.whiteTexture);
             GUI.color = Color.white;

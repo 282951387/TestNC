@@ -21,16 +21,22 @@ namespace NodeCanvas.Tasks.Actions
         public Control control = Control.StartBehaviour;
         public bool waitActionFinish = true;
 
-        protected override string info {
+        protected override string info
+        {
             get { return agentInfo + "." + control.ToString(); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( control == Control.StartBehaviour ) {
-                if ( waitActionFinish ) {
+            if (control == Control.StartBehaviour)
+            {
+                if (waitActionFinish)
+                {
                     agent.StartBehaviour((s) => { EndAction(s); });
-                } else {
+                }
+                else
+                {
                     agent.StartBehaviour();
                     EndAction();
                 }
@@ -38,28 +44,34 @@ namespace NodeCanvas.Tasks.Actions
             }
 
             //in case target is this owner, we must yield 1 frame before pausing/stoppping
-            if ( agent == ownerSystemAgent ) { StartCoroutine(YieldDo()); } else { Do(); }
+            if (agent == ownerSystemAgent) { StartCoroutine(YieldDo()); } else { Do(); }
         }
 
-        IEnumerator YieldDo() {
+        private IEnumerator YieldDo()
+        {
             yield return null;
             Do();
         }
 
-        void Do() {
-            if ( control == Control.StopBehaviour ) {
+        private void Do()
+        {
+            if (control == Control.StopBehaviour)
+            {
                 EndAction(null);
                 agent.StopBehaviour();
             }
 
-            if ( control == Control.PauseBehaviour ) {
+            if (control == Control.PauseBehaviour)
+            {
                 EndAction(null);
                 agent.PauseBehaviour();
             }
         }
 
-        protected override void OnStop() {
-            if ( waitActionFinish && control == Control.StartBehaviour ) {
+        protected override void OnStop()
+        {
+            if (waitActionFinish && control == Control.StartBehaviour)
+            {
                 agent.StopBehaviour();
             }
         }

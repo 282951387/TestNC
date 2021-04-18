@@ -13,13 +13,16 @@ namespace NodeCanvas.BehaviourTrees
     public class Optional : BTDecorator
     {
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
             }
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 decoratedConnection.Reset();
             }
 

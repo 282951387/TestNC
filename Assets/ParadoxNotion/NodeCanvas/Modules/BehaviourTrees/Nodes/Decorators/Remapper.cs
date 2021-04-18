@@ -22,14 +22,18 @@ namespace NodeCanvas.BehaviourTrees
         public RemapStatus successRemap = RemapStatus.Success;
         public RemapStatus failureRemap = RemapStatus.Failure;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null )
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
+            }
 
             status = decoratedConnection.Execute(agent, blackboard);
 
-            switch ( status ) {
+            switch (status)
+            {
                 case Status.Success:
                     return (Status)successRemap;
                 case Status.Failure:
@@ -44,13 +48,18 @@ namespace NodeCanvas.BehaviourTrees
         /////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
 
-            if ( (int)successRemap != (int)Status.Success )
+            if ((int)successRemap != (int)Status.Success)
+            {
                 GUILayout.Label("Success = " + successRemap);
+            }
 
-            if ( (int)failureRemap != (int)Status.Failure )
+            if (failureRemap != (int)Status.Failure)
+            {
                 GUILayout.Label("Failure = " + failureRemap);
+            }
         }
 
 #endif

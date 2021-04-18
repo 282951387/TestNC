@@ -19,11 +19,14 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<float> saveAs;
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
             saveAs.value = curve.value.Evaluate(Mathf.Lerp(from.value, to.value, elapsedTime / time.value));
-            if ( elapsedTime > time.value )
+            if (elapsedTime > time.value)
+            {
                 EndAction();
+            }
         }
     }
 }

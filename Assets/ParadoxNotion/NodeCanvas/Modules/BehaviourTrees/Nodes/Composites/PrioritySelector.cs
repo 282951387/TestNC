@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization.FullSerializer;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -10,7 +10,7 @@ namespace NodeCanvas.BehaviourTrees
 {
 
     ///----------------------------------------------------------------------------------------------
-    class PrioritySelector_0 : BTComposite
+    internal class PrioritySelector_0 : BTComposite
     {
         [SerializeField] public List<BBParameter<float>> priorities = null;
     }
@@ -24,12 +24,14 @@ namespace NodeCanvas.BehaviourTrees
     public class PrioritySelector : BTComposite, IMigratable<PrioritySelector_0>
     {
         ///----------------------------------------------------------------------------------------------
-        void IMigratable<PrioritySelector_0>.Migrate(PrioritySelector_0 model) {
-            this.desires = new List<Desire>();
-            foreach ( var priority in model.priorities ) {
-                var desire = new Desire();
-                this.desires.Add(desire);
-                var consideration = desire.AddConsideration(graphBlackboard);
+        void IMigratable<PrioritySelector_0>.Migrate(PrioritySelector_0 model)
+        {
+            desires = new List<Desire>();
+            foreach (BBParameter<float> priority in model.priorities)
+            {
+                Desire desire = new Desire();
+                desires.Add(desire);
+                Consideration consideration = desire.AddConsideration(graphBlackboard);
                 consideration.input = priority;
             }
         }
@@ -44,17 +46,20 @@ namespace NodeCanvas.BehaviourTrees
             public bool foldout;
             public List<Consideration> considerations = new List<Consideration>();
 
-            public Consideration AddConsideration(IBlackboard bb) {
-                var result = new Consideration(bb);
+            public Consideration AddConsideration(IBlackboard bb)
+            {
+                Consideration result = new Consideration(bb);
                 considerations.Add(result);
                 return result;
             }
 
             public void RemoveConsideration(Consideration consideration) { considerations.Remove(consideration); }
 
-            public float GetCompoundUtility() {
+            public float GetCompoundUtility()
+            {
                 float total = 0;
-                for ( var i = 0; i < considerations.Count; i++ ) {
+                for (int i = 0; i < considerations.Count; i++)
+                {
                     total += considerations[i].utility;
                 }
                 return total / considerations.Count;
@@ -67,7 +72,8 @@ namespace NodeCanvas.BehaviourTrees
             public BBParameter<float> input;
             public BBParameter<AnimationCurve> function;
             public float utility => function.value != null ? function.value.Evaluate(input.value) : input.value;
-            public Consideration(IBlackboard blackboard) {
+            public Consideration(IBlackboard blackboard)
+            {
                 input = new BBParameter<float> { value = 1f, bb = blackboard };
                 function = new BBParameter<AnimationCurve> { bb = blackboard };
             }
@@ -81,26 +87,32 @@ namespace NodeCanvas.BehaviourTrees
         private Connection[] orderedConnections;
         private int current = 0;
 
-        public override void OnChildConnected(int index) {
-            if ( desires == null ) { desires = new List<Desire>(); }
-            if ( desires.Count < outConnections.Count ) { desires.Insert(index, new Desire()); }
+        public override void OnChildConnected(int index)
+        {
+            if (desires == null) { desires = new List<Desire>(); }
+            if (desires.Count < outConnections.Count) { desires.Insert(index, new Desire()); }
         }
 
         public override void OnChildDisconnected(int index) { desires.RemoveAt(index); }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 orderedConnections = outConnections.OrderBy(c => desires[outConnections.IndexOf(c)].GetCompoundUtility()).ToArray();
             }
 
-            for ( var i = orderedConnections.Length; i-- > 0; ) {
+            for (int i = orderedConnections.Length; i-- > 0;)
+            {
                 status = orderedConnections[i].Execute(agent, blackboard);
-                if ( status == Status.Success ) {
+                if (status == Status.Success)
+                {
                     return Status.Success;
                 }
 
-                if ( status == Status.Running ) {
+                if (status == Status.Running)
+                {
                     current = i;
                     return Status.Running;
                 }
@@ -117,52 +129,58 @@ namespace NodeCanvas.BehaviourTrees
 #if UNITY_EDITOR
 
         //..
-        public override string GetConnectionInfo(int i) {
-            var desire = desires[i];
-            var desireName = string.IsNullOrEmpty(desire.name) ? "DESIRE " + i.ToString() : desire.name;
-            var result = desireName.ToUpper() + "\n";
-            for ( var j = 0; j < desire.considerations.Count; j++ ) {
+        public override string GetConnectionInfo(int i)
+        {
+            Desire desire = desires[i];
+            string desireName = string.IsNullOrEmpty(desire.name) ? "DESIRE " + i.ToString() : desire.name;
+            string result = desireName.ToUpper() + "\n";
+            for (int j = 0; j < desire.considerations.Count; j++)
+            {
                 result += desire.considerations[j].input.ToString() + " (" + desire.considerations[j].utility.ToString("0.00") + ")" + "\n";
             }
             return result += string.Format("<b>Avg.</b> ({0})", desire.GetCompoundUtility().ToString("0.00"));
         }
 
         //..
-        public override void OnConnectionInspectorGUI(int i) {
-            var desire = desires[i];
-            var optionsB = new EditorUtils.ReorderableListOptions();
+        public override void OnConnectionInspectorGUI(int i)
+        {
+            Desire desire = desires[i];
+            EditorUtils.ReorderableListOptions optionsB = new EditorUtils.ReorderableListOptions();
             optionsB.allowAdd = false;
             optionsB.allowRemove = true;
             EditorUtils.ReorderableList(desire.considerations, optionsB, (j, pickedB) =>
             {
-                var consideration = desire.considerations[j];
+                Consideration consideration = desire.considerations[j];
                 GUILayout.BeginVertical("box");
                 consideration.input = (BBParameter<float>)NodeCanvas.Editor.BBParameterEditor.ParameterField("Input", consideration.input, true);
                 consideration.function = (BBParameter<AnimationCurve>)NodeCanvas.Editor.BBParameterEditor.ParameterField("Curve", consideration.function);
                 GUILayout.EndVertical();
             });
 
-            if ( GUILayout.Button("Add Consideration") ) { desire.AddConsideration(graphBlackboard); }
+            if (GUILayout.Button("Add Consideration")) { desire.AddConsideration(graphBlackboard); }
             EditorUtils.Separator();
         }
 
         //..
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
 
-            if ( outConnections.Count == 0 ) {
+            if (outConnections.Count == 0)
+            {
                 GUILayout.Label("Make some connections first");
                 return;
             }
 
-            var optionsA = new EditorUtils.ReorderableListOptions();
+            EditorUtils.ReorderableListOptions optionsA = new EditorUtils.ReorderableListOptions();
             optionsA.allowAdd = false;
             optionsA.allowRemove = false;
             EditorUtils.ReorderableList(desires, optionsA, (i, pickedA) =>
             {
-                var desire = desires[i];
-                var desireName = string.IsNullOrEmpty(desire.name) ? "DESIRE " + i.ToString() : desire.name;
+                Desire desire = desires[i];
+                string desireName = string.IsNullOrEmpty(desire.name) ? "DESIRE " + i.ToString() : desire.name;
                 desire.foldout = UnityEditor.EditorGUILayout.Foldout(desire.foldout, new GUIContent(desireName));
-                if ( desire.foldout ) {
+                if (desire.foldout)
+                {
                     desire.name = UnityEditor.EditorGUILayout.TextField("   Friendly Name", desire.name);
                     OnConnectionInspectorGUI(i);
                 }

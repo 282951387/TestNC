@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -18,13 +18,15 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<List<GameObject>> saveObjectsAs;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            var hitColliders = Physics.OverlapSphere(agent.position, radius.value, layerMask);
+            Collider[] hitColliders = Physics.OverlapSphere(agent.position, radius.value, layerMask);
             saveObjectsAs.value = hitColliders.Select(c => c.gameObject).ToList();
             saveObjectsAs.value.Remove(agent.gameObject);
 
-            if ( saveObjectsAs.value.Count == 0 ) {
+            if (saveObjectsAs.value.Count == 0)
+            {
                 EndAction(false);
                 return;
             }
@@ -32,8 +34,10 @@ namespace NodeCanvas.Tasks.Actions
             EndAction(true);
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent != null ) {
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent != null)
+            {
                 Gizmos.color = new Color(1, 1, 1, 0.2f);
                 Gizmos.DrawSphere(agent.position, radius.value);
             }

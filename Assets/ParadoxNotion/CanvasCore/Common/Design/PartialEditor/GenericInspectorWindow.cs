@@ -21,7 +21,8 @@ namespace ParadoxNotion.Design
         private bool willRepaint;
 
         // ...
-        void OnEnable() {
+        private void OnEnable()
+        {
             titleContent = new GUIContent("Object Editor");
             current = this;
 
@@ -35,7 +36,8 @@ namespace ParadoxNotion.Design
         }
 
         //...
-        void OnDisable() {
+        private void OnDisable()
+        {
 #if UNITY_2017_2_OR_NEWER
             EditorApplication.playModeStateChanged -= PlayModeChange;
 #else
@@ -44,14 +46,15 @@ namespace ParadoxNotion.Design
         }
 
 #if UNITY_2017_2_OR_NEWER
-        void PlayModeChange(PlayModeStateChange state) { Close(); }
+        private void PlayModeChange(PlayModeStateChange state) { Close(); }
 #else
         void PlayModeChange(){ Close(); }
 #endif
 
         ///Open utility window to inspect target object of type in context using read/write delegates.
-        public static void Show(string title, System.Type targetType, Object unityObjectContext, System.Func<object> read, System.Action<object> write) {
-            var window = current != null ? current : CreateInstance<GenericInspectorWindow>();
+        public static void Show(string title, System.Type targetType, Object unityObjectContext, System.Func<object> read, System.Action<object> write)
+        {
+            GenericInspectorWindow window = current != null ? current : CreateInstance<GenericInspectorWindow>();
             window.friendlyTitle = title;
             window.targetType = targetType;
             window.unityObjectContext = unityObjectContext;
@@ -61,22 +64,27 @@ namespace ParadoxNotion.Design
         }
 
         //...
-        void Update() {
-            if ( willRepaint ) {
+        private void Update()
+        {
+            if (willRepaint)
+            {
                 willRepaint = false;
                 Repaint();
             }
         }
 
         //...
-        void OnGUI() {
+        private void OnGUI()
+        {
 
-            if ( targetType == null ) {
+            if (targetType == null)
+            {
                 return;
             }
 
-            var e = Event.current;
-            if ( e.type == EventType.ValidateCommand && e.commandName == "UndoRedoPerformed" ) {
+            Event e = Event.current;
+            if (e.type == EventType.ValidateCommand && e.commandName == "UndoRedoPerformed")
+            {
                 GUIUtility.hotControl = 0;
                 GUIUtility.keyboardControl = 0;
                 e.Use();
@@ -88,10 +96,11 @@ namespace ParadoxNotion.Design
             EditorUtils.Separator();
             GUILayout.Space(10);
             scrollPos = GUILayout.BeginScrollView(scrollPos);
-            var serializationInfo = new InspectedFieldInfo(unityObjectContext, null, null, null);
-            var oldValue = read();
-            var newValue = EditorUtils.ReflectedFieldInspector(friendlyTitle, oldValue, targetType, serializationInfo);
-            if ( !Equals(oldValue, newValue) || GUI.changed ) {
+            InspectedFieldInfo serializationInfo = new InspectedFieldInfo(unityObjectContext, null, null, null);
+            object oldValue = read();
+            object newValue = EditorUtils.ReflectedFieldInspector(friendlyTitle, oldValue, targetType, serializationInfo);
+            if (!Equals(oldValue, newValue) || GUI.changed)
+            {
                 write(newValue);
             }
             GUILayout.EndScrollView();

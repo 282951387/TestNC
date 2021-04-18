@@ -13,15 +13,19 @@ public class ClickToMove : MonoBehaviour
 
     private NavMeshAgent navAgent;
 
-    void Awake() {
+    private void Awake()
+    {
         navAgent = GetComponent<NavMeshAgent>();
     }
 
-    void Update() {
+    private void Update()
+    {
 
-        if ( Input.GetMouseButtonDown(0) ) {
+        if (Input.GetMouseButtonDown(0))
+        {
             RaycastHit hit;
-            if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity) ) {
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+            {
                 navAgent.SetDestination(hit.point);
             }
         }

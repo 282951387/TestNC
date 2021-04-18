@@ -1,7 +1,7 @@
-﻿using NodeCanvas.Framework;
+﻿using NodeCanvas.BehaviourTrees;
+using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEngine;
-using NodeCanvas.BehaviourTrees;
 
 namespace NodeCanvas.StateMachines
 {
@@ -26,13 +26,15 @@ namespace NodeCanvas.StateMachines
 
         ///----------------------------------------------------------------------------------------------
 
-        public override void OnGraphStarted() {
-            if ( subGraph == null ) { return; }
+        public override void OnGraphStarted()
+        {
+            if (subGraph == null) { return; }
             status = Status.Running;
             this.TryStartSubGraph(graphAgent, (result) => { status = result ? Status.Success : Status.Failure; });
         }
 
-        void IUpdatable.Update() {
+        void IUpdatable.Update()
+        {
             this.TryUpdateSubGraph();
         }
     }

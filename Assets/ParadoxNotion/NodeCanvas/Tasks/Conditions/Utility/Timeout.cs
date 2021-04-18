@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using ParadoxNotion.Services;
+using UnityEngine;
 
 namespace NodeCanvas.Tasks.Conditions
 {
@@ -14,25 +14,30 @@ namespace NodeCanvas.Tasks.Conditions
         public BBParameter<float> timeout = 1f;
         private float currentTime;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Timeout {0}/{1}", currentTime.ToString("0.00"), timeout.ToString()); }
         }
 
-        protected override void OnEnable() {
+        protected override void OnEnable()
+        {
             currentTime = 0;
             MonoManager.current.onLateUpdate += MoveNext;
         }
 
-        protected override void OnDisable() {
+        protected override void OnDisable()
+        {
             MonoManager.current.onLateUpdate -= MoveNext;
         }
 
-        void MoveNext() {
+        private void MoveNext()
+        {
             currentTime += Time.deltaTime;
             currentTime = Mathf.Min(currentTime, timeout.value);
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return currentTime >= timeout.value;
         }
     }

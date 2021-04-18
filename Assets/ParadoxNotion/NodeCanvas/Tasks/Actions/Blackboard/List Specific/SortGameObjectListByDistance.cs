@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -20,15 +20,19 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<List<GameObject>> saveAs;
         public bool reverse;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Sort " + targetList + " by distance as " + saveAs; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             saveAs.value = targetList.value.OrderBy(go => Vector3.Distance(go.transform.position, agent.position)).ToList();
-            if ( reverse )
+            if (reverse)
+            {
                 saveAs.value.Reverse();
+            }
 
             EndAction();
         }

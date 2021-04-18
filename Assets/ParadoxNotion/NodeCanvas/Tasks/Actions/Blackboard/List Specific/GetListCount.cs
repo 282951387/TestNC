@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections;
 
 
 namespace NodeCanvas.Tasks.Actions
@@ -16,11 +16,13 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<int> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} = {1}.Count", saveAs, targetList); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             saveAs.value = targetList.value.Count;
             EndAction(true);
         }

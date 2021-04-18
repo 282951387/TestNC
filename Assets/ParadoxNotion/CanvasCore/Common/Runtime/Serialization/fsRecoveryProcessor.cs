@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ParadoxNotion.Serialization.FullSerializer;
+using System;
 using System.Linq;
-using ParadoxNotion.Serialization.FullSerializer;
 
 namespace ParadoxNotion.Serialization
 {
@@ -12,51 +12,59 @@ namespace ParadoxNotion.Serialization
         private const string FIELD_NAME_TYPE = "_missingType";
         private const string FIELD_NAME_STATE = "_recoveryState";
 
-        public override bool CanProcess(Type type) {
+        public override bool CanProcess(Type type)
+        {
             return typeof(TCanProcess).RTIsAssignableFrom(type);
         }
 
-        public override void OnBeforeDeserialize(Type storageType, ref fsData data) {
+        public override void OnBeforeDeserialize(Type storageType, ref fsData data)
+        {
 
-            if ( Services.Threader.applicationIsPlaying ) {
+            if (Services.Threader.applicationIsPlaying)
+            {
                 return;
             }
 
-            if ( !data.IsDictionary ) {
+            if (!data.IsDictionary)
+            {
                 return;
             }
 
-            var json = data.AsDictionary;
+            System.Collections.Generic.Dictionary<string, fsData> json = data.AsDictionary;
 
             fsData typeData;
-            if ( json.TryGetValue(fsSerializer.KEY_INSTANCE_TYPE, out typeData) ) {
+            if (json.TryGetValue(fsSerializer.KEY_INSTANCE_TYPE, out typeData))
+            {
 
                 //check if serialized can actually resolve the type
-                var serializedType = ReflectionTools.GetType(typeData.AsString, storageType);
+                Type serializedType = ReflectionTools.GetType(typeData.AsString, storageType);
 
                 //If not, handle missing serialized type
-                if ( serializedType == null ) {
+                if (serializedType == null)
+                {
                     //Replace with a Missing Type
                     //inject the Missing Type and store recovery serialization state.
                     //recoveryState and missingType are serializable members of Missing Type.
-                    var wasType = typeData.AsString;
-                    var wasData = fsJsonPrinter.PrettyJson(data);
+                    string wasType = typeData.AsString;
+                    string wasData = fsJsonPrinter.PrettyJson(data);
                     json[FIELD_NAME_TYPE] = new fsData(wasType);
                     json[FIELD_NAME_STATE] = new fsData(wasData);
                     json[fsSerializer.KEY_INSTANCE_TYPE] = new fsData(typeof(TMissing).FullName);
                 }
 
                 //Recover possibly found serialized type
-                if ( serializedType == typeof(TMissing) ) {
+                if (serializedType == typeof(TMissing))
+                {
 
                     //Does the missing type now exists?
-                    var missingType = ReflectionTools.GetType(json[FIELD_NAME_TYPE].AsString, storageType);
+                    Type missingType = ReflectionTools.GetType(json[FIELD_NAME_TYPE].AsString, storageType);
 
                     //Finaly recover if we have a type
-                    if ( missingType != null ) {
+                    if (missingType != null)
+                    {
 
-                        var recoveryState = json[FIELD_NAME_STATE].AsString;
-                        var recoverJson = fsJsonParser.Parse(recoveryState).AsDictionary;
+                        string recoveryState = json[FIELD_NAME_STATE].AsString;
+                        System.Collections.Generic.Dictionary<string, fsData> recoverJson = fsJsonParser.Parse(recoveryState).AsDictionary;
 
                         //merge the recover state *ON TOP* of the current state, thus merging only Declared recovered members
                         json = json.Concat(recoverJson.Where(kvp => !json.ContainsKey(kvp.Key))).ToDictionary(c => c.Key, c => c.Value);

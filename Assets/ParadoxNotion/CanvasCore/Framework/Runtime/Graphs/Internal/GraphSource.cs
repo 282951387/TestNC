@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ParadoxNotion.Serialization.FullSerializer;
+﻿using ParadoxNotion.Serialization.FullSerializer;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NodeCanvas.Framework.Internal
@@ -14,14 +14,16 @@ namespace NodeCanvas.Framework.Internal
         public List<Task> allTasks { get; private set; }
         public List<BBParameter> allParameters { get; private set; }
 
-        void ISerializationCollector.OnPush(ISerializationCollector parent) {
+        void ISerializationCollector.OnPush(ISerializationCollector parent)
+        {
             allTasks = new List<Task>();
             allParameters = new List<BBParameter>();
         }
 
-        void ISerializationCollector.OnCollect(ISerializationCollectable child, int depth) {
-            if ( child is Task ) { allTasks.Add((Task)child); }
-            if ( child is BBParameter ) { allParameters.Add((BBParameter)child); }
+        void ISerializationCollector.OnCollect(ISerializationCollectable child, int depth)
+        {
+            if (child is Task) { allTasks.Add((Task)child); }
+            if (child is BBParameter) { allParameters.Add((BBParameter)child); }
         }
 
         void ISerializationCollector.OnPop(ISerializationCollector parent) { }
@@ -72,7 +74,8 @@ namespace NodeCanvas.Framework.Internal
         ///----------------------------------------------------------------------------------------------
 
         //...
-        public GraphSource() {
+        public GraphSource()
+        {
             zoomFactor = 1f;
             nodes = new List<Node>();
             canvasGroups = new List<CanvasGroup>();
@@ -80,27 +83,31 @@ namespace NodeCanvas.Framework.Internal
         }
 
         ///Must Pack *BEFORE* any serialization
-        public GraphSource Pack(Graph graph) {
+        public GraphSource Pack(Graph graph)
+        {
 
-            this.version = FRAMEWORK_VERSION;
-            this.type = graph.GetType().FullName;
+            version = FRAMEWORK_VERSION;
+            type = graph.GetType().FullName;
 
             //connections are serialized seperately and not part of their parent node
-            var structConnections = new List<Connection>();
-            for ( var i = 0; i < nodes.Count; i++ ) {
-                for ( var j = 0; j < nodes[i].outConnections.Count; j++ ) {
+            List<Connection> structConnections = new List<Connection>();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                for (int j = 0; j < nodes[i].outConnections.Count; j++)
+                {
                     structConnections.Add(nodes[i].outConnections[j]);
                 }
             }
-            this.connections = structConnections;
+            connections = structConnections;
 
             //serialize derived data
-            this.derivedData = graph.OnDerivedDataSerialization();
+            derivedData = graph.OnDerivedDataSerialization();
             return this;
         }
 
         ///Must Unpack *AFTER* any deserialization
-        public GraphSource Unpack(Graph graph) {
+        public GraphSource Unpack(Graph graph)
+        {
 
             //check serialization versions here in the future if needed
 
@@ -108,7 +115,8 @@ namespace NodeCanvas.Framework.Internal
             localBlackboard.unityContextObject = graph;
 
             //re-set the node's owner and ID
-            for ( var i = 0; i < this.nodes.Count; i++ ) {
+            for (int i = 0; i < nodes.Count; i++)
+            {
                 nodes[i].outConnections.Clear();
                 nodes[i].inConnections.Clear();
                 nodes[i].graph = graph;
@@ -116,7 +124,8 @@ namespace NodeCanvas.Framework.Internal
             }
 
             //re-link connections for deserialization
-            for ( var i = 0; i < this.connections.Count; i++ ) {
+            for (int i = 0; i < connections.Count; i++)
+            {
                 connections[i].sourceNode.outConnections.Add(connections[i]);
                 connections[i].targetNode.inConnections.Add(connections[i]);
             }
@@ -127,7 +136,8 @@ namespace NodeCanvas.Framework.Internal
         }
 
         ///Sets only the meta-data from another GraphSource and returns itself
-        public GraphSource SetMetaData(GraphSource source) {
+        public GraphSource SetMetaData(GraphSource source)
+        {
             version = source.version;
             category = source.category;
             comments = source.comments;
@@ -137,7 +147,8 @@ namespace NodeCanvas.Framework.Internal
         }
 
         //...
-        public void PurgeRedundantReferences() {
+        public void PurgeRedundantReferences()
+        {
             connections.Clear();
         }
     }

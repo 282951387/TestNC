@@ -13,7 +13,8 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<UnityEngine.GameObject> saveAs;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             saveAs.value = agent?.gameObject;
             EndAction(true);
         }

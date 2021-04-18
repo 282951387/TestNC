@@ -16,19 +16,23 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<object> argument;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Message {0}({1}) to all {2}s", message, argument, typeof(T).Name); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            var objects = Object.FindObjectsOfType<T>();
-            if ( objects.Length == 0 ) {
+            T[] objects = Object.FindObjectsOfType<T>();
+            if (objects.Length == 0)
+            {
                 EndAction(false);
                 return;
             }
 
-            foreach ( var o in objects ) {
+            foreach (T o in objects)
+            {
                 o.gameObject.SendMessage(message.value, argument.value);
             }
 

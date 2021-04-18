@@ -24,11 +24,13 @@ namespace NodeCanvas.Tasks.Actions
 
         private RaycastHit2D hit;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             hit = Physics2D.Linecast(agent.position, target.value.transform.position, mask);
 
-            if ( hit.collider != null ) {
+            if (hit.collider != null)
+            {
                 saveHitGameObjectAs.value = hit.collider.gameObject;
                 saveDistanceAs.value = hit.fraction;
                 savePointAs.value = hit.point;
@@ -40,9 +42,12 @@ namespace NodeCanvas.Tasks.Actions
             EndAction(false);
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent && target.value )
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent && target.value)
+            {
                 Gizmos.DrawLine(agent.position, target.value.transform.position);
+            }
         }
     }
 }

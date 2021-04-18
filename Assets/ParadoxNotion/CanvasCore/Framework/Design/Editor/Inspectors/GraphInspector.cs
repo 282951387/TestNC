@@ -16,7 +16,8 @@ namespace NodeCanvas.Editor
 
         private Graph graph => (Graph)target;
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             UndoUtility.CheckUndo(this, "Graph Inspector");
             ShowBasicGUI();
             EditorUtils.Separator();
@@ -26,7 +27,8 @@ namespace NodeCanvas.Editor
         }
 
         //name, description, edit button
-        public void ShowBasicGUI() {
+        public void ShowBasicGUI()
+        {
             GUILayout.Space(10);
             graph.category = GUILayout.TextField(graph.category);
             EditorUtils.CommentLastTextField(graph.category, "Category...");
@@ -35,13 +37,15 @@ namespace NodeCanvas.Editor
             EditorUtils.CommentLastTextField(graph.comments, "Comments...");
 
             GUI.backgroundColor = Colors.lightBlue;
-            if ( GUILayout.Button(string.Format("EDIT {0}", graph.GetType().Name.SplitCamelCase().ToUpper())) ) {
+            if (GUILayout.Button(string.Format("EDIT {0}", graph.GetType().Name.SplitCamelCase().ToUpper())))
+            {
                 GraphEditor.OpenWindow(graph);
             }
             GUI.backgroundColor = Color.white;
         }
 
-        public void ShowBlackboardGUI() {
+        public void ShowBlackboardGUI()
+        {
             BlackboardEditor.ShowVariables(graph.blackboard, graph);
         }
     }

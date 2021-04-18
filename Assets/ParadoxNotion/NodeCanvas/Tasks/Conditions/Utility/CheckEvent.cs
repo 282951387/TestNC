@@ -1,6 +1,6 @@
 ﻿using NodeCanvas.Framework;
-using ParadoxNotion.Design;
 using ParadoxNotion;
+using ParadoxNotion.Design;
 using Logger = ParadoxNotion.Services.Logger;
 
 namespace NodeCanvas.Tasks.Conditions
@@ -21,8 +21,10 @@ namespace NodeCanvas.Tasks.Conditions
 
         protected override bool OnCheck() { return false; }
 
-        void OnCustomEvent(string eventName, IEventData data) {
-            if ( eventName.Equals(this.eventName.value, System.StringComparison.OrdinalIgnoreCase) ) {
+        private void OnCustomEvent(string eventName, IEventData data)
+        {
+            if (eventName.Equals(this.eventName.value, System.StringComparison.OrdinalIgnoreCase))
+            {
                 Logger.Log(string.Format("Event Received from ({0}): '{1}'", agent.gameObject.name, name), LogTag.EVENT, this);
                 YieldReturn(true);
             }
@@ -48,11 +50,15 @@ namespace NodeCanvas.Tasks.Conditions
 
         protected override bool OnCheck() { return false; }
 
-        void OnCustomEvent(string eventName, IEventData data) {
-            if ( eventName.Equals(this.eventName.value, System.StringComparison.OrdinalIgnoreCase) ) {
-                if ( data is EventData<T> ) { //avoid boxing if able
-                    saveEventValue.value = ( (EventData<T>)data ).value;
-                } else if ( data.valueBoxed is T ) { saveEventValue.value = (T)data.valueBoxed; }
+        private void OnCustomEvent(string eventName, IEventData data)
+        {
+            if (eventName.Equals(this.eventName.value, System.StringComparison.OrdinalIgnoreCase))
+            {
+                if (data is EventData<T>)
+                { //avoid boxing if able
+                    saveEventValue.value = ((EventData<T>)data).value;
+                }
+                else if (data.valueBoxed is T) { saveEventValue.value = (T)data.valueBoxed; }
 
                 Logger.Log(string.Format("Event Received from ({0}): '{1}'", agent.gameObject.name, eventName), LogTag.EVENT, this);
                 YieldReturn(true);

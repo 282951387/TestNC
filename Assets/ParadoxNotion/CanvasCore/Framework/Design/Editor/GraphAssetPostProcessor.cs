@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR
 
-using System.Collections.Generic;
-using UnityEditor;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 
 namespace NodeCanvas.Editor
 {
@@ -13,12 +13,14 @@ namespace NodeCanvas.Editor
     {
 
         [InitializeOnLoadMethod]
-        static void PreInit() {
+        private static void PreInit()
+        {
             EditorApplication.delayCall -= Init;
             EditorApplication.delayCall += Init;
         }
 
-        static void Init() {
+        private static void Init()
+        {
 
             // TODO: HOTFIX COMMENT OUT UNTIL FURTHER DEVELOPEMENT.
             // THIS WAS CREATING ISSUES, THUS JSON APPEND TO ASSET FEATURE REMOVED FOR NOW!

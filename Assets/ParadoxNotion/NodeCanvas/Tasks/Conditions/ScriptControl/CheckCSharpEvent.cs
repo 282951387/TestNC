@@ -1,10 +1,10 @@
-﻿using System.Reflection;
-using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization;
 using ParadoxNotion.Serialization.FullSerializer;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 
@@ -13,34 +13,34 @@ namespace NodeCanvas.Tasks.Conditions
 
     ///----------------------------------------------------------------------------------------------
     ///previous versions
-    class CheckCSharpEvent_0
+    internal class CheckCSharpEvent_0
     {
         [SerializeField] public System.Type targetType = null;
         [SerializeField] public string eventName = null;
     }
 
-    class CheckCSharpEvent_0<T>
+    internal class CheckCSharpEvent_0<T>
     {
 
         [SerializeField] public System.Type targetType = null;
         [SerializeField] public string eventName = null;
     }
 
-    class CheckCSharpEventValue_0<T>
+    internal class CheckCSharpEventValue_0<T>
     {
         [SerializeField] public System.Type targetType = null;
         [SerializeField] public string eventName = null;
     }
 
     [fsMigrateTo(typeof(CheckCSharpEvent))]
-    class CheckStaticCSharpEvent
+    internal class CheckStaticCSharpEvent
     {
         [SerializeField] public System.Type targetType = null;
         [SerializeField] public string eventName = null;
     }
 
     [fsMigrateTo(typeof(CheckCSharpEvent<>))]
-    class CheckStaticCSharpEvent<T>
+    internal class CheckStaticCSharpEvent<T>
     {
         [SerializeField] public System.Type targetType = null;
         [SerializeField] public string eventName = null;
@@ -56,11 +56,13 @@ namespace NodeCanvas.Tasks.Conditions
     {
 
         ///----------------------------------------------------------------------------------------------
-        void IMigratable<CheckCSharpEvent_0>.Migrate(CheckCSharpEvent_0 model) {
-            this.SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
+        void IMigratable<CheckCSharpEvent_0>.Migrate(CheckCSharpEvent_0 model)
+        {
+            SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
         }
-        void IMigratable<CheckStaticCSharpEvent>.Migrate(CheckStaticCSharpEvent model) {
-            this.SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
+        void IMigratable<CheckStaticCSharpEvent>.Migrate(CheckStaticCSharpEvent model)
+        {
+            SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
         }
         ///----------------------------------------------------------------------------------------------
 
@@ -70,47 +72,60 @@ namespace NodeCanvas.Tasks.Conditions
         private System.Delegate handler;
         private EventInfo targetEvent => eventInfo;
 
-        public override System.Type agentType {
+        public override System.Type agentType
+        {
             get
             {
-                if ( targetEvent == null ) { return typeof(Transform); }
+                if (targetEvent == null) { return typeof(Transform); }
                 return targetEvent.IsStatic() ? null : targetEvent.RTReflectedOrDeclaredType();
             }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( eventInfo == null ) { return "No Event Selected"; }
-                if ( targetEvent == null ) { return eventInfo.AsString().FormatError(); }
+                if (eventInfo == null) { return "No Event Selected"; }
+                if (targetEvent == null) { return eventInfo.AsString().FormatError(); }
                 return string.Format("'{0}' Raised", targetEvent.Name);
             }
         }
 
         ISerializedReflectedInfo IReflectedWrapper.GetSerializedInfo() { return eventInfo; }
 
-        protected override string OnInit() {
-            if ( eventInfo == null ) { return "No Event Selected"; }
-            if ( targetEvent == null ) { return eventInfo.AsString().FormatError(); }
+        protected override string OnInit()
+        {
+            if (eventInfo == null) { return "No Event Selected"; }
+            if (targetEvent == null) { return eventInfo.AsString().FormatError(); }
 
-            var methodInfo = this.GetType().RTGetMethod("Raised");
-            this.handler = methodInfo.RTCreateDelegate(targetEvent.EventHandlerType, this);
+            MethodInfo methodInfo = GetType().RTGetMethod("Raised");
+            handler = methodInfo.RTCreateDelegate(targetEvent.EventHandlerType, this);
             return null;
         }
 
-        protected override void OnEnable() {
-            if ( handler != null ) targetEvent.AddEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+        protected override void OnEnable()
+        {
+            if (handler != null)
+            {
+                targetEvent.AddEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+            }
         }
 
-        protected override void OnDisable() {
-            if ( handler != null ) targetEvent.RemoveEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+        protected override void OnDisable()
+        {
+            if (handler != null)
+            {
+                targetEvent.RemoveEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+            }
         }
 
         public void Raised() { YieldReturn(true); }
         protected override bool OnCheck() { return false; }
 
-        void SetTargetEvent(EventInfo info) {
-            if ( info != null ) {
+        private void SetTargetEvent(EventInfo info)
+        {
+            if (info != null)
+            {
                 eventInfo = new SerializedEventInfo(info);
             }
         }
@@ -120,27 +135,34 @@ namespace NodeCanvas.Tasks.Conditions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
-            if ( !Application.isPlaying && GUILayout.Button("Select Event") ) {
-                var menu = new UnityEditor.GenericMenu();
-                if ( agent != null ) {
-                    foreach ( var comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0) ) {
+            if (!Application.isPlaying && GUILayout.Button("Select Event"))
+            {
+                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
+                if (agent != null)
+                {
+                    foreach (Component comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0))
+                    {
                         menu = EditorUtils.GetInstanceEventSelectionMenu(comp.GetType(), null, SetTargetEvent, menu);
                     }
                     menu.AddSeparator("/");
                 }
-                foreach ( var t in TypePrefs.GetPreferedTypesList(typeof(object)) ) {
+                foreach (System.Type t in TypePrefs.GetPreferedTypesList(typeof(object)))
+                {
                     menu = EditorUtils.GetStaticEventSelectionMenu(t, null, SetTargetEvent, menu);
-                    if ( typeof(Component).IsAssignableFrom(t) ) {
+                    if (typeof(Component).IsAssignableFrom(t))
+                    {
                         menu = EditorUtils.GetInstanceEventSelectionMenu(t, null, SetTargetEvent, menu);
                     }
                 }
-                menu.ShowAsBrowser("Select Event", this.GetType());
+                menu.ShowAsBrowser("Select Event", GetType());
                 Event.current.Use();
             }
 
-            if ( targetEvent != null ) {
+            if (targetEvent != null)
+            {
                 GUILayout.BeginVertical("box");
                 UnityEditor.EditorGUILayout.LabelField("Selected Type", targetEvent.DeclaringType.FriendlyName());
                 UnityEditor.EditorGUILayout.LabelField("Selected Event", targetEvent.Name);
@@ -160,11 +182,13 @@ namespace NodeCanvas.Tasks.Conditions
     {
 
         ///----------------------------------------------------------------------------------------------
-        void IMigratable<CheckCSharpEvent_0<T>>.Migrate(CheckCSharpEvent_0<T> model) {
-            this.SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
+        void IMigratable<CheckCSharpEvent_0<T>>.Migrate(CheckCSharpEvent_0<T> model)
+        {
+            SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
         }
-        void IMigratable<CheckStaticCSharpEvent<T>>.Migrate(CheckStaticCSharpEvent<T> model) {
-            this.SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
+        void IMigratable<CheckStaticCSharpEvent<T>>.Migrate(CheckStaticCSharpEvent<T> model)
+        {
+            SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
         }
         ///----------------------------------------------------------------------------------------------
 
@@ -176,51 +200,65 @@ namespace NodeCanvas.Tasks.Conditions
         private System.Delegate handler;
         private EventInfo targetEvent => eventInfo;
 
-        public override System.Type agentType {
+        public override System.Type agentType
+        {
             get
             {
-                if ( targetEvent == null ) { return typeof(Transform); }
+                if (targetEvent == null) { return typeof(Transform); }
                 return targetEvent.IsStatic() ? null : targetEvent.RTReflectedOrDeclaredType();
             }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( eventInfo == null ) { return "No Event Selected"; }
-                if ( targetEvent == null ) { return eventInfo.AsString().FormatError(); }
+                if (eventInfo == null) { return "No Event Selected"; }
+                if (targetEvent == null) { return eventInfo.AsString().FormatError(); }
                 return string.Format("'{0}' Raised", targetEvent.Name);
             }
         }
 
         ISerializedReflectedInfo IReflectedWrapper.GetSerializedInfo() { return eventInfo; }
 
-        protected override string OnInit() {
-            if ( eventInfo == null ) { return "No Event Selected"; }
-            if ( targetEvent == null ) { return eventInfo.AsString().FormatError(); }
+        protected override string OnInit()
+        {
+            if (eventInfo == null) { return "No Event Selected"; }
+            if (targetEvent == null) { return eventInfo.AsString().FormatError(); }
 
-            var methodInfo = this.GetType().RTGetMethod("Raised");
+            MethodInfo methodInfo = GetType().RTGetMethod("Raised");
             handler = methodInfo.RTCreateDelegate(targetEvent.EventHandlerType, this);
             return null;
         }
 
-        protected override void OnEnable() {
-            if ( handler != null ) targetEvent.AddEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+        protected override void OnEnable()
+        {
+            if (handler != null)
+            {
+                targetEvent.AddEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+            }
         }
 
-        protected override void OnDisable() {
-            if ( handler != null ) targetEvent.RemoveEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+        protected override void OnDisable()
+        {
+            if (handler != null)
+            {
+                targetEvent.RemoveEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+            }
         }
 
-        public void Raised(T eventValue) {
+        public void Raised(T eventValue)
+        {
             saveAs.value = eventValue;
             YieldReturn(true);
         }
 
         protected override bool OnCheck() { return false; }
 
-        void SetTargetEvent(EventInfo info) {
-            if ( info != null ) {
+        private void SetTargetEvent(EventInfo info)
+        {
+            if (info != null)
+            {
                 eventInfo = new SerializedEventInfo(info);
             }
         }
@@ -230,27 +268,34 @@ namespace NodeCanvas.Tasks.Conditions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
-            if ( !Application.isPlaying && GUILayout.Button("Select Event") ) {
-                var menu = new UnityEditor.GenericMenu();
-                if ( agent != null ) {
-                    foreach ( var comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0) ) {
+            if (!Application.isPlaying && GUILayout.Button("Select Event"))
+            {
+                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
+                if (agent != null)
+                {
+                    foreach (Component comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0))
+                    {
                         menu = EditorUtils.GetInstanceEventSelectionMenu(comp.GetType(), typeof(T), SetTargetEvent, menu);
                     }
                     menu.AddSeparator("/");
                 }
-                foreach ( var t in TypePrefs.GetPreferedTypesList(typeof(object)) ) {
+                foreach (System.Type t in TypePrefs.GetPreferedTypesList(typeof(object)))
+                {
                     menu = EditorUtils.GetStaticEventSelectionMenu(t, typeof(T), SetTargetEvent, menu);
-                    if ( typeof(Component).IsAssignableFrom(t) ) {
+                    if (typeof(Component).IsAssignableFrom(t))
+                    {
                         menu = EditorUtils.GetInstanceEventSelectionMenu(t, typeof(T), SetTargetEvent, menu);
                     }
                 }
-                menu.ShowAsBrowser("Select Event", this.GetType());
+                menu.ShowAsBrowser("Select Event", GetType());
                 Event.current.Use();
             }
 
-            if ( targetEvent != null ) {
+            if (targetEvent != null)
+            {
                 GUILayout.BeginVertical("box");
                 UnityEditor.EditorGUILayout.LabelField("Selected Type", targetEvent.DeclaringType.FriendlyName());
                 UnityEditor.EditorGUILayout.LabelField("Selected Event", targetEvent.Name);
@@ -272,8 +317,9 @@ namespace NodeCanvas.Tasks.Conditions
     {
 
         ///----------------------------------------------------------------------------------------------
-        void IMigratable<CheckCSharpEventValue_0<T>>.Migrate(CheckCSharpEventValue_0<T> model) {
-            this.SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
+        void IMigratable<CheckCSharpEventValue_0<T>>.Migrate(CheckCSharpEventValue_0<T> model)
+        {
+            SetTargetEvent(model.targetType?.RTGetEvent(model.eventName));
         }
         ///----------------------------------------------------------------------------------------------
 
@@ -285,52 +331,67 @@ namespace NodeCanvas.Tasks.Conditions
         private System.Delegate handler;
         private EventInfo targetEvent => eventInfo;
 
-        public override System.Type agentType {
+        public override System.Type agentType
+        {
             get
             {
-                if ( targetEvent == null ) { return typeof(Transform); }
+                if (targetEvent == null) { return typeof(Transform); }
                 return targetEvent.IsStatic() ? null : targetEvent.RTReflectedOrDeclaredType();
             }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( eventInfo == null ) { return "No Event Selected"; }
-                if ( targetEvent == null ) { return eventInfo.AsString().FormatError(); }
+                if (eventInfo == null) { return "No Event Selected"; }
+                if (targetEvent == null) { return eventInfo.AsString().FormatError(); }
                 return string.Format("'{0}' Raised && Value == {1}", targetEvent.Name, checkValue);
             }
         }
 
         ISerializedReflectedInfo IReflectedWrapper.GetSerializedInfo() { return eventInfo; }
 
-        protected override string OnInit() {
-            if ( eventInfo == null ) { return "No Event Selected"; }
-            if ( targetEvent == null ) { return eventInfo.AsString().FormatError(); }
+        protected override string OnInit()
+        {
+            if (eventInfo == null) { return "No Event Selected"; }
+            if (targetEvent == null) { return eventInfo.AsString().FormatError(); }
 
-            var methodInfo = this.GetType().RTGetMethod("Raised");
+            MethodInfo methodInfo = GetType().RTGetMethod("Raised");
             handler = methodInfo.RTCreateDelegate(targetEvent.EventHandlerType, this);
             return null;
         }
 
-        protected override void OnEnable() {
-            if ( handler != null ) targetEvent.AddEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+        protected override void OnEnable()
+        {
+            if (handler != null)
+            {
+                targetEvent.AddEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+            }
         }
 
-        protected override void OnDisable() {
-            if ( handler != null ) targetEvent.RemoveEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+        protected override void OnDisable()
+        {
+            if (handler != null)
+            {
+                targetEvent.RemoveEventHandler(targetEvent.IsStatic() ? null : agent, handler);
+            }
         }
 
-        public void Raised(T eventValue) {
-            if ( ObjectUtils.AnyEquals(checkValue.value, eventValue) ) {
+        public void Raised(T eventValue)
+        {
+            if (ObjectUtils.AnyEquals(checkValue.value, eventValue))
+            {
                 YieldReturn(true);
             }
         }
 
         protected override bool OnCheck() { return false; }
 
-        void SetTargetEvent(EventInfo info) {
-            if ( info != null ) {
+        private void SetTargetEvent(EventInfo info)
+        {
+            if (info != null)
+            {
                 eventInfo = new SerializedEventInfo(info);
             }
         }
@@ -340,28 +401,35 @@ namespace NodeCanvas.Tasks.Conditions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
-            if ( !Application.isPlaying && GUILayout.Button("Select Event") ) {
-                var menu = new UnityEditor.GenericMenu();
-                if ( agent != null ) {
-                    foreach ( var comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0) ) {
+            if (!Application.isPlaying && GUILayout.Button("Select Event"))
+            {
+                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
+                if (agent != null)
+                {
+                    foreach (Component comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0))
+                    {
                         menu = EditorUtils.GetInstanceEventSelectionMenu(comp.GetType(), typeof(T), SetTargetEvent, menu);
                     }
                     menu.AddSeparator("/");
                 }
-                foreach ( var t in TypePrefs.GetPreferedTypesList(typeof(object)) ) {
+                foreach (System.Type t in TypePrefs.GetPreferedTypesList(typeof(object)))
+                {
                     menu = EditorUtils.GetStaticEventSelectionMenu(t, typeof(T), SetTargetEvent, menu);
-                    if ( typeof(Component).IsAssignableFrom(t) ) {
+                    if (typeof(Component).IsAssignableFrom(t))
+                    {
                         menu = EditorUtils.GetInstanceEventSelectionMenu(t, typeof(T), SetTargetEvent, menu);
                     }
                 }
 
-                menu.ShowAsBrowser("Select Event", this.GetType());
+                menu.ShowAsBrowser("Select Event", GetType());
                 Event.current.Use();
             }
 
-            if ( targetEvent != null ) {
+            if (targetEvent != null)
+            {
                 GUILayout.BeginVertical("box");
                 UnityEditor.EditorGUILayout.LabelField("Selected Type", targetEvent.DeclaringType.FriendlyName());
                 UnityEditor.EditorGUILayout.LabelField("Selected Event", targetEvent.Name);

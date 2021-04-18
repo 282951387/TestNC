@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections;
 using UnityEngine;
 
 
@@ -15,13 +15,15 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<IList> targetList;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            var list = targetList.value;
+            IList list = targetList.value;
 
-            for ( var i = list.Count - 1; i > 0; i-- ) {
-                var j = (int)Mathf.Floor(Random.value * ( i + 1 ));
-                var temp = list[i];
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = (int)Mathf.Floor(Random.value * (i + 1));
+                object temp = list[i];
                 list[i] = list[j];
                 list[j] = temp;
             }

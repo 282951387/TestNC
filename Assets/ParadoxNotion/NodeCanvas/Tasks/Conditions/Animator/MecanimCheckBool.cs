@@ -15,11 +15,13 @@ namespace NodeCanvas.Tasks.Conditions
         public BBParameter<string> parameter;
         public BBParameter<bool> value;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Mec.Bool " + parameter.ToString() + " == " + value; }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
 
             return agent.GetBool(parameter.value) == value.value;
         }

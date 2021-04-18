@@ -21,22 +21,26 @@ namespace NodeCanvas.StateMachines
 
         private bool accessed;
 
-        public ConditionList conditionList {
+        public ConditionList conditionList
+        {
             get { return _conditionList; }
             set { _conditionList = value; }
         }
 
-        public ActionList actionList {
+        public ActionList actionList
+        {
             get { return _actionList; }
             set { _actionList = value; }
         }
 
-        public bool repeatStateActions {
+        public bool repeatStateActions
+        {
             get { return _repeatStateActions; }
             set { _repeatStateActions = value; }
         }
 
-        public override string name {
+        public override string name
+        {
             get { return base.name.ToUpper(); }
         }
 
@@ -46,42 +50,53 @@ namespace NodeCanvas.StateMachines
 
         ///----------------------------------------------------------------------------------------------
 
-        public override void OnValidate(Graph assignedGraph) {
-            if ( conditionList == null ) {
+        public override void OnValidate(Graph assignedGraph)
+        {
+            if (conditionList == null)
+            {
                 conditionList = (ConditionList)Task.Create(typeof(ConditionList), assignedGraph);
                 conditionList.checkMode = ConditionList.ConditionsCheckMode.AllTrueRequired;
             }
 
-            if ( actionList == null ) {
+            if (actionList == null)
+            {
                 actionList = (ActionList)Task.Create(typeof(ActionList), assignedGraph);
                 actionList.executionMode = ActionList.ActionsExecutionMode.ActionsRunInParallel;
             }
         }
 
-        public override void OnGraphStarted() {
+        public override void OnGraphStarted()
+        {
             conditionList.Enable(graphAgent, graphBlackboard);
             accessed = false;
         }
 
-        public override void OnGraphStoped() {
+        public override void OnGraphStoped()
+        {
             conditionList.Disable();
             actionList.EndAction(null);
             accessed = false;
         }
 
-        public override void OnGraphPaused() {
+        public override void OnGraphPaused()
+        {
             actionList.Pause();
         }
 
-        void IUpdatable.Update() {
-            if ( status == Status.Resting || status == Status.Running ) {
+        void IUpdatable.Update()
+        {
+            if (status == Status.Resting || status == Status.Running)
+            {
                 status = Status.Running;
-                if ( conditionList.Check(graphAgent, graphBlackboard) ) {
+                if (conditionList.Check(graphAgent, graphBlackboard))
+                {
                     accessed = true;
                 }
-                if ( accessed && actionList.Execute(graphAgent, graphBlackboard) != Status.Running ) {
+                if (accessed && actionList.Execute(graphAgent, graphBlackboard) != Status.Running)
+                {
                     accessed = false;
-                    if ( !repeatStateActions ) {
+                    if (!repeatStateActions)
+                    {
                         status = Status.Success;
                     }
                 }
@@ -93,11 +108,14 @@ namespace NodeCanvas.StateMachines
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
-            if ( repeatStateActions ) {
+        protected override void OnNodeGUI()
+        {
+            if (repeatStateActions)
+            {
                 GUILayout.Label("<b>[REPEAT]</b>");
             }
-            if ( conditionList.conditions.Count > 0 ) {
+            if (conditionList.conditions.Count > 0)
+            {
                 GUILayout.BeginVertical(Styles.roundedBox);
                 GUILayout.Label(conditionList.summaryInfo);
                 GUILayout.EndVertical();
@@ -110,7 +128,8 @@ namespace NodeCanvas.StateMachines
             base.OnNodeGUI();
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
 
             repeatStateActions = UnityEditor.EditorGUILayout.ToggleLeft("Repeat", repeatStateActions);
             EditorUtils.Separator();

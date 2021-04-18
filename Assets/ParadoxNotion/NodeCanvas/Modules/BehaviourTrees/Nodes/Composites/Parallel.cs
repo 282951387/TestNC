@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
 using ParadoxNotion;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -29,46 +29,57 @@ namespace NodeCanvas.BehaviourTrees
 
         private readonly List<Connection> finishedConnections = new List<Connection>();
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            var defferedStatus = Status.Resting;
-            for ( var i = 0; i < outConnections.Count; i++ ) {
-                var connection = outConnections[i];
-                var isConnectionFinished = finishedConnections.Contains(outConnections[i]);
+            Status defferedStatus = Status.Resting;
+            for (int i = 0; i < outConnections.Count; i++)
+            {
+                Connection connection = outConnections[i];
+                bool isConnectionFinished = finishedConnections.Contains(outConnections[i]);
 
-                if ( !dynamic && isConnectionFinished ) {
+                if (!dynamic && isConnectionFinished)
+                {
                     continue;
                 }
 
-                if ( connection.status != Status.Running && isConnectionFinished ) {
+                if (connection.status != Status.Running && isConnectionFinished)
+                {
                     connection.Reset();
                 }
 
                 status = connection.Execute(agent, blackboard);
 
-                if ( defferedStatus == Status.Resting ) {
-                    if ( status == Status.Failure && ( policy == ParallelPolicy.FirstFailure || policy == ParallelPolicy.FirstSuccessOrFailure ) ) {
+                if (defferedStatus == Status.Resting)
+                {
+                    if (status == Status.Failure && (policy == ParallelPolicy.FirstFailure || policy == ParallelPolicy.FirstSuccessOrFailure))
+                    {
                         defferedStatus = Status.Failure;
                     }
 
-                    if ( status == Status.Success && ( policy == ParallelPolicy.FirstSuccess || policy == ParallelPolicy.FirstSuccessOrFailure ) ) {
+                    if (status == Status.Success && (policy == ParallelPolicy.FirstSuccess || policy == ParallelPolicy.FirstSuccessOrFailure))
+                    {
                         defferedStatus = Status.Success;
                     }
                 }
 
-                if ( status != Status.Running && !isConnectionFinished ) {
+                if (status != Status.Running && !isConnectionFinished)
+                {
                     finishedConnections.Add(connection);
                 }
             }
 
-            if ( defferedStatus != Status.Resting ) {
+            if (defferedStatus != Status.Resting)
+            {
                 ResetRunning();
                 return defferedStatus;
             }
 
-            if ( finishedConnections.Count == outConnections.Count ) {
+            if (finishedConnections.Count == outConnections.Count)
+            {
                 ResetRunning();
-                switch ( policy ) {
+                switch (policy)
+                {
                     case ParallelPolicy.FirstFailure:
                         return Status.Success;
                     case ParallelPolicy.FirstSuccess:
@@ -79,13 +90,17 @@ namespace NodeCanvas.BehaviourTrees
             return Status.Running;
         }
 
-        protected override void OnReset() {
+        protected override void OnReset()
+        {
             finishedConnections.Clear();
         }
 
-        void ResetRunning() {
-            for ( var i = 0; i < outConnections.Count; i++ ) {
-                if ( outConnections[i].status == Status.Running ) {
+        private void ResetRunning()
+        {
+            for (int i = 0; i < outConnections.Count; i++)
+            {
+                if (outConnections[i].status == Status.Running)
+                {
                     outConnections[i].Reset();
                 }
             }
@@ -96,8 +111,9 @@ namespace NodeCanvas.BehaviourTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
-            GUILayout.Label(( dynamic ? "<b>REPEAT</b>\n" : "" ) + policy.ToString().SplitCamelCase());
+        protected override void OnNodeGUI()
+        {
+            GUILayout.Label((dynamic ? "<b>REPEAT</b>\n" : "") + policy.ToString().SplitCamelCase());
         }
 
 #endif

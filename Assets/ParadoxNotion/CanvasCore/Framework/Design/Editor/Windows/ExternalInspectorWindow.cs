@@ -1,7 +1,7 @@
 ﻿#if UNITY_EDITOR
 
-using ParadoxNotion.Design;
 using NodeCanvas.Framework;
+using ParadoxNotion.Design;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,48 +14,58 @@ namespace NodeCanvas.Editor
         private Vector2 scrollPos;
         private bool willRepaint;
 
-        public static void ShowWindow() {
-            var window = GetWindow<ExternalInspectorWindow>();
+        public static void ShowWindow()
+        {
+            ExternalInspectorWindow window = GetWindow<ExternalInspectorWindow>();
             window.Show();
         }
 
-        void OnEnable() {
+        private void OnEnable()
+        {
             Prefs.useExternalInspector = true;
             titleContent = new GUIContent("Inspector", StyleSheet.canvasIcon);
             GraphEditorUtility.onActiveElementChanged -= OnActiveElementChange;
             GraphEditorUtility.onActiveElementChanged += OnActiveElementChange;
         }
 
-        void OnDisable() {
+        private void OnDisable()
+        {
             Prefs.useExternalInspector = false;
             GraphEditorUtility.onActiveElementChanged -= OnActiveElementChange;
         }
 
-        void OnActiveElementChange(IGraphElement element) {
+        private void OnActiveElementChange(IGraphElement element)
+        {
             willRepaint = true;
         }
 
-        void Update() {
-            if ( willRepaint ) {
+        private void Update()
+        {
+            if (willRepaint)
+            {
                 willRepaint = false;
                 Repaint();
             }
         }
 
-        void OnGUI() {
+        private void OnGUI()
+        {
 
-            if ( GraphEditor.current == null || GraphEditor.currentGraph == null ) {
+            if (GraphEditor.current == null || GraphEditor.currentGraph == null)
+            {
                 GUILayout.Label("No graph is open in the Graph Editor");
                 return;
             }
 
-            if ( EditorApplication.isCompiling && !Application.isPlaying) {
+            if (EditorApplication.isCompiling && !Application.isPlaying)
+            {
                 ShowNotification(new GUIContent("...Compiling Please Wait..."));
                 return;
             }
 
-            var currentSelection = GraphEditorUtility.activeElement;
-            if ( currentSelection == null ) {
+            IGraphElement currentSelection = GraphEditorUtility.activeElement;
+            if (currentSelection == null)
+            {
                 GUILayout.Label("No selection in Graph Editor");
                 return;
             }
@@ -63,13 +73,15 @@ namespace NodeCanvas.Editor
             UndoUtility.CheckUndo(currentSelection.graph, "Inspector Change");
             scrollPos = GUILayout.BeginScrollView(scrollPos);
             {
-                if ( currentSelection is Node ) {
-                    var node = (Node)currentSelection;
+                if (currentSelection is Node)
+                {
+                    Node node = (Node)currentSelection;
                     Title(node.name);
                     Node.ShowNodeInspectorGUI(node);
                 }
 
-                if ( currentSelection is Connection ) {
+                if (currentSelection is Connection)
+                {
                     Title("Connection");
                     Connection.ShowConnectionInspectorGUI(currentSelection as Connection);
                 }
@@ -79,12 +91,14 @@ namespace NodeCanvas.Editor
 
             UndoUtility.CheckDirty(currentSelection.graph);
 
-            if ( GUI.changed ) {
+            if (GUI.changed)
+            {
                 GraphEditor.current.Repaint();
             }
         }
 
-        void Title(string text) {
+        private void Title(string text)
+        {
             GUILayout.Space(5);
             GUILayout.BeginHorizontal("box", GUILayout.Height(28));
             GUILayout.FlexibleSpace();

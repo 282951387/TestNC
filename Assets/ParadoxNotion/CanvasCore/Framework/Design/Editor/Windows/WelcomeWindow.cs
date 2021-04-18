@@ -1,11 +1,11 @@
 ﻿#if UNITY_EDITOR
 
+using NodeCanvas.Framework;
+using ParadoxNotion;
+using ParadoxNotion.Design;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using System.Linq;
-using NodeCanvas.Framework;
-using ParadoxNotion.Design;
-using ParadoxNotion;
 
 namespace NodeCanvas.Editor
 {
@@ -20,30 +20,33 @@ namespace NodeCanvas.Editor
         private static Texture2D communityIcon;
         private static Texture2D discordIcon;
 
-        void OnEnable() {
+        private void OnEnable()
+        {
             titleContent = new GUIContent("Welcome");
             paradoxHeader = Resources.Load("ParadoxNotionHeader") as Texture2D;
             docsIcon = Resources.Load("Manual") as Texture2D;
             resourcesIcon = Resources.Load("Resources") as Texture2D;
             communityIcon = Resources.Load("Community") as Texture2D;
             discordIcon = Resources.Load("Discord") as Texture2D;
-            var size = new Vector2(paradoxHeader.width, 510);
+            Vector2 size = new Vector2(paradoxHeader.width, 510);
             minSize = size;
             maxSize = size;
         }
 
-        void OnGUI() {
+        private void OnGUI()
+        {
 
-            var att = assetType != null ? (GraphInfoAttribute)assetType.GetCustomAttributes(typeof(GraphInfoAttribute), true).FirstOrDefault() : null;
-            var packageName = att != null ? att.packageName : "NodeCanvas";
-            var docsURL = att != null ? att.docsURL : "https://nodecanvas.paradoxnotion.com/documentation/";
-            var resourcesURL = att != null ? att.resourcesURL : "https://nodecanvas.paradoxnotion.com/downloads/";
-            var forumsURL = att != null ? att.forumsURL : "https://nodecanvas.paradoxnotion.com/forums-page/";
-            var discordUrl = "https://discord.gg/97q2Rjh";
+            GraphInfoAttribute att = assetType != null ? (GraphInfoAttribute)assetType.GetCustomAttributes(typeof(GraphInfoAttribute), true).FirstOrDefault() : null;
+            string packageName = att != null ? att.packageName : "NodeCanvas";
+            string docsURL = att != null ? att.docsURL : "https://nodecanvas.paradoxnotion.com/documentation/";
+            string resourcesURL = att != null ? att.resourcesURL : "https://nodecanvas.paradoxnotion.com/downloads/";
+            string forumsURL = att != null ? att.forumsURL : "https://nodecanvas.paradoxnotion.com/forums-page/";
+            string discordUrl = "https://discord.gg/97q2Rjh";
 
-            var headerRect = new Rect(0, 0, paradoxHeader.width, paradoxHeader.height);
+            Rect headerRect = new Rect(0, 0, paradoxHeader.width, paradoxHeader.height);
             EditorGUIUtility.AddCursorRect(headerRect, MouseCursor.Link);
-            if ( GUI.Button(headerRect, paradoxHeader, GUIStyle.none) ) {
+            if (GUI.Button(headerRect, paradoxHeader, GUIStyle.none))
+            {
                 UnityEditor.Help.BrowseURL("http://www.paradoxnotion.com");
             }
             GUILayout.Space(paradoxHeader.height);
@@ -83,11 +86,13 @@ namespace NodeCanvas.Editor
         }
 
         //...
-        void ShowEntry(Texture2D icon, string text, string url) {
+        private void ShowEntry(Texture2D icon, string text, string url)
+        {
             GUILayout.BeginHorizontal(Styles.roundedBox);
             GUI.backgroundColor = Color.clear;
             GUI.contentColor = EditorGUIUtility.isProSkin ? ColorUtils.Grey(0.8f) : Color.black;
-            if ( GUILayout.Button(icon, GUILayout.Width(50), GUILayout.Height(50)) ) {
+            if (GUILayout.Button(icon, GUILayout.Width(50), GUILayout.Height(50)))
+            {
                 UnityEditor.Help.BrowseURL(url);
             }
             GUI.contentColor = Color.white;
@@ -103,8 +108,9 @@ namespace NodeCanvas.Editor
         }
 
         //...
-        public static void ShowWindow(System.Type t) {
-            var window = CreateInstance<WelcomeWindow>();
+        public static void ShowWindow(System.Type t)
+        {
+            WelcomeWindow window = CreateInstance<WelcomeWindow>();
             assetType = t;
             window.ShowUtility();
         }

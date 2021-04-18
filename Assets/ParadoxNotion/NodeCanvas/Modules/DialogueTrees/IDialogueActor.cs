@@ -20,36 +20,43 @@ namespace NodeCanvas.DialogueTrees
     public class ProxyDialogueActor : IDialogueActor
     {
 
-        private string _name;
-        private Transform _transform;
+        private readonly string _name;
+        private readonly Transform _transform;
 
-        public string name {
+        public string name
+        {
             get { return _name; }
         }
 
-        public Texture2D portrait {
+        public Texture2D portrait
+        {
             get { return null; }
         }
 
-        public Sprite portraitSprite {
+        public Sprite portraitSprite
+        {
             get { return null; }
         }
 
-        public Color dialogueColor {
+        public Color dialogueColor
+        {
             get { return Color.white; }
         }
 
-        public Vector3 dialoguePosition {
+        public Vector3 dialoguePosition
+        {
             get { return Vector3.zero; }
         }
 
-        public Transform transform {
+        public Transform transform
+        {
             get { return _transform; }
         }
 
-        public ProxyDialogueActor(string name, Transform transform) {
-            this._name = name;
-            this._transform = transform;
+        public ProxyDialogueActor(string name, Transform transform)
+        {
+            _name = name;
+            _transform = transform;
         }
     }
 }

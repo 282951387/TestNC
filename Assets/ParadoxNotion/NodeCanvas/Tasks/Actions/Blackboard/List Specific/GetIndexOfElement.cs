@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -15,7 +15,8 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<int> saveIndexAs;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             saveIndexAs.value = targetList.value.IndexOf(targetElement.value);
             EndAction(true);

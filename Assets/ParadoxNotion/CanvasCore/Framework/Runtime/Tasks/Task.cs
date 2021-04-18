@@ -1,13 +1,13 @@
 ﻿#define CONVENIENCE_OVER_PERFORMANCE
 
-using System;
-using System.Collections;
+using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization;
 using ParadoxNotion.Serialization.FullSerializer;
 using ParadoxNotion.Services;
-using NodeCanvas.Framework.Internal;
+using System;
+using System.Collections;
 using UnityEngine;
 using Logger = ParadoxNotion.Services.Logger;
 
@@ -18,15 +18,16 @@ namespace NodeCanvas.Framework
 
     ///The base class for all Actions and Conditions. You dont actually use or derive this class. Instead derive from ActionTask and ConditionTask
     [Serializable, fsDeserializeOverwrite, SpoofAOT]
-    abstract public partial class Task : ISerializationCollectable, ISerializationCallbackReceiver
+    public abstract partial class Task : ISerializationCollectable, ISerializationCallbackReceiver
     {
 
         ///----------------------------------------------------------------------------------------------
 
         //We set the hint type that the agent parameter (if any) is.
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
-            if ( agentType == null ) { _agentParameter = null; }
-            if ( _agentParameter != null ) { _agentParameter.SetType(agentType); }
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (agentType == null) { _agentParameter = null; }
+            if (_agentParameter != null) { _agentParameter.SetType(agentType); }
         }
         void ISerializationCallbackReceiver.OnAfterDeserialize() { }
 
@@ -42,7 +43,7 @@ namespace NodeCanvas.Framework
         [fsSerializeAs("_isDisabled")]
         private bool _isUserDisabled;
         [fsSerializeAs("overrideAgent")]
-        internal protected TaskAgentParameter _agentParameter;
+        protected internal TaskAgentParameter _agentParameter;
 
         //
         private ITaskSystem _ownerSystem;
@@ -62,8 +63,9 @@ namespace NodeCanvas.Framework
 
         ///Create a new Task of type assigned to the target ITaskSystem
         public static T Create<T>(ITaskSystem newOwnerSystem) where T : Task { return (T)Create(typeof(T), newOwnerSystem); }
-        public static Task Create(Type type, ITaskSystem newOwnerSystem) {
-            var newTask = (Task)Activator.CreateInstance(type);
+        public static Task Create(Type type, ITaskSystem newOwnerSystem)
+        {
+            Task newTask = (Task)Activator.CreateInstance(type);
             UndoUtility.RecordObject(newOwnerSystem.contextObject, "New Task");
             BBParameter.SetBBFields(newTask, newOwnerSystem.blackboard);
             newTask.Validate(newOwnerSystem);
@@ -72,8 +74,9 @@ namespace NodeCanvas.Framework
         }
 
         ///Duplicate the task for the target ITaskSystem
-        virtual public Task Duplicate(ITaskSystem newOwnerSystem) {
-            var newTask = JSONSerializer.Clone<Task>(this);
+        public virtual Task Duplicate(ITaskSystem newOwnerSystem)
+        {
+            Task newTask = JSONSerializer.Clone<Task>(this);
             UndoUtility.RecordObject(newOwnerSystem.contextObject, "Duplicate Task");
             BBParameter.SetBBFields(newTask, newOwnerSystem.blackboard);
             newTask.Validate(newOwnerSystem);
@@ -81,17 +84,20 @@ namespace NodeCanvas.Framework
         }
 
         ///Validate the task in respects to the target ITaskSystem
-        public void Validate(ITaskSystem ownerSystem) {
+        public void Validate(ITaskSystem ownerSystem)
+        {
             SetOwnerSystem(ownerSystem);
             OnValidate(ownerSystem);
-            var hardError = GetHardError();
-            if ( hardError != null ) {
+            string hardError = GetHardError();
+            if (hardError != null)
+            {
                 Logger.LogError(hardError, LogTag.VALIDATION, this);
             }
         }
 
         ///Sets the system in which this task lives in
-        public void SetOwnerSystem(ITaskSystem newOwnerSystem) {
+        public void SetOwnerSystem(ITaskSystem newOwnerSystem)
+        {
             Debug.Assert(newOwnerSystem != null, "Null ITaskSystem set");
             ownerSystem = newOwnerSystem;
         }
@@ -99,7 +105,8 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///The system this task belongs to from which defaults are taken from.
-        public ITaskSystem ownerSystem {
+        public ITaskSystem ownerSystem
+        {
             get { return _ownerSystem; }
             private set { _ownerSystem = value; }
         }
@@ -115,17 +122,20 @@ namespace NodeCanvas.Framework
         ///
 
         ///Is the Task user enabled?
-        public bool isUserEnabled {
+        public bool isUserEnabled
+        {
             get { return !_isUserDisabled; }
             internal set { _isUserDisabled = !value; }
         }
 
         ///Is the task obsolete? (marked by [Obsolete]). string.Empty: is not.
-        public string obsolete {
+        public string obsolete
+        {
             get
             {
-                if ( _obsoleteInfo == null ) {
-                    var att = this.GetType().RTGetAttribute<ObsoleteAttribute>(true);
+                if (_obsoleteInfo == null)
+                {
+                    ObsoleteAttribute att = GetType().RTGetAttribute<ObsoleteAttribute>(true);
                     _obsoleteInfo = att != null ? att.Message : string.Empty;
                 }
                 return _obsoleteInfo;
@@ -133,11 +143,13 @@ namespace NodeCanvas.Framework
         }
 
         ///The friendly task name. This can be overriden with the [Name] attribute
-        public string name {
+        public string name
+        {
             get
             {
-                if ( _taskName == null ) {
-                    var nameAtt = this.GetType().RTGetAttribute<NameAttribute>(false);
+                if (_taskName == null)
+                {
+                    NameAttribute nameAtt = GetType().RTGetAttribute<NameAttribute>(false);
                     _taskName = nameAtt != null ? nameAtt.name : GetType().FriendlyName().SplitCamelCase();
                 }
                 return _taskName;
@@ -145,11 +157,13 @@ namespace NodeCanvas.Framework
         }
 
         ///The help description of the task if it has any through [Description] attribute
-        public string description {
+        public string description
+        {
             get
             {
-                if ( _taskDescription == null ) {
-                    var descAtt = this.GetType().RTGetAttribute<DescriptionAttribute>(true);
+                if (_taskDescription == null)
+                {
+                    DescriptionAttribute descAtt = GetType().RTGetAttribute<DescriptionAttribute>(true);
                     _taskDescription = descAtt != null ? descAtt.description : string.Empty;
                 }
                 return _taskDescription;
@@ -157,27 +171,29 @@ namespace NodeCanvas.Framework
         }
 
         ///A short summary of what the task will finaly do.
-        public string summaryInfo {
+        public string summaryInfo
+        {
             get
             {
 #if UNITY_EDITOR
-                if ( !NodeCanvas.Editor.Prefs.showTaskSummary && !( this is ActionList ) && !( this is ConditionList ) ) {
+                if (!NodeCanvas.Editor.Prefs.showTaskSummary && !(this is ActionList) && !(this is ConditionList))
+                {
                     return string.Format("<b>{0}</b>", name);
                 }
 #endif
 
-                if ( this is ActionTask ) { return ( agentIsOverride ? "* " : "" ) + info; }
-                if ( this is ConditionTask ) { return ( agentIsOverride ? "* " : "" ) + ( ( this as ConditionTask ).invert ? "If <b>!</b> " : "If " ) + info; }
+                if (this is ActionTask) { return (agentIsOverride ? "* " : "") + info; }
+                if (this is ConditionTask) { return (agentIsOverride ? "* " : "") + ((this as ConditionTask).invert ? "If <b>!</b> " : "If ") + info; }
                 return info;
             }
         }
 
         ///Override this and return the information of the task summary
-        virtual protected string info => name;
+        protected virtual string info => name;
 
         ///The type that the agent will be set to by getting component from itself on task initialize. Also defined by using the generic versions of Action and Condition Tasks.
         ///You can omit this to keep the agent propagated as is or if there is no need for a specific type anyway.
-        virtual public Type agentType => null;
+        public virtual Type agentType => null;
 
         ///Helper summary info to display final agent string within task info if needed
         public string agentInfo => _agentParameter != null ? _agentParameter.ToString() : "<b>Self</b>";
@@ -186,15 +202,18 @@ namespace NodeCanvas.Framework
         public string agentParameterName => _agentParameter != null ? _agentParameter.name : null;
 
         ///Is the agent overriden or the default taken from owner system will be used?
-        public bool agentIsOverride {
+        public bool agentIsOverride
+        {
             get { return _agentParameter != null; }
             set
             {
-                if ( value == false && _agentParameter != null ) {
+                if (value == false && _agentParameter != null)
+                {
                     _agentParameter = null;
                 }
 
-                if ( value == true && _agentParameter == null ) {
+                if (value == true && _agentParameter == null)
+                {
                     _agentParameter = new TaskAgentParameter();
                     _agentParameter.bb = blackboard;
                 }
@@ -202,11 +221,12 @@ namespace NodeCanvas.Framework
         }
 
         ///The current or last executive agent of this task
-        public Component agent {
+        public Component agent
+        {
             get
             {
-                if ( _currentAgent != null ) { return _currentAgent; }
-                var input = agentIsOverride ? (Component)_agentParameter.value : ownerSystemAgent;
+                if (_currentAgent != null) { return _currentAgent; }
+                Component input = agentIsOverride ? (Component)_agentParameter.value : ownerSystemAgent;
                 return input.TransformToType(agentType);
             }
         }
@@ -221,15 +241,18 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         //Actions and Conditions call this before execution. Returns if the task was sucessfully initialized as well
-        protected bool Set(Component newAgent, IBlackboard newBB) {
+        protected bool Set(Component newAgent, IBlackboard newBB)
+        {
 
             Debug.Assert(ReferenceEquals(newBB, ownerSystemBlackboard), "Set Blackboard != Owner Blackboard");
 
-            if ( agentIsOverride ) {
+            if (agentIsOverride)
+            {
                 newAgent = (Component)_agentParameter.value;
             }
 
-            if ( _currentAgent != null && newAgent != null && _currentAgent.gameObject == newAgent.gameObject ) {
+            if (_currentAgent != null && newAgent != null && _currentAgent.gameObject == newAgent.gameObject)
+            {
                 return _isInitSuccess;
             }
 
@@ -237,7 +260,8 @@ namespace NodeCanvas.Framework
         }
 
         //Initialize whenever agent is set to a new value
-        bool Initialize(Component newAgent) {
+        private bool Initialize(Component newAgent)
+        {
 
             //purge cached reference whenever we init new agent
             _eventRouter = null;
@@ -246,18 +270,21 @@ namespace NodeCanvas.Framework
             _currentAgent = newAgent.TransformToType(agentType);
 
             //error if it's null but an agentType is required
-            if ( _currentAgent == null && agentType != null ) {
+            if (_currentAgent == null && agentType != null)
+            {
                 return Error("Failed to resolve Agent to requested type '" + agentType + "', or new Agent is NULL. Does the Agent has the requested Component?");
             }
 
             //Use the field attributes
-            if ( InitializeFieldAttributes(_currentAgent) == false ) {
+            if (InitializeFieldAttributes(_currentAgent) == false)
+            {
                 return false;
             }
 
             //let user make further adjustments and inform us if there was an error
-            var error = OnInit();
-            if ( error != null ) {
+            string error = OnInit();
+            if (error != null)
+            {
                 return Error(error);
             }
 
@@ -265,38 +292,47 @@ namespace NodeCanvas.Framework
         }
 
         //...
-        bool InitializeFieldAttributes(Component newAgent) {
+        private bool InitializeFieldAttributes(Component newAgent)
+        {
 
 #if CONVENIENCE_OVER_PERFORMANCE
 
             //Usage of [RequiredField] and [GetFromAgent] attributes
-            var fields = this.GetType().RTGetFields();
-            for ( var i = 0; i < fields.Length; i++ ) {
-                var field = fields[i];
+            System.Reflection.FieldInfo[] fields = GetType().RTGetFields();
+            for (int i = 0; i < fields.Length; i++)
+            {
+                System.Reflection.FieldInfo field = fields[i];
 
 #if UNITY_EDITOR
-                if ( field.RTIsDefined<RequiredFieldAttribute>(true) ) {
-                    var value = field.GetValue(this);
+                if (field.RTIsDefined<RequiredFieldAttribute>(true))
+                {
+                    object value = field.GetValue(this);
 
-                    if ( value == null || value.Equals(null) ) {
+                    if (value == null || value.Equals(null))
+                    {
                         return Error(string.Format("A required field named '{0}' is not set.", field.Name));
                     }
 
-                    if ( field.FieldType == typeof(string) && string.IsNullOrEmpty((string)value) ) {
+                    if (field.FieldType == typeof(string) && string.IsNullOrEmpty((string)value))
+                    {
                         return Error(string.Format("A required string field named '{0}' is not set.", field.Name));
                     }
 
-                    if ( typeof(BBParameter).RTIsAssignableFrom(field.FieldType) && ( value as BBParameter ).isNull ) {
+                    if (typeof(BBParameter).RTIsAssignableFrom(field.FieldType) && (value as BBParameter).isNull)
+                    {
                         return Error(string.Format("A required BBParameter field value named '{0}' is not set.", field.Name));
                     }
                 }
 #endif
 
-                if ( newAgent != null && ( typeof(Component).RTIsAssignableFrom(field.FieldType) || field.FieldType.IsInterface ) ) {
-                    if ( field.RTIsDefined<GetFromAgentAttribute>(true) ) {
-                        var o = newAgent.GetComponent(field.FieldType);
+                if (newAgent != null && (typeof(Component).RTIsAssignableFrom(field.FieldType) || field.FieldType.IsInterface))
+                {
+                    if (field.RTIsDefined<GetFromAgentAttribute>(true))
+                    {
+                        Component o = newAgent.GetComponent(field.FieldType);
                         field.SetValue(this, o);
-                        if ( ReferenceEquals(o, null) ) {
+                        if (ReferenceEquals(o, null))
+                        {
                             return Error(string.Format("GetFromAgent Attribute failed to get the required Component of type '{0}' from '{1}'. Does it exist?", field.FieldType.Name, agent.gameObject.name));
                         }
                     }
@@ -309,7 +345,8 @@ namespace NodeCanvas.Framework
         }
 
         //Utility function to log and return errors
-        protected bool Error(string error, string tag = LogTag.EXECUTION) {
+        protected bool Error(string error, string tag = LogTag.EXECUTION)
+        {
             Logger.LogError(error, tag, this);
             return false;
         }
@@ -317,63 +354,79 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Tasks can start coroutine through MonoManager
-        protected Coroutine StartCoroutine(IEnumerator routine) {
+        protected Coroutine StartCoroutine(IEnumerator routine)
+        {
             return MonoManager.current != null ? MonoManager.current.StartCoroutine(routine) : null;
         }
 
         ///Tasks can start coroutine through MonoManager
-        protected void StopCoroutine(Coroutine routine) {
-            if ( MonoManager.current != null ) { MonoManager.current.StopCoroutine(routine); }
+        protected void StopCoroutine(Coroutine routine)
+        {
+            if (MonoManager.current != null) { MonoManager.current.StopCoroutine(routine); }
         }
 
         ///----------------------------------------------------------------------------------------------
 
         ///Sends an event through the owner system to handle (same as calling ownerSystem.SendEvent)
-        protected void SendEvent(string name) {
-            if ( ownerSystem != null ) { ownerSystem.SendEvent(name, null, this); }
+        protected void SendEvent(string name)
+        {
+            if (ownerSystem != null) { ownerSystem.SendEvent(name, null, this); }
         }
         ///Sends an event through the owner system to handle (same as calling ownerSystem.SendEvent)
-        protected void SendEvent<T>(string name, T value) {
-            if ( ownerSystem != null ) { ownerSystem.SendEvent(name, value, this); }
+        protected void SendEvent<T>(string name, T value)
+        {
+            if (ownerSystem != null) { ownerSystem.SendEvent(name, value, this); }
         }
 
         ///----------------------------------------------------------------------------------------------
 
         //Gather warnings for user convernience. Basicaly used in the editor, but could be used in runtime as well.
-        virtual internal string GetWarningOrError() {
+        internal virtual string GetWarningOrError()
+        {
 
-            var hardError = GetHardError();
-            if ( hardError != null ) { return "* " + hardError; }
+            string hardError = GetHardError();
+            if (hardError != null) { return "* " + hardError; }
 
-            var userError = OnErrorCheck();
-            if ( userError != null ) { return userError; }
+            string userError = OnErrorCheck();
+            if (userError != null) { return userError; }
 
-            if ( obsolete != string.Empty ) {
+            if (obsolete != string.Empty)
+            {
                 return string.Format("Task is obsolete: '{0}'", obsolete);
             }
 
-            if ( agentType != null && agent == null ) {
-                if ( _agentParameter == null || ( _agentParameter.isNoneOrNull && !_agentParameter.isDefined ) ) {
+            if (agentType != null && agent == null)
+            {
+                if (_agentParameter == null || (_agentParameter.isNoneOrNull && !_agentParameter.isDefined))
+                {
                     return string.Format("* '{0}' target agent is null", agentType.Name);
                 }
             }
 
-            var fields = this.GetType().RTGetFields();
-            for ( var i = 0; i < fields.Length; i++ ) {
-                var field = fields[i];
-                if ( field.RTIsDefined<RequiredFieldAttribute>(true) ) {
-                    var value = field.GetValue(this);
-                    if ( value == null || value.Equals(null) ) {
+            System.Reflection.FieldInfo[] fields = GetType().RTGetFields();
+            for (int i = 0; i < fields.Length; i++)
+            {
+                System.Reflection.FieldInfo field = fields[i];
+                if (field.RTIsDefined<RequiredFieldAttribute>(true))
+                {
+                    object value = field.GetValue(this);
+                    if (value == null || value.Equals(null))
+                    {
                         return string.Format("* Required field '{0}' is null", field.Name.SplitCamelCase());
                     }
-                    if ( field.FieldType == typeof(string) && string.IsNullOrEmpty((string)value) ) {
+                    if (field.FieldType == typeof(string) && string.IsNullOrEmpty((string)value))
+                    {
                         return string.Format("* Required string field '{0}' is null or empty", field.Name.SplitCamelCase());
                     }
-                    if ( typeof(BBParameter).RTIsAssignableFrom(field.FieldType) ) {
-                        var bbParam = value as BBParameter;
-                        if ( bbParam == null ) {
+                    if (typeof(BBParameter).RTIsAssignableFrom(field.FieldType))
+                    {
+                        BBParameter bbParam = value as BBParameter;
+                        if (bbParam == null)
+                        {
                             return string.Format("* BBParameter '{0}' is null", field.Name.SplitCamelCase());
-                        } else if ( bbParam.isNoneOrNull && !bbParam.isDefined ) {
+                        }
+                        else if (bbParam.isNoneOrNull && !bbParam.isDefined)
+                        {
                             return string.Format("* Required parameter '{0}' is null", field.Name.SplitCamelCase());
                         }
                     }
@@ -383,17 +436,20 @@ namespace NodeCanvas.Framework
         }
 
         /// Override and return anything but null to mark the task has an error
-        virtual protected string OnErrorCheck() { return null; }
+        protected virtual string OnErrorCheck() { return null; }
 
         ///A hard error, missing things
-        string GetHardError() {
-            if ( this is IMissingRecoverable ) {
-                return string.Format("Missing Task '{0}'", ( this as IMissingRecoverable ).missingType);
+        private string GetHardError()
+        {
+            if (this is IMissingRecoverable)
+            {
+                return string.Format("Missing Task '{0}'", (this as IMissingRecoverable).missingType);
             }
 
-            if ( this is IReflectedWrapper ) {
-                var info = ( this as IReflectedWrapper ).GetSerializedInfo();
-                if ( info != null && info.AsMemberInfo() == null ) { return string.Format("Missing Reflected Info '{0}'", info.AsString()); }
+            if (this is IReflectedWrapper)
+            {
+                ISerializedReflectedInfo info = (this as IReflectedWrapper).GetSerializedInfo();
+                if (info != null && info.AsMemberInfo() == null) { return string.Format("Missing Reflected Info '{0}'", info.AsString()); }
             }
             return null;
         }
@@ -402,20 +458,21 @@ namespace NodeCanvas.Framework
 
         ///Override in Tasks. This is called AFTER a NEW agent is set, after initialization and before execution.
         ///Return null if everything is ok, or a string with the error if not.
-        virtual protected string OnInit() { return null; }
+        protected virtual string OnInit() { return null; }
         ///Called once the first time task is created
-        virtual public void OnCreate(ITaskSystem ownerSystem) { }
+        public virtual void OnCreate(ITaskSystem ownerSystem) { }
         ///Called when the task is created, duplicated or otherwise needs validation.
-        virtual public void OnValidate(ITaskSystem ownerSystem) { }
+        public virtual void OnValidate(ITaskSystem ownerSystem) { }
         [System.Obsolete("Use OnDrawGizmosSelected")]
-        virtual public void OnDrawGizmos() { OnDrawGizmosSelected(); }
+        public virtual void OnDrawGizmos() { OnDrawGizmosSelected(); }
         ///Draw gizmos when the element containing the task is selected
-        virtual public void OnDrawGizmosSelected() { }
+        public virtual void OnDrawGizmosSelected() { }
 
         ///----------------------------------------------------------------------------------------------
 
         //...
-        public override string ToString() {
+        public override string ToString()
+        {
             return summaryInfo;
         }
 
@@ -428,13 +485,15 @@ namespace NodeCanvas.Framework
 
         private object _icon;
         //The icon if any of the task
-        public Texture2D icon {
+        public Texture2D icon
+        {
             get
             {
-                if ( _icon == null ) {
-                    var iconAtt = this.GetType().RTGetAttribute<IconAttribute>(true);
+                if (_icon == null)
+                {
+                    IconAttribute iconAtt = GetType().RTGetAttribute<IconAttribute>(true);
                     _icon = iconAtt != null ? TypePrefs.GetTypeIcon(iconAtt, this) : null;
-                    if ( _icon == null ) { _icon = new object(); }
+                    if (_icon == null) { _icon = new object(); }
                 }
                 return _icon as Texture2D;
             }
@@ -443,7 +502,7 @@ namespace NodeCanvas.Framework
         ///Draw an automatic editor inspector for this task.
         protected void DrawDefaultInspector() { EditorUtils.ReflectedObjectInspector(this, ownerSystem.contextObject); }
         ///Optional override to show custom controls whenever the ShowTaskInspectorGUI is called. By default controls will automaticaly show for most types.
-        virtual protected void OnTaskInspectorGUI() { DrawDefaultInspector(); }
+        protected virtual void OnTaskInspectorGUI() { DrawDefaultInspector(); }
 
 #endif
         ///----------------------------------------------------------------------------------------------

@@ -9,26 +9,28 @@ namespace NodeCanvas.Editor
 
     public class TaskWizardWindow : EditorWindow
     {
+        private enum TaskType { Action, Condition }
 
-        enum TaskType { Action, Condition }
-        TaskType type = TaskType.Action;
+        private TaskType type = TaskType.Action;
+        private string taskName;
+        private string category;
+        private string description;
+        private string agentType;
+        private string ns;
 
-        string taskName;
-        string category;
-        string description;
-        string agentType;
-        string ns;
-
-        public static void ShowWindow() {
-            var window = ScriptableObject.CreateInstance(typeof(TaskWizardWindow)) as TaskWizardWindow;
+        public static void ShowWindow()
+        {
+            TaskWizardWindow window = ScriptableObject.CreateInstance(typeof(TaskWizardWindow)) as TaskWizardWindow;
             window.ShowUtility();
         }
 
-        void OnEnable() {
+        private void OnEnable()
+        {
             titleContent = new GUIContent("NC Task Wizard");
         }
 
-        void OnGUI() {
+        private void OnGUI()
+        {
             type = (TaskType)EditorGUILayout.EnumPopup("Task Type", type);
             taskName = EditorGUILayout.TextField("Task Name", taskName);
             ns = EditorGUILayout.TextField("Namespace", ns);
@@ -36,18 +38,22 @@ namespace NodeCanvas.Editor
             description = EditorGUILayout.TextField("Description(?)", description);
             agentType = EditorGUILayout.TextField("Agent Type(?)", agentType);
 
-            if ( GUILayout.Button("CREATE") ) {
+            if (GUILayout.Button("CREATE"))
+            {
 
-                if ( string.IsNullOrEmpty(taskName) ) {
+                if (string.IsNullOrEmpty(taskName))
+                {
                     EditorUtility.DisplayDialog("Empty Task Name", "Please give the new task a name", "OK");
                     return;
                 }
 
-                if ( type == TaskType.Action ) {
+                if (type == TaskType.Action)
+                {
                     CreateFile(GetActionTemplate());
                 }
 
-                if ( type == TaskType.Condition ) {
+                if (type == TaskType.Condition)
+                {
                     CreateFile(GetCoditionTemplate());
                 }
 
@@ -56,21 +62,26 @@ namespace NodeCanvas.Editor
                 GUIUtility.keyboardControl = 0;
             }
 
-            if ( type == TaskType.Action ) {
+            if (type == TaskType.Action)
+            {
                 GUILayout.Label(GetActionTemplate());
             }
 
-            if ( type == TaskType.Condition ) {
+            if (type == TaskType.Condition)
+            {
                 GUILayout.Label(GetCoditionTemplate());
             }
         }
 
-        void CreateFile(string template) {
+        private void CreateFile(string template)
+        {
 
-            var path = GetUniquePath();
+            string path = GetUniquePath();
 
-            if ( System.IO.File.Exists(path) ) {
-                if ( !EditorUtility.DisplayDialog("File Exists", "Overwrite file?", "YES", "NO") ) {
+            if (System.IO.File.Exists(path))
+            {
+                if (!EditorUtility.DisplayDialog("File Exists", "Overwrite file?", "YES", "NO"))
+                {
                     return;
                 }
             }
@@ -80,26 +91,30 @@ namespace NodeCanvas.Editor
             ParadoxNotion.Services.Logger.LogWarning("New Task is placed under: " + path);
         }
 
-        string GetUniquePath() {
-            var path = AssetDatabase.GetAssetPath(Selection.activeObject);
-            if ( path == "" ) {
+        private string GetUniquePath()
+        {
+            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            if (path == "")
+            {
                 path = "Assets";
             }
-            if ( System.IO.Path.GetExtension(path) != "" ) {
+            if (System.IO.Path.GetExtension(path) != "")
+            {
                 path = path.Replace(System.IO.Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
             }
             return AssetDatabase.GenerateUniqueAssetPath(path + "/" + taskName + ".cs");
         }
 
-        string GetActionTemplate() {
+        private string GetActionTemplate()
+        {
             return
             "using NodeCanvas.Framework;\n" +
             "using ParadoxNotion.Design;\n" +
             "\n\n" +
-            "namespace " + ( string.IsNullOrEmpty(ns) ? "NodeCanvas.Tasks.Actions" : ns ) + "{\n\n" +
-            ( !string.IsNullOrEmpty(category) ? "\t[Category(\"" + category + "\")]\n" : "" ) +
-            ( !string.IsNullOrEmpty(description) ? "\t[Description(\"" + description + "\")]\n" : "" ) +
-            "\tpublic class " + taskName + " : ActionTask" + ( !string.IsNullOrEmpty(agentType) ? ( "<" + agentType + ">" ) : "" ) + "{\n\n" +
+            "namespace " + (string.IsNullOrEmpty(ns) ? "NodeCanvas.Tasks.Actions" : ns) + "{\n\n" +
+            (!string.IsNullOrEmpty(category) ? "\t[Category(\"" + category + "\")]\n" : "") +
+            (!string.IsNullOrEmpty(description) ? "\t[Description(\"" + description + "\")]\n" : "") +
+            "\tpublic class " + taskName + " : ActionTask" + (!string.IsNullOrEmpty(agentType) ? ("<" + agentType + ">") : "") + "{\n\n" +
 
             "\t\t//Use for initialization. This is called only once in the lifetime of the task.\n" +
             "\t\t//Return null if init was successfull. Return an error string otherwise\n" +
@@ -133,15 +148,16 @@ namespace NodeCanvas.Editor
             "}";
         }
 
-        string GetCoditionTemplate() {
+        private string GetCoditionTemplate()
+        {
             return
             "using NodeCanvas.Framework;\n" +
             "using ParadoxNotion.Design;\n" +
             "\n\n" +
-            "namespace " + ( string.IsNullOrEmpty(ns) ? "NodeCanvas.Tasks.Conditions" : ns ) + "{\n\n" +
-            ( !string.IsNullOrEmpty(category) ? "\t[Category(\"" + category + "\")]\n" : "" ) +
-            ( !string.IsNullOrEmpty(description) ? "\t[Description(\"" + description + "\")]\n" : "" ) +
-            "\tpublic class " + taskName + " : ConditionTask" + ( !string.IsNullOrEmpty(agentType) ? ( "<" + agentType + ">" ) : "" ) + "{\n\n" +
+            "namespace " + (string.IsNullOrEmpty(ns) ? "NodeCanvas.Tasks.Conditions" : ns) + "{\n\n" +
+            (!string.IsNullOrEmpty(category) ? "\t[Category(\"" + category + "\")]\n" : "") +
+            (!string.IsNullOrEmpty(description) ? "\t[Description(\"" + description + "\")]\n" : "") +
+            "\tpublic class " + taskName + " : ConditionTask" + (!string.IsNullOrEmpty(agentType) ? ("<" + agentType + ">") : "") + "{\n\n" +
             "\t\t//Use for initialization. This is called only once in the lifetime of the task.\n" +
             "\t\t//Return null if init was successfull. Return an error string otherwise\n" +
             "\t\tprotected override string OnInit(){\n" +

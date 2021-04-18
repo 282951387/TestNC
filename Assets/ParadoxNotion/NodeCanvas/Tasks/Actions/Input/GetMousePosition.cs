@@ -18,10 +18,13 @@ namespace NodeCanvas.Tasks.Actions
         protected override void OnExecute() { Do(); }
         protected override void OnUpdate() { Do(); }
 
-        void Do() {
+        private void Do()
+        {
             saveAs.value = Input.mousePosition;
-            if ( !repeat )
+            if (!repeat)
+            {
                 EndAction();
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -21,20 +21,24 @@ namespace NodeCanvas.Tasks.Actions
         //holds the last played animationClip.value for each agent 
         private static Dictionary<Animation, AnimationClip> lastPlayedClips = new Dictionary<Animation, AnimationClip>();
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Anim " + animationClip.ToString(); }
         }
 
-        protected override string OnInit() {
+        protected override string OnInit()
+        {
             agent.AddClip(animationClip.value, animationClip.value.name);
             animationClip.value.legacy = true;
             return null;
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             AnimationClip last = null;
-            if ( lastPlayedClips.TryGetValue(agent, out last) && last == animationClip.value ) {
+            if (lastPlayedClips.TryGetValue(agent, out last) && last == animationClip.value)
+            {
                 EndAction(true);
                 return;
             }
@@ -43,14 +47,17 @@ namespace NodeCanvas.Tasks.Actions
             agent[animationClip.value.name].wrapMode = animationWrap;
             agent.CrossFade(animationClip.value.name, crossFadeTime);
 
-            if ( !waitActionFinish ) {
+            if (!waitActionFinish)
+            {
                 EndAction(true);
             }
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
-            if ( elapsedTime >= animationClip.value.length - crossFadeTime ) {
+            if (elapsedTime >= animationClip.value.length - crossFadeTime)
+            {
                 EndAction(true);
             }
         }

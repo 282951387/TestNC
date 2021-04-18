@@ -14,11 +14,13 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<Vector3> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Get " + agentInfo + " position as " + saveAs; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             saveAs.value = agent.position;
             EndAction();
         }

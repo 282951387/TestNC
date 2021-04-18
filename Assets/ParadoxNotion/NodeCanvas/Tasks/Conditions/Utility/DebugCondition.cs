@@ -10,7 +10,8 @@ namespace NodeCanvas.Tasks.Conditions
     public class DebugCondition : ConditionTask
     {
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return false;
         }
 
@@ -19,8 +20,10 @@ namespace NodeCanvas.Tasks.Conditions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
-            if ( UnityEngine.Application.isPlaying && UnityEngine.GUILayout.Button("Tick True") ) {
+        protected override void OnTaskInspectorGUI()
+        {
+            if (UnityEngine.Application.isPlaying && UnityEngine.GUILayout.Button("Tick True"))
+            {
                 YieldReturn(true);
             }
         }

@@ -29,23 +29,28 @@ namespace NodeCanvas.Framework
         private bool allTrueRequired { get { return checkMode == ConditionsCheckMode.AllTrueRequired; } }
 
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( conditions.Count == 0 ) {
+                if (conditions.Count == 0)
+                {
                     return "No Conditions";
                 }
 
-                var finalText = conditions.Count > 1 ? ( "<b>(" + ( allTrueRequired ? "ALL True" : "ANY True" ) + ")</b>\n" ) : string.Empty;
-                for ( var i = 0; i < conditions.Count; i++ ) {
+                string finalText = conditions.Count > 1 ? ("<b>(" + (allTrueRequired ? "ALL True" : "ANY True") + ")</b>\n") : string.Empty;
+                for (int i = 0; i < conditions.Count; i++)
+                {
 
-                    if ( conditions[i] == null ) {
+                    if (conditions[i] == null)
+                    {
                         continue;
                     }
 
-                    if ( conditions[i].isUserEnabled ) {
-                        var prefix = "▪";
-                        finalText += prefix + conditions[i].summaryInfo + ( i == conditions.Count - 1 ? "" : "\n" );
+                    if (conditions[i].isUserEnabled)
+                    {
+                        string prefix = "▪";
+                        finalText += prefix + conditions[i].summaryInfo + (i == conditions.Count - 1 ? "" : "\n");
                     }
                 }
                 return finalText;
@@ -53,10 +58,12 @@ namespace NodeCanvas.Framework
         }
 
         ///ConditionList overrides to duplicate listed conditions correctly
-        public override Task Duplicate(ITaskSystem newOwnerSystem) {
-            var newList = (ConditionList)base.Duplicate(newOwnerSystem);
+        public override Task Duplicate(ITaskSystem newOwnerSystem)
+        {
+            ConditionList newList = (ConditionList)base.Duplicate(newOwnerSystem);
             newList.conditions.Clear();
-            foreach ( var condition in conditions ) {
+            foreach (ConditionTask condition in conditions)
+            {
                 newList.AddCondition((ConditionTask)condition.Duplicate(newOwnerSystem));
             }
 
@@ -64,37 +71,49 @@ namespace NodeCanvas.Framework
         }
 
         //Forward Enable call
-        protected override void OnEnable() {
-            for ( var i = 0; i < conditions.Count; i++ ) {
+        protected override void OnEnable()
+        {
+            for (int i = 0; i < conditions.Count; i++)
+            {
                 conditions[i].Enable(agent, blackboard);
             }
         }
 
         //Forward Disable call
-        protected override void OnDisable() {
-            for ( var i = 0; i < conditions.Count; i++ ) {
+        protected override void OnDisable()
+        {
+            for (int i = 0; i < conditions.Count; i++)
+            {
                 conditions[i].Disable();
             }
         }
 
-        protected override bool OnCheck() {
-            var succeedChecks = 0;
-            for ( var i = 0; i < conditions.Count; i++ ) {
+        protected override bool OnCheck()
+        {
+            int succeedChecks = 0;
+            for (int i = 0; i < conditions.Count; i++)
+            {
 
-                if ( !conditions[i].isUserEnabled ) {
+                if (!conditions[i].isUserEnabled)
+                {
                     succeedChecks++;
                     continue;
                 }
 
-                if ( conditions[i].Check(agent, blackboard) ) {
-                    if ( !allTrueRequired ) {
+                if (conditions[i].Check(agent, blackboard))
+                {
+                    if (!allTrueRequired)
+                    {
                         return true;
                     }
                     succeedChecks++;
 
-                } else {
+                }
+                else
+                {
 
-                    if ( allTrueRequired ) {
+                    if (allTrueRequired)
+                    {
                         return false;
                     }
                 }
@@ -103,18 +122,24 @@ namespace NodeCanvas.Framework
             return succeedChecks == conditions.Count;
         }
 
-        public override void OnDrawGizmosSelected() {
-            for ( var i = 0; i < conditions.Count; i++ ) {
-                if ( conditions[i].isUserEnabled ) {
+        public override void OnDrawGizmosSelected()
+        {
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                if (conditions[i].isUserEnabled)
+                {
                     conditions[i].OnDrawGizmosSelected();
                 }
             }
         }
 
-        public void AddCondition(ConditionTask condition) {
+        public void AddCondition(ConditionTask condition)
+        {
 
-            if ( condition is ConditionList ) {
-                foreach ( var subCondition in ( condition as ConditionList ).conditions ) {
+            if (condition is ConditionList)
+            {
+                foreach (ConditionTask subCondition in (condition as ConditionList).conditions)
+                {
                     AddCondition(subCondition);
                 }
                 return;
@@ -126,13 +151,15 @@ namespace NodeCanvas.Framework
 #endif
 
             conditions.Add(condition);
-            condition.SetOwnerSystem(this.ownerSystem);
+            condition.SetOwnerSystem(ownerSystem);
         }
 
-        internal override string GetWarningOrError() {
-            for ( var i = 0; i < conditions.Count; i++ ) {
-                var result = conditions[i].GetWarningOrError();
-                if ( result != null ) { return result; }
+        internal override string GetWarningOrError()
+        {
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                string result = conditions[i].GetWarningOrError();
+                if (result != null) { return result; }
             }
             return null;
         }
@@ -145,28 +172,31 @@ namespace NodeCanvas.Framework
         private ConditionTask currentViewCondition;
 
         //...
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
             ShowListGUI();
             ShowNestedConditionsGUI();
         }
 
         ///Show the sub-tasks list
-        public void ShowListGUI() {
+        public void ShowListGUI()
+        {
 
             TaskEditor.ShowCreateTaskSelectionButton<ConditionTask>(ownerSystem, AddCondition);
 
             ValidateList();
 
-            if ( conditions.Count == 0 ) {
+            if (conditions.Count == 0)
+            {
                 EditorGUILayout.HelpBox("No Conditions", MessageType.None);
                 return;
             }
 
-            if ( conditions.Count == 1 ) { return; }
+            if (conditions.Count == 1) { return; }
 
             EditorUtils.ReorderableList(conditions, (i, picked) =>
             {
-                var condition = conditions[i];
+                ConditionTask condition = conditions[i];
                 GUI.color = Color.white.WithAlpha(condition == currentViewCondition ? 0.75f : 0.25f);
                 GUILayout.BeginHorizontal("box");
 
@@ -177,17 +207,19 @@ namespace NodeCanvas.Framework
 
                 GUILayout.Label(condition.summaryInfo, GUILayout.MinWidth(0), GUILayout.ExpandWidth(true));
 
-                if ( !Application.isPlaying && GUILayout.Button("X", GUILayout.MaxWidth(20)) ) {
+                if (!Application.isPlaying && GUILayout.Button("X", GUILayout.MaxWidth(20)))
+                {
                     UndoUtility.RecordObject(ownerSystem.contextObject, "List Remove Task");
                     conditions.RemoveAt(i);
-                    if ( conditions.Count == 1 ) { conditions[0].isUserEnabled = true; }
+                    if (conditions.Count == 1) { conditions[0].isUserEnabled = true; }
                 }
 
                 GUILayout.EndHorizontal();
 
-                var lastRect = GUILayoutUtility.GetLastRect();
+                Rect lastRect = GUILayoutUtility.GetLastRect();
                 EditorGUIUtility.AddCursorRect(lastRect, MouseCursor.Link);
-                if ( Event.current.type == EventType.MouseDown && lastRect.Contains(Event.current.mousePosition) ) {
+                if (Event.current.type == EventType.MouseDown && lastRect.Contains(Event.current.mousePosition))
+                {
                     currentViewCondition = condition == currentViewCondition ? null : condition;
                     Event.current.Use();
                 }
@@ -199,18 +231,22 @@ namespace NodeCanvas.Framework
         }
 
         ///Show currently selected task inspector
-        public void ShowNestedConditionsGUI() {
+        public void ShowNestedConditionsGUI()
+        {
 
-            if ( conditions.Count == 1 ) {
+            if (conditions.Count == 1)
+            {
                 currentViewCondition = conditions[0];
             }
 
-            if ( currentViewCondition != null ) {
+            if (currentViewCondition != null)
+            {
                 EditorUtils.Separator();
                 TaskEditor.TaskFieldSingle(currentViewCondition, (c) =>
                 {
-                    if ( c == null ) {
-                        var i = conditions.IndexOf(currentViewCondition);
+                    if (c == null)
+                    {
+                        int i = conditions.IndexOf(currentViewCondition);
                         conditions.RemoveAt(i);
                     }
                     currentViewCondition = (ConditionTask)c;
@@ -219,34 +255,42 @@ namespace NodeCanvas.Framework
         }
 
         //Validate possible null tasks
-        void ValidateList() {
-            for ( var i = conditions.Count; i-- > 0; ) {
-                if ( conditions[i] == null ) {
+        private void ValidateList()
+        {
+            for (int i = conditions.Count; i-- > 0;)
+            {
+                if (conditions[i] == null)
+                {
                     conditions.RemoveAt(i);
                 }
             }
         }
 
         [ContextMenu("Save List Preset")]
-        void DoSavePreset() {
-            var path = EditorUtility.SaveFilePanelInProject("Save Preset", "", "conditionList", "");
-            if ( !string.IsNullOrEmpty(path) ) {
+        private void DoSavePreset()
+        {
+            string path = EditorUtility.SaveFilePanelInProject("Save Preset", "", "conditionList", "");
+            if (!string.IsNullOrEmpty(path))
+            {
                 System.IO.File.WriteAllText(path, JSONSerializer.Serialize(typeof(ConditionList), this, null, true)); //true for pretyJson
                 AssetDatabase.Refresh();
             }
         }
 
         [ContextMenu("Load List Preset")]
-        void DoLoadPreset() {
-            var path = EditorUtility.OpenFilePanel("Load Preset", "Assets", "conditionList");
-            if ( !string.IsNullOrEmpty(path) ) {
-                var json = System.IO.File.ReadAllText(path);
-                var list = JSONSerializer.TryDeserializeOverwrite<ConditionList>(this, json);
-                this.conditions = list.conditions;
-                this.checkMode = list.checkMode;
-                this.currentViewCondition = null;
-                foreach ( var a in conditions ) {
-                    a.SetOwnerSystem(this.ownerSystem);
+        private void DoLoadPreset()
+        {
+            string path = EditorUtility.OpenFilePanel("Load Preset", "Assets", "conditionList");
+            if (!string.IsNullOrEmpty(path))
+            {
+                string json = System.IO.File.ReadAllText(path);
+                ConditionList list = JSONSerializer.TryDeserializeOverwrite<ConditionList>(this, json);
+                conditions = list.conditions;
+                checkMode = list.checkMode;
+                currentViewCondition = null;
+                foreach (ConditionTask a in conditions)
+                {
+                    a.SetOwnerSystem(ownerSystem);
                 }
             }
         }

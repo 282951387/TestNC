@@ -17,16 +17,18 @@ namespace NodeCanvas.Tasks.Conditions
         public CompareMethod comparison = CompareMethod.EqualTo;
         public BBParameter<float> value;
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
                 return "Mec.Float " + parameter.ToString() + OperationTools.GetCompareString(comparison) + value;
             }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
 
-            return OperationTools.Compare((float)agent.GetFloat(parameter.value), (float)value.value, comparison, 0.1f);
+            return OperationTools.Compare(agent.GetFloat(parameter.value), value.value, comparison, 0.1f);
         }
     }
 }

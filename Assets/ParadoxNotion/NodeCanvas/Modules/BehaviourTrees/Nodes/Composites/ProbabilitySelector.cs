@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -24,51 +24,63 @@ namespace NodeCanvas.BehaviourTrees
         private float tmpTotal;
         private float tmpDice;
 
-        public override void OnChildConnected(int index) {
-            if ( childWeights == null ) { childWeights = new List<BBParameter<float>>(); }
-            if ( childWeights.Count < outConnections.Count ) {
+        public override void OnChildConnected(int index)
+        {
+            if (childWeights == null) { childWeights = new List<BBParameter<float>>(); }
+            if (childWeights.Count < outConnections.Count)
+            {
                 childWeights.Insert(index, new BBParameter<float> { value = 1, bb = graphBlackboard });
             }
         }
 
-        public override void OnChildDisconnected(int index) {
+        public override void OnChildDisconnected(int index)
+        {
             childWeights.RemoveAt(index);
         }
 
         public override void OnGraphStarted() { OnReset(); }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 tmpDice = Random.value;
                 tmpFailWeight = failChance.value;
                 tmpTotal = tmpFailWeight;
-                for ( var i = 0; i < childWeights.Count; i++ ) {
-                    var childWeight = childWeights[i].value;
+                for (int i = 0; i < childWeights.Count; i++)
+                {
+                    float childWeight = childWeights[i].value;
                     tmpTotal += childWeight;
                     tmpWeights[i] = childWeight;
                 }
             }
 
-            var prob = tmpFailWeight / tmpTotal;
-            if ( tmpDice < prob ) {
+            float prob = tmpFailWeight / tmpTotal;
+            if (tmpDice < prob)
+            {
                 return Status.Failure;
             }
 
-            for ( var i = 0; i < outConnections.Count; i++ ) {
+            for (int i = 0; i < outConnections.Count; i++)
+            {
 
-                if ( indexFailed[i] ) {
+                if (indexFailed[i])
+                {
                     continue;
                 }
 
                 prob += tmpWeights[i] / tmpTotal;
-                if ( tmpDice <= prob ) {
+                if (tmpDice <= prob)
+                {
                     status = outConnections[i].Execute(agent, blackboard);
-                    if ( status == Status.Success || status == Status.Running ) {
+                    if (status == Status.Success || status == Status.Running)
+                    {
                         return status;
                     }
 
-                    if ( status == Status.Failure ) {
+                    if (status == Status.Failure)
+                    {
                         indexFailed[i] = true;
                         tmpTotal -= tmpWeights[i];
                         return Status.Running;
@@ -79,7 +91,8 @@ namespace NodeCanvas.BehaviourTrees
             return Status.Failure;
         }
 
-        protected override void OnReset() {
+        protected override void OnReset()
+        {
             tmpWeights = new float[outConnections.Count];
             indexFailed = new bool[outConnections.Count];
         }
@@ -89,34 +102,41 @@ namespace NodeCanvas.BehaviourTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        float GetTotal() {
-            var total = failChance.value;
-            for ( var i = 0; i < childWeights.Count; i++ ) {
+        private float GetTotal()
+        {
+            float total = failChance.value;
+            for (int i = 0; i < childWeights.Count; i++)
+            {
                 total += childWeights[i].value;
             }
             return total;
         }
 
-        public override string GetConnectionInfo(int i) {
-            return Mathf.Round(( childWeights[i].value / GetTotal() ) * 100) + "%";
+        public override string GetConnectionInfo(int i)
+        {
+            return Mathf.Round((childWeights[i].value / GetTotal()) * 100) + "%";
         }
 
-        public override void OnConnectionInspectorGUI(int i) {
+        public override void OnConnectionInspectorGUI(int i)
+        {
             NodeCanvas.Editor.BBParameterEditor.ParameterField("Weight", childWeights[i]);
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
 
-            if ( outConnections.Count == 0 ) {
+            if (outConnections.Count == 0)
+            {
                 GUILayout.Label("Make some connections first");
                 return;
             }
 
-            var total = GetTotal();
-            for ( var i = 0; i < childWeights.Count; i++ ) {
+            float total = GetTotal();
+            for (int i = 0; i < childWeights.Count; i++)
+            {
                 GUILayout.BeginHorizontal();
                 childWeights[i] = (BBParameter<float>)NodeCanvas.Editor.BBParameterEditor.ParameterField("Weight", childWeights[i]);
-                GUILayout.Label(Mathf.Round(( childWeights[i].value / total ) * 100) + "%", GUILayout.Width(38));
+                GUILayout.Label(Mathf.Round((childWeights[i].value / total) * 100) + "%", GUILayout.Width(38));
                 GUILayout.EndHorizontal();
             }
 
@@ -124,7 +144,7 @@ namespace NodeCanvas.BehaviourTrees
 
             GUILayout.BeginHorizontal();
             failChance = (BBParameter<float>)NodeCanvas.Editor.BBParameterEditor.ParameterField("Direct Failure Chance", failChance);
-            GUILayout.Label(Mathf.Round(( failChance.value / total ) * 100) + "%", GUILayout.Width(38));
+            GUILayout.Label(Mathf.Round((failChance.value / total) * 100) + "%", GUILayout.Width(38));
             GUILayout.EndHorizontal();
         }
 

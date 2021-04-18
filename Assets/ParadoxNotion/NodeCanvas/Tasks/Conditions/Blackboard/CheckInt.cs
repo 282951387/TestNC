@@ -15,12 +15,14 @@ namespace NodeCanvas.Tasks.Conditions
         public CompareMethod checkType = CompareMethod.EqualTo;
         public BBParameter<int> valueB;
 
-        protected override string info {
+        protected override string info
+        {
             get { return valueA + OperationTools.GetCompareString(checkType) + valueB; }
         }
 
-        protected override bool OnCheck() {
-            return OperationTools.Compare((int)valueA.value, (int)valueB.value, checkType);
+        protected override bool OnCheck()
+        {
+            return OperationTools.Compare(valueA.value, valueB.value, checkType);
         }
     }
 }

@@ -16,12 +16,14 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<Transform> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} = {1}.FindChild({2})", saveAs, agentInfo, childName); }
         }
 
-        protected override void OnExecute() {
-            var result = agent.Find(childName.value);
+        protected override void OnExecute()
+        {
+            Transform result = agent.Find(childName.value);
             saveAs.value = result;
             EndAction(result != null);
         }

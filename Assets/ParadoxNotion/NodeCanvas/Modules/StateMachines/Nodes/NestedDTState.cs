@@ -24,8 +24,10 @@ namespace NodeCanvas.StateMachines
 
         ////		
 
-        protected override void OnEnter() {
-            if ( subGraph == null ) {
+        protected override void OnEnter()
+        {
+            if (subGraph == null)
+            {
                 Finish(false);
                 return;
             }
@@ -33,23 +35,30 @@ namespace NodeCanvas.StateMachines
             this.TryStartSubGraph(graphAgent, OnDialogueFinished);
         }
 
-        protected override void OnUpdate() {
-            currentInstance.UpdateGraph(this.graph.deltaTime);
+        protected override void OnUpdate()
+        {
+            currentInstance.UpdateGraph(graph.deltaTime);
         }
 
-        protected override void OnExit() {
-            if ( currentInstance != null ) {
+        protected override void OnExit()
+        {
+            if (currentInstance != null)
+            {
                 currentInstance.Stop();
             }
         }
 
-        void OnDialogueFinished(bool success) {
-            if ( this.status == Status.Running ) {
-                if ( !string.IsNullOrEmpty(successEvent) && success ) {
+        private void OnDialogueFinished(bool success)
+        {
+            if (status == Status.Running)
+            {
+                if (!string.IsNullOrEmpty(successEvent) && success)
+                {
                     SendEvent(successEvent);
                 }
 
-                if ( !string.IsNullOrEmpty(failureEvent) && !success ) {
+                if (!string.IsNullOrEmpty(failureEvent) && !success)
+                {
                     SendEvent(failureEvent);
                 }
 

@@ -13,7 +13,8 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<Vector3> targetVector;
         public BBParameter<float> multiply = 1;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             targetVector.value = targetVector.value.normalized * multiply.value;
             EndAction(true);
         }

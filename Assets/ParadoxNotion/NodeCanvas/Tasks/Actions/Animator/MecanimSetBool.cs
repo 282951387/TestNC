@@ -16,14 +16,19 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<int> parameterHashID;
         public BBParameter<bool> setTo;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Mec.SetBool {0} to {1}", string.IsNullOrEmpty(parameter.value) && !parameter.useBlackboard ? parameterHashID.ToString() : parameter.ToString(), setTo); }
         }
 
-        protected override void OnExecute() {
-            if ( !string.IsNullOrEmpty(parameter.value) ) {
+        protected override void OnExecute()
+        {
+            if (!string.IsNullOrEmpty(parameter.value))
+            {
                 agent.SetBool(parameter.value, setTo.value);
-            } else {
+            }
+            else
+            {
                 agent.SetBool(parameterHashID.value, setTo.value);
             }
             EndAction(true);

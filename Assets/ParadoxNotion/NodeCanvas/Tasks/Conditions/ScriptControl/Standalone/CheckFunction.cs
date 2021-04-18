@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using System.Reflection;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Design;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 
@@ -25,40 +25,47 @@ namespace NodeCanvas.Tasks.Conditions
 
         private MethodInfo targetMethod { get { return functionWrapper != null ? functionWrapper.GetMethod() : null; } }
 
-        public override System.Type agentType {
+        public override System.Type agentType
+        {
             get
             {
-                if ( targetMethod == null ) { return typeof(Transform); }
+                if (targetMethod == null) { return typeof(Transform); }
                 return targetMethod.IsStatic ? null : targetMethod.RTReflectedOrDeclaredType();
             }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( functionWrapper == null ) { return "No Method Selected"; }
-                if ( targetMethod == null ) { return functionWrapper.AsString().FormatError(); }
-                var variables = functionWrapper.GetVariables();
-                var paramInfo = "";
-                for ( var i = 1; i < variables.Length; i++ ) {
-                    paramInfo += ( i != 1 ? ", " : "" ) + variables[i].ToString();
+                if (functionWrapper == null) { return "No Method Selected"; }
+                if (targetMethod == null) { return functionWrapper.AsString().FormatError(); }
+                BBParameter[] variables = functionWrapper.GetVariables();
+                string paramInfo = "";
+                for (int i = 1; i < variables.Length; i++)
+                {
+                    paramInfo += (i != 1 ? ", " : "") + variables[i].ToString();
                 }
-                var mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
+                string mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
                 return string.Format("{0}.{1}({2}){3}", mInfo, targetMethod.Name, paramInfo, OperationTools.GetCompareString(comparison) + checkValue);
             }
         }
 
-        public override void OnValidate(ITaskSystem ownerSystem) {
-            if ( functionWrapper != null && functionWrapper.HasChanged() ) {
+        public override void OnValidate(ITaskSystem ownerSystem)
+        {
+            if (functionWrapper != null && functionWrapper.HasChanged())
+            {
                 SetMethod(functionWrapper.GetMethod());
             }
         }
 
         //store the method info on agent set for performance
-        protected override string OnInit() {
-            if ( targetMethod == null ) { return "Missing Method"; }
+        protected override string OnInit()
+        {
+            if (targetMethod == null) { return "Missing Method"; }
 
-            try {
+            try
+            {
                 functionWrapper.Init(targetMethod.IsStatic ? null : agent);
                 return null;
             }
@@ -66,25 +73,31 @@ namespace NodeCanvas.Tasks.Conditions
         }
 
         //do it by invoking method
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
 
-            if ( functionWrapper == null ) {
+            if (functionWrapper == null)
+            {
                 return true;
             }
 
-            if ( checkValue.varType == typeof(float) ) {
+            if (checkValue.varType == typeof(float))
+            {
                 return OperationTools.Compare((float)functionWrapper.Call(), (float)checkValue.value, comparison, 0.05f);
             }
 
-            if ( checkValue.varType == typeof(int) ) {
+            if (checkValue.varType == typeof(int))
+            {
                 return OperationTools.Compare((int)functionWrapper.Call(), (int)checkValue.value, comparison);
             }
 
             return ObjectUtils.AnyEquals(functionWrapper.Call(), checkValue.value);
         }
 
-        void SetMethod(MethodInfo method) {
-            if ( method != null ) {
+        private void SetMethod(MethodInfo method)
+        {
+            if (method != null)
+            {
                 functionWrapper = ReflectedFunctionWrapper.Create(method, blackboard);
                 checkValue = BBParameter.CreateInstance(method.ReturnType, blackboard);
                 comparison = CompareMethod.EqualTo;
@@ -96,35 +109,43 @@ namespace NodeCanvas.Tasks.Conditions
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
-            if ( !Application.isPlaying && GUILayout.Button("Select Method") ) {
-                var menu = new UnityEditor.GenericMenu();
-                if ( agent != null ) {
-                    foreach ( var comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0) ) {
+            if (!Application.isPlaying && GUILayout.Button("Select Method"))
+            {
+                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
+                if (agent != null)
+                {
+                    foreach (Component comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags == 0))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(comp.GetType(), typeof(object), typeof(object), SetMethod, 6, false, true, menu);
                     }
                     menu.AddSeparator("/");
                 }
-                foreach ( var t in TypePrefs.GetPreferedTypesList(typeof(object)) ) {
+                foreach (System.Type t in TypePrefs.GetPreferedTypesList(typeof(object)))
+                {
                     menu = EditorUtils.GetStaticMethodSelectionMenu(t, typeof(object), typeof(object), SetMethod, 6, false, true, menu);
-                    if ( typeof(UnityEngine.Component).IsAssignableFrom(t) ) {
+                    if (typeof(UnityEngine.Component).IsAssignableFrom(t))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(t, typeof(object), typeof(object), SetMethod, 6, false, true, menu);
                     }
                 }
-                menu.ShowAsBrowser("Select Method", this.GetType());
+                menu.ShowAsBrowser("Select Method", GetType());
                 Event.current.Use();
             }
 
-            if ( targetMethod != null ) {
+            if (targetMethod != null)
+            {
                 GUILayout.BeginVertical("box");
                 UnityEditor.EditorGUILayout.LabelField("Type", targetMethod.RTReflectedOrDeclaredType().FriendlyName());
                 UnityEditor.EditorGUILayout.LabelField("Method", targetMethod.Name);
                 GUILayout.EndVertical();
 
-                var paramNames = targetMethod.GetParameters().Select(p => p.Name.SplitCamelCase()).ToArray();
-                var variables = functionWrapper.GetVariables();
-                for ( var i = 0; i < paramNames.Length; i++ ) {
+                string[] paramNames = targetMethod.GetParameters().Select(p => p.Name.SplitCamelCase()).ToArray();
+                BBParameter[] variables = functionWrapper.GetVariables();
+                for (int i = 0; i < paramNames.Length; i++)
+                {
                     NodeCanvas.Editor.BBParameterEditor.ParameterField(paramNames[i], variables[i + 1]);
                 }
 

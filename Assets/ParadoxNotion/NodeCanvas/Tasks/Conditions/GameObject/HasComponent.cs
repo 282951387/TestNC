@@ -10,7 +10,8 @@ namespace NodeCanvas.Tasks.Conditions
     public class HasComponent<T> : ConditionTask<Transform> where T : Component
     {
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return agent.GetComponent<T>() != null;
         }
     }

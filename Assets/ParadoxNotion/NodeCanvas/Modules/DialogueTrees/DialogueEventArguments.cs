@@ -16,10 +16,11 @@ namespace NodeCanvas.DialogueTrees
         ///Call this to Continue the DialogueTree
         public Action Continue;
 
-        public SubtitlesRequestInfo(IDialogueActor actor, IStatement statement, Action callback) {
+        public SubtitlesRequestInfo(IDialogueActor actor, IStatement statement, Action callback)
+        {
             this.actor = actor;
             this.statement = statement;
-            this.Continue = callback;
+            Continue = callback;
         }
     }
 
@@ -38,19 +39,21 @@ namespace NodeCanvas.DialogueTrees
         ///Call this with to select the option to continue with in the DialogueTree
         public Action<int> SelectOption;
 
-        public MultipleChoiceRequestInfo(IDialogueActor actor, Dictionary<IStatement, int> options, float availableTime, bool showLastStatement, Action<int> callback) {
+        public MultipleChoiceRequestInfo(IDialogueActor actor, Dictionary<IStatement, int> options, float availableTime, bool showLastStatement, Action<int> callback)
+        {
             this.actor = actor;
             this.options = options;
             this.availableTime = availableTime;
             this.showLastStatement = showLastStatement;
-            this.SelectOption = callback;
+            SelectOption = callback;
         }
 
-        public MultipleChoiceRequestInfo(IDialogueActor actor, Dictionary<IStatement, int> options, float availableTime, Action<int> callback) {
+        public MultipleChoiceRequestInfo(IDialogueActor actor, Dictionary<IStatement, int> options, float availableTime, Action<int> callback)
+        {
             this.actor = actor;
             this.options = options;
             this.availableTime = availableTime;
-            this.SelectOption = callback;
+            SelectOption = callback;
         }
     }
 }

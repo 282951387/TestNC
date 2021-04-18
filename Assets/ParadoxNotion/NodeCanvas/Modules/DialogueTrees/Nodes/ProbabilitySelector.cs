@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -18,7 +18,8 @@ namespace NodeCanvas.DialogueTrees
         {
             public BBParameter<float> weight;
             public ConditionTask condition;
-            public Option(float weightValue, IBlackboard bbValue) {
+            public Option(float weightValue, IBlackboard bbValue)
+            {
                 weight = new BBParameter<float> { value = weightValue, bb = bbValue };
                 condition = null;
             }
@@ -30,34 +31,43 @@ namespace NodeCanvas.DialogueTrees
 
         public override int maxOutConnections { get { return -1; } }
 
-        public override void OnChildConnected(int index) {
-            if ( childOptions.Count < outConnections.Count ) {
+        public override void OnChildConnected(int index)
+        {
+            if (childOptions.Count < outConnections.Count)
+            {
                 childOptions.Insert(index, new Option(1, graphBlackboard));
             }
         }
 
-        public override void OnChildDisconnected(int index) {
+        public override void OnChildDisconnected(int index)
+        {
             childOptions.RemoveAt(index);
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
             successIndeces = new List<int>();
-            for ( var i = 0; i < outConnections.Count; i++ ) {
-                var condition = childOptions[i].condition;
-                if ( condition == null || condition.CheckOnce(finalActor.transform, blackboard) ) {
+            for (int i = 0; i < outConnections.Count; i++)
+            {
+                ConditionTask condition = childOptions[i].condition;
+                if (condition == null || condition.CheckOnce(finalActor.transform, blackboard))
+                {
                     successIndeces.Add(i);
                 }
             }
 
-            var probability = Random.Range(0f, GetTotal());
-            for ( var i = 0; i < outConnections.Count; i++ ) {
+            float probability = Random.Range(0f, GetTotal());
+            for (int i = 0; i < outConnections.Count; i++)
+            {
 
-                if ( !successIndeces.Contains(i) ) {
+                if (!successIndeces.Contains(i))
+                {
                     continue;
                 }
 
-                if ( probability > childOptions[i].weight.value ) {
+                if (probability > childOptions[i].weight.value)
+                {
                     probability -= childOptions[i].weight.value;
                     continue;
                 }
@@ -69,11 +79,14 @@ namespace NodeCanvas.DialogueTrees
             return Status.Failure;
         }
 
-        float GetTotal() {
-            var total = 0f;
-            for ( var i = 0; i < childOptions.Count; i++ ) {
-                var option = childOptions[i];
-                if ( successIndeces == null || successIndeces.Contains(i) ) {
+        private float GetTotal()
+        {
+            float total = 0f;
+            for (int i = 0; i < childOptions.Count; i++)
+            {
+                Option option = childOptions[i];
+                if (successIndeces == null || successIndeces.Contains(i))
+                {
                     total += option.weight.value;
                     continue;
                 }
@@ -81,7 +94,8 @@ namespace NodeCanvas.DialogueTrees
             return total;
         }
 
-        protected override void OnReset() {
+        protected override void OnReset()
+        {
             successIndeces = null;
         }
 
@@ -90,39 +104,46 @@ namespace NodeCanvas.DialogueTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        public override string GetConnectionInfo(int i) {
-            var result = childOptions[i].condition != null ? childOptions[i].condition.summaryInfo + "\n" : string.Empty;
-            if ( successIndeces == null || successIndeces.Contains(i) ) {
-                return result + Mathf.Round(( childOptions[i].weight.value / GetTotal() ) * 100) + "%";
+        public override string GetConnectionInfo(int i)
+        {
+            string result = childOptions[i].condition != null ? childOptions[i].condition.summaryInfo + "\n" : string.Empty;
+            if (successIndeces == null || successIndeces.Contains(i))
+            {
+                return result + Mathf.Round((childOptions[i].weight.value / GetTotal()) * 100) + "%";
             }
             return result + "Condition Failed";
         }
 
-        public override void OnConnectionInspectorGUI(int i) {
+        public override void OnConnectionInspectorGUI(int i)
+        {
             DrawOptionGUI(i, GetTotal());
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
 
             base.OnNodeInspectorGUI();
 
-            if ( outConnections.Count == 0 ) {
+            if (outConnections.Count == 0)
+            {
                 return;
             }
 
-            var total = GetTotal();
-            for ( var i = 0; i < childOptions.Count; i++ ) {
+            float total = GetTotal();
+            for (int i = 0; i < childOptions.Count; i++)
+            {
                 EditorUtils.BoldSeparator();
                 DrawOptionGUI(i, total);
             }
         }
 
-        void DrawOptionGUI(int i, float total) {
+        private void DrawOptionGUI(int i, float total)
+        {
             NodeCanvas.Editor.TaskEditor.TaskFieldMulti<ConditionTask>(childOptions[i].condition, DLGTree, (c) => { childOptions[i].condition = c; });
             EditorUtils.Separator();
             GUILayout.BeginHorizontal();
             NodeCanvas.Editor.BBParameterEditor.ParameterField("Weight", childOptions[i].weight);
-            GUILayout.Label(Mathf.Round(( childOptions[i].weight.value / total ) * 100) + "%", GUILayout.Width(38));
+            GUILayout.Label(Mathf.Round((childOptions[i].weight.value / total) * 100) + "%", GUILayout.Width(38));
             GUILayout.EndHorizontal();
         }
 

@@ -1,7 +1,7 @@
-using ParadoxNotion;
 using NodeCanvas.Framework;
-using UnityEngine;
+using ParadoxNotion;
 using System.Linq;
+using UnityEngine;
 
 namespace NodeCanvas.DialogueTrees
 {
@@ -26,55 +26,65 @@ namespace NodeCanvas.DialogueTrees
         [SerializeField]
         private string _meta = string.Empty;
 
-        public string text {
+        public string text
+        {
             get { return _text; }
             set { _text = value; }
         }
 
-        public AudioClip audio {
+        public AudioClip audio
+        {
             get { return _audio; }
             set { _audio = value; }
         }
 
-        public string meta {
+        public string meta
+        {
             get { return _meta; }
             set { _meta = value; }
         }
 
         //required
         public Statement() { }
-        public Statement(string text) {
+        public Statement(string text)
+        {
             this.text = text;
         }
 
-        public Statement(string text, AudioClip audio) {
+        public Statement(string text, AudioClip audio)
+        {
             this.text = text;
             this.audio = audio;
         }
 
-        public Statement(string text, AudioClip audio, string meta) {
+        public Statement(string text, AudioClip audio, string meta)
+        {
             this.text = text;
             this.audio = audio;
             this.meta = meta;
         }
 
         ///Replace the text of the statement found in brackets, with blackboard variables ToString and returns a Statement copy
-        public IStatement BlackboardReplace(IBlackboard bb) {
-            var copy = ParadoxNotion.Serialization.JSONSerializer.Clone<Statement>(this);
+        public IStatement BlackboardReplace(IBlackboard bb)
+        {
+            Statement copy = ParadoxNotion.Serialization.JSONSerializer.Clone<Statement>(this);
 
             copy.text = copy.text.ReplaceWithin('[', ']', (input) =>
             {
                 object o = null;
-                if ( bb != null ) { //referenced blackboard replace
-                    var v = bb.GetVariable(input, typeof(object));
-                    if ( v != null ) { o = v.value; }
+                if (bb != null)
+                { //referenced blackboard replace
+                    Variable v = bb.GetVariable(input, typeof(object));
+                    if (v != null) { o = v.value; }
                 }
 
-                if ( input.Contains("/") ) { //global blackboard replace
-                    var globalBB = GlobalBlackboard.Find(input.Split('/').First());
-                    if ( globalBB != null ) {
-                        var v = globalBB.GetVariable(input.Split('/').Last(), typeof(object));
-                        if ( v != null ) { o = v.value; }
+                if (input.Contains("/"))
+                { //global blackboard replace
+                    GlobalBlackboard globalBB = GlobalBlackboard.Find(input.Split('/').First());
+                    if (globalBB != null)
+                    {
+                        Variable v = globalBB.GetVariable(input.Split('/').Last(), typeof(object));
+                        if (v != null) { o = v.value; }
                     }
                 }
                 return o != null ? o.ToString() : input;
@@ -83,7 +93,8 @@ namespace NodeCanvas.DialogueTrees
             return copy;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return text;
         }
     }

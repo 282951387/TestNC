@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace NodeCanvas.Tasks.Conditions
@@ -22,15 +22,18 @@ namespace NodeCanvas.Tasks.Conditions
 
         protected override string info { get { return signalDefinition.ToString(); } }
 
-        protected override string OnInit() {
-            if ( signalDefinition.isNoneOrNull ) { return "Missing Definition"; }
+        protected override string OnInit()
+        {
+            if (signalDefinition.isNoneOrNull) { return "Missing Definition"; }
             args = new object[argumentsMap.Count];
             return null;
         }
 
-        protected override void OnExecute() {
-            var def = signalDefinition.value;
-            for ( var i = 0; i < def.parameters.Count; i++ ) {
+        protected override void OnExecute()
+        {
+            SignalDefinition def = signalDefinition.value;
+            for (int i = 0; i < def.parameters.Count; i++)
+            {
                 args[i] = argumentsMap[def.parameters[i].ID].value;
             }
             def.Invoke(agent, agent, global, args);
@@ -40,21 +43,26 @@ namespace NodeCanvas.Tasks.Conditions
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
             base.OnTaskInspectorGUI();
-            if ( signalDefinition.isNoneOrNull ) { return; }
-            var parameters = signalDefinition.value.parameters;
+            if (signalDefinition.isNoneOrNull) { return; }
+            List<ParadoxNotion.DynamicParameterDefinition> parameters = signalDefinition.value.parameters;
             EditorUtils.Separator();
-            foreach ( var parameter in parameters ) {
+            foreach (ParadoxNotion.DynamicParameterDefinition parameter in parameters)
+            {
                 BBObjectParameter bbParam = null;
-                if ( !argumentsMap.TryGetValue(parameter.ID, out bbParam) ) {
+                if (!argumentsMap.TryGetValue(parameter.ID, out bbParam))
+                {
                     bbParam = argumentsMap[parameter.ID] = new BBObjectParameter(parameter.type) { bb = ownerSystemBlackboard };
                 }
                 NodeCanvas.Editor.BBParameterEditor.ParameterField(parameter.name, bbParam);
             }
 
-            foreach ( var key in argumentsMap.Keys.ToArray() ) {
-                if ( !parameters.Select(v => v.ID).Contains(key) ) {
+            foreach (string key in argumentsMap.Keys.ToArray())
+            {
+                if (!parameters.Select(v => v.ID).Contains(key))
+                {
                     argumentsMap.Remove(key);
                 }
             }

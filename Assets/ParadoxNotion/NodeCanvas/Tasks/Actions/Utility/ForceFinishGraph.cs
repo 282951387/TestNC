@@ -1,6 +1,6 @@
+using NodeCanvas.Framework;
 using ParadoxNotion;
 using ParadoxNotion.Design;
-using NodeCanvas.Framework;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -12,9 +12,11 @@ namespace NodeCanvas.Tasks.Actions
 
         public CompactStatus finishStatus = CompactStatus.Success;
 
-        protected override void OnExecute() {
-            var graph = ownerSystem as Graph;
-            if ( graph != null ) {
+        protected override void OnExecute()
+        {
+            Graph graph = ownerSystem as Graph;
+            if (graph != null)
+            {
                 graph.Stop(finishStatus == CompactStatus.Success);
             }
             EndAction(graph != null);

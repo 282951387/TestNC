@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Linq;
 using UnityEngine;
 
 namespace NodeCanvas.Tasks.Conditions
@@ -14,7 +14,7 @@ namespace NodeCanvas.Tasks.Conditions
 
         [RequiredField]
         public BBParameter<GameObject> LOSTarget;
-        public BBParameter<LayerMask> layerMask = (LayerMask)( -1 );
+        public BBParameter<LayerMask> layerMask = (LayerMask)(-1);
         [BlackboardOnly]
         public BBParameter<float> saveDistanceAs;
 
@@ -22,22 +22,28 @@ namespace NodeCanvas.Tasks.Conditions
         protected Collider2D agentCollider;
         private RaycastHit2D[] hits;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "LOS with " + LOSTarget.ToString(); }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             hits = Physics2D.LinecastAll(agent.position, LOSTarget.value.transform.position, layerMask.value);
-            foreach ( var collider in hits.Select(h => h.collider) ) {
-                if ( collider != agentCollider && collider != LOSTarget.value.GetComponent<Collider2D>() ) {
+            foreach (Collider2D collider in hits.Select(h => h.collider))
+            {
+                if (collider != agentCollider && collider != LOSTarget.value.GetComponent<Collider2D>())
+                {
                     return false;
                 }
             }
             return true;
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent && LOSTarget.value ) {
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent && LOSTarget.value)
+            {
                 Gizmos.DrawLine((Vector2)agent.position, (Vector2)LOSTarget.value.transform.position);
             }
         }

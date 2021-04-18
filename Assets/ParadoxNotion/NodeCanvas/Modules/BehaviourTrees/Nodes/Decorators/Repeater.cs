@@ -34,29 +34,35 @@ namespace NodeCanvas.BehaviourTrees
 
         private int currentIteration = 1;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
             }
 
-            if ( decoratedConnection.status == Status.Success || decoratedConnection.status == Status.Failure ) {
+            if (decoratedConnection.status == Status.Success || decoratedConnection.status == Status.Failure)
+            {
                 decoratedConnection.Reset();
             }
 
             status = decoratedConnection.Execute(agent, blackboard);
 
-            switch ( status ) {
+            switch (status)
+            {
                 case Status.Resting:
                     return Status.Running;
                 case Status.Running:
                     return Status.Running;
             }
 
-            switch ( repeaterMode ) {
+            switch (repeaterMode)
+            {
                 case RepeaterMode.RepeatTimes:
 
-                    if ( currentIteration >= repeatTimes.value ) {
+                    if (currentIteration >= repeatTimes.value)
+                    {
                         return status;
                     }
 
@@ -65,7 +71,8 @@ namespace NodeCanvas.BehaviourTrees
 
                 case RepeaterMode.RepeatUntil:
 
-                    if ( (int)status == (int)repeatUntilStatus ) {
+                    if ((int)status == (int)repeatUntilStatus)
+                    {
                         return status;
                     }
                     break;
@@ -74,7 +81,8 @@ namespace NodeCanvas.BehaviourTrees
             return Status.Running;
         }
 
-        protected override void OnReset() {
+        protected override void OnReset()
+        {
             currentIteration = 1;
         }
 
@@ -83,18 +91,25 @@ namespace NodeCanvas.BehaviourTrees
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
 
-            if ( repeaterMode == RepeaterMode.RepeatTimes ) {
+            if (repeaterMode == RepeaterMode.RepeatTimes)
+            {
                 GUILayout.Label(repeatTimes + " Times");
-                if ( Application.isPlaying )
+                if (Application.isPlaying)
+                {
                     GUILayout.Label("Iteration: " + currentIteration.ToString());
-
-            } else if ( repeaterMode == RepeaterMode.RepeatUntil ) {
+                }
+            }
+            else if (repeaterMode == RepeaterMode.RepeatUntil)
+            {
 
                 GUILayout.Label("Until " + repeatUntilStatus);
 
-            } else {
+            }
+            else
+            {
 
                 GUILayout.Label("Repeat Forever");
             }

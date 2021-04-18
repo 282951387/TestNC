@@ -14,11 +14,13 @@ namespace NodeCanvas.Tasks.Conditions
         public BBObjectParameter valueA = new BBObjectParameter(typeof(System.Enum));
         public BBObjectParameter valueB = new BBObjectParameter(typeof(System.Enum));
 
-        protected override string info {
+        protected override string info
+        {
             get { return valueA + " == " + valueB; }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return Equals(valueA.value, valueB.value);
         }
 
@@ -27,9 +29,10 @@ namespace NodeCanvas.Tasks.Conditions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
             DrawDefaultInspector();
-            if ( valueB.varType != valueA.refType ) { valueB.SetType(valueA.refType); }
+            if (valueB.varType != valueA.refType) { valueB.SetType(valueA.refType); }
         }
 
 #endif

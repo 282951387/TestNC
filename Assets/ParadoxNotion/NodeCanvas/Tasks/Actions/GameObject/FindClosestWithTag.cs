@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Linq;
 using UnityEngine;
 
 
@@ -21,10 +21,12 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<float> saveDistanceAs;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            var found = GameObject.FindGameObjectsWithTag(searchTag.value).ToList();
-            if ( found.Count == 0 ) {
+            System.Collections.Generic.List<GameObject> found = GameObject.FindGameObjectsWithTag(searchTag.value).ToList();
+            if (found.Count == 0)
+            {
                 saveObjectAs.value = null;
                 saveDistanceAs.value = 0;
                 EndAction(false);
@@ -32,19 +34,23 @@ namespace NodeCanvas.Tasks.Actions
             }
 
             GameObject closest = null;
-            var dist = Mathf.Infinity;
-            foreach ( var go in found ) {
+            float dist = Mathf.Infinity;
+            foreach (GameObject go in found)
+            {
 
-                if ( go.transform == agent ) {
+                if (go.transform == agent)
+                {
                     continue;
                 }
 
-                if ( ignoreChildren.value && go.transform.IsChildOf(agent) ) {
+                if (ignoreChildren.value && go.transform.IsChildOf(agent))
+                {
                     continue;
                 }
 
-                var newDist = Vector3.Distance(go.transform.position, agent.position);
-                if ( newDist < dist ) {
+                float newDist = Vector3.Distance(go.transform.position, agent.position);
+                if (newDist < dist)
+                {
                     dist = newDist;
                     closest = go;
                 }

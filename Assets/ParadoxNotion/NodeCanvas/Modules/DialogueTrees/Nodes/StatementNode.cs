@@ -16,13 +16,15 @@ namespace NodeCanvas.DialogueTrees
 
         public override bool requireActorSelection { get { return true; } }
 
-        protected override Status OnExecute(Component agent, IBlackboard bb) {
-            var tempStatement = statement.BlackboardReplace(bb);
+        protected override Status OnExecute(Component agent, IBlackboard bb)
+        {
+            IStatement tempStatement = statement.BlackboardReplace(bb);
             DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(finalActor, tempStatement, OnStatementFinish));
             return Status.Running;
         }
 
-        void OnStatementFinish() {
+        private void OnStatementFinish()
+        {
             status = Status.Success;
             DLGTree.Continue();
         }
@@ -31,7 +33,8 @@ namespace NodeCanvas.DialogueTrees
         ///////////GUI AND EDITOR STUFF/////////
         ////////////////////////////////////////
 #if UNITY_EDITOR
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Label("\"<i> " + statement.text.CapLength(30) + "</i> \"");
         }
 #endif

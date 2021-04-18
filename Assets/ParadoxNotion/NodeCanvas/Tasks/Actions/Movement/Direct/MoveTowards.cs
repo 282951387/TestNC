@@ -16,14 +16,17 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<float> stopDistance = 0.1f;
         public bool waitActionFinish;
 
-        protected override void OnUpdate() {
-            if ( ( agent.position - target.value.transform.position ).magnitude <= stopDistance.value ) {
+        protected override void OnUpdate()
+        {
+            if ((agent.position - target.value.transform.position).magnitude <= stopDistance.value)
+            {
                 EndAction();
                 return;
             }
 
             agent.position = Vector3.MoveTowards(agent.position, target.value.transform.position, speed.value * Time.deltaTime);
-            if ( !waitActionFinish ) {
+            if (!waitActionFinish)
+            {
                 EndAction();
             }
         }

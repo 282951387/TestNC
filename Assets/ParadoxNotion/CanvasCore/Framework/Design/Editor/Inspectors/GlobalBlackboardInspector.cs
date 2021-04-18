@@ -18,17 +18,20 @@ namespace NodeCanvas.Editor
         private SerializedProperty identifierProp;
         private SerializedProperty destroyDupProp;
 
-        void OnEnable() {
+        private void OnEnable()
+        {
             dontDestroyProp = serializedObject.FindProperty("_dontDestroyOnLoad");
             identifierProp = serializedObject.FindProperty("_identifier");
             destroyDupProp = serializedObject.FindProperty("_singletonMode");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
 
             EditorGUILayout.PropertyField(identifierProp);
-            var existing = GlobalBlackboard.Find(bb.name);
-            if ( existing != bb && existing != null && !EditorUtility.IsPersistent(bb) ) {
+            GlobalBlackboard existing = GlobalBlackboard.Find(bb.name);
+            if (existing != bb && existing != null && !EditorUtility.IsPersistent(bb))
+            {
                 EditorUtils.MarkLastFieldError("Another Global Blackboard has the same identifier name. Please rename either.");
             }
             EditorGUILayout.PropertyField(destroyDupProp);
@@ -37,7 +40,8 @@ namespace NodeCanvas.Editor
             BlackboardEditor.ShowVariables(bb);
             EditorUtils.EndOfInspector();
             serializedObject.ApplyModifiedProperties();
-            if ( Event.current.isMouse ) {
+            if (Event.current.isMouse)
+            {
                 Repaint();
             }
         }

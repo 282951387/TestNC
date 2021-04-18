@@ -28,18 +28,21 @@ namespace NodeCanvas.Tasks.Actions
         protected override void OnExecute() { Do(); }
         protected override void OnUpdate() { Do(); }
 
-        void Do() {
+        private void Do()
+        {
 
-            var x = string.IsNullOrEmpty(xAxisName.value) ? 0 : Input.GetAxis(xAxisName.value);
-            var y = string.IsNullOrEmpty(yAxisName.value) ? 0 : Input.GetAxis(yAxisName.value);
-            var z = string.IsNullOrEmpty(zAxisName.value) ? 0 : Input.GetAxis(zAxisName.value);
+            float x = string.IsNullOrEmpty(xAxisName.value) ? 0 : Input.GetAxis(xAxisName.value);
+            float y = string.IsNullOrEmpty(yAxisName.value) ? 0 : Input.GetAxis(yAxisName.value);
+            float z = string.IsNullOrEmpty(zAxisName.value) ? 0 : Input.GetAxis(zAxisName.value);
 
             saveXAs.value = x * multiplier.value;
             saveYAs.value = y * multiplier.value;
             saveZAs.value = z * multiplier.value;
             saveAs.value = new Vector3(x, y, z) * multiplier.value;
-            if ( !repeat )
+            if (!repeat)
+            {
                 EndAction();
+            }
         }
     }
 }

@@ -14,11 +14,13 @@ namespace NodeCanvas.Tasks.Conditions
         public BBParameter<T> valueA;
         public BBParameter<T> valueB;
 
-        protected override string info {
+        protected override string info
+        {
             get { return valueA + " == " + valueB; }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return ObjectUtils.AnyEquals(valueA.value, valueB.value);
         }
     }

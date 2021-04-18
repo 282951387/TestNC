@@ -28,8 +28,10 @@ namespace NodeCanvas.StateMachines
 
         ////
 
-        protected override void OnEnter() {
-            if ( subGraph == null ) {
+        protected override void OnEnter()
+        {
+            if (subGraph == null)
+            {
                 Finish(false);
                 return;
             }
@@ -38,18 +40,25 @@ namespace NodeCanvas.StateMachines
             OnUpdate();
         }
 
-        protected override void OnUpdate() {
-            currentInstance.UpdateGraph(this.graph.deltaTime);
+        protected override void OnUpdate()
+        {
+            currentInstance.UpdateGraph(graph.deltaTime);
         }
 
-        protected override void OnExit() {
-            if ( currentInstance != null ) {
-                if ( this.status == Status.Running ) {
+        protected override void OnExit()
+        {
+            if (currentInstance != null)
+            {
+                if (status == Status.Running)
+                {
                     this.TryReadAndUnbindMappedVariables();
                 }
-                if ( exitMode == FSMExitMode.StopAndRestart ) {
+                if (exitMode == FSMExitMode.StopAndRestart)
+                {
                     currentInstance.Stop();
-                } else {
+                }
+                else
+                {
                     currentInstance.Pause();
                 }
             }

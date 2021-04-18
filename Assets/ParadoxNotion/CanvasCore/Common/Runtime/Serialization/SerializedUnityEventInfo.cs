@@ -18,49 +18,57 @@ namespace ParadoxNotion.Serialization
         private MemberInfo _memberInfo;
 
         ///Just a shortcut
-        public bool isStatic {
+        public bool isStatic
+        {
             get
             {
-                if ( _memberInfo is FieldInfo ) { return ( _memberInfo as FieldInfo ).IsStatic; }
-                if ( _memberInfo is PropertyInfo ) { return ( _memberInfo as PropertyInfo ).IsStatic(); }
+                if (_memberInfo is FieldInfo) { return (_memberInfo as FieldInfo).IsStatic; }
+                if (_memberInfo is PropertyInfo) { return (_memberInfo as PropertyInfo).IsStatic(); }
                 return false;
             }
         }
 
         ///Just a shortcut
-        public Type memberType {
+        public Type memberType
+        {
             get
             {
-                if ( _memberInfo is FieldInfo ) { return ( _memberInfo as FieldInfo ).FieldType; }
-                if ( _memberInfo is PropertyInfo ) { return ( _memberInfo as PropertyInfo ).PropertyType; }
+                if (_memberInfo is FieldInfo) { return (_memberInfo as FieldInfo).FieldType; }
+                if (_memberInfo is PropertyInfo) { return (_memberInfo as PropertyInfo).PropertyType; }
                 return null;
             }
         }
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
-            if ( _memberInfo != null ) { _baseInfo = string.Format("{0}|{1}", _memberInfo.RTReflectedOrDeclaredType().FullName, _memberInfo.Name); }
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (_memberInfo != null) { _baseInfo = string.Format("{0}|{1}", _memberInfo.RTReflectedOrDeclaredType().FullName, _memberInfo.Name); }
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {
-            if ( _baseInfo == null ) {
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            if (_baseInfo == null)
+            {
                 return;
             }
 
-            var split = _baseInfo.Split('|');
-            var type = ReflectionTools.GetType(split[0], true);
-            if ( type == null ) {
+            string[] split = _baseInfo.Split('|');
+            Type type = ReflectionTools.GetType(split[0], true);
+            if (type == null)
+            {
                 _memberInfo = null;
                 return;
             }
 
-            var name = split[1];
-            var result = type.RTGetFieldOrProp(name);
+            string name = split[1];
+            MemberInfo result = type.RTGetFieldOrProp(name);
             _memberInfo = null;
-            if ( result is FieldInfo && typeof(UnityEventBase).RTIsAssignableFrom(( result as FieldInfo ).FieldType) ) {
+            if (result is FieldInfo && typeof(UnityEventBase).RTIsAssignableFrom((result as FieldInfo).FieldType))
+            {
                 _memberInfo = result;
                 return;
             }
-            if ( result is PropertyInfo && typeof(UnityEventBase).RTIsAssignableFrom(( result as PropertyInfo ).PropertyType) ) {
+            if (result is PropertyInfo && typeof(UnityEventBase).RTIsAssignableFrom((result as PropertyInfo).PropertyType))
+            {
                 _memberInfo = result;
                 return;
             }
@@ -69,8 +77,10 @@ namespace ParadoxNotion.Serialization
         public SerializedUnityEventInfo() { }
         public SerializedUnityEventInfo(FieldInfo info) { _memberInfo = info; }
         public SerializedUnityEventInfo(PropertyInfo info) { _memberInfo = info; }
-        public SerializedUnityEventInfo(MemberInfo info) {
-            if ( info is FieldInfo || info is PropertyInfo ) {
+        public SerializedUnityEventInfo(MemberInfo info)
+        {
+            if (info is FieldInfo || info is PropertyInfo)
+            {
                 _memberInfo = info;
                 return;
             }
@@ -82,12 +92,14 @@ namespace ParadoxNotion.Serialization
         public override string ToString() { return AsString(); }
 
         //operator
-        public static implicit operator FieldInfo(SerializedUnityEventInfo value) {
+        public static implicit operator FieldInfo(SerializedUnityEventInfo value)
+        {
             return value != null ? value._memberInfo as FieldInfo : null;
         }
 
         //operator
-        public static implicit operator PropertyInfo(SerializedUnityEventInfo value) {
+        public static implicit operator PropertyInfo(SerializedUnityEventInfo value)
+        {
             return value != null ? value._memberInfo as PropertyInfo : null;
         }
     }

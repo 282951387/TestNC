@@ -16,23 +16,28 @@ namespace NodeCanvas.StateMachines
         [SerializeField]
         private bool _repeatStateActions;
 
-        public Task task {
+        public Task task
+        {
             get { return actionList; }
             set { actionList = (ActionList)value; }
         }
 
-        public ActionList actionList {
+        public ActionList actionList
+        {
             get { return _actionList; }
             set { _actionList = value; }
         }
 
-        public bool repeatStateActions {
+        public bool repeatStateActions
+        {
             get { return _repeatStateActions; }
             set { _repeatStateActions = value; }
         }
 
-        public override void OnValidate(Graph assignedGraph) {
-            if ( actionList == null ) {
+        public override void OnValidate(Graph assignedGraph)
+        {
+            if (actionList == null)
+            {
                 actionList = (ActionList)Task.Create(typeof(ActionList), assignedGraph);
                 actionList.executionMode = ActionList.ActionsExecutionMode.ActionsRunInParallel;
             }
@@ -40,18 +45,22 @@ namespace NodeCanvas.StateMachines
 
         protected override void OnEnter() { OnUpdate(); }
 
-        protected override void OnUpdate() {
-            var actionListStatus = actionList.Execute(graphAgent, graphBlackboard);
-            if ( !repeatStateActions && actionListStatus != Status.Running ) {
+        protected override void OnUpdate()
+        {
+            Status actionListStatus = actionList.Execute(graphAgent, graphBlackboard);
+            if (!repeatStateActions && actionListStatus != Status.Running)
+            {
                 Finish(actionListStatus);
             }
         }
 
-        protected override void OnExit() {
+        protected override void OnExit()
+        {
             actionList.EndAction(null);
         }
 
-        protected override void OnPause() {
+        protected override void OnPause()
+        {
             actionList.Pause();
         }
 
@@ -60,18 +69,22 @@ namespace NodeCanvas.StateMachines
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
-            if ( repeatStateActions ) {
+        protected override void OnNodeGUI()
+        {
+            if (repeatStateActions)
+            {
                 GUILayout.Label("<b>[REPEAT]</b>");
             }
             base.OnNodeGUI();
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
 
             ShowTransitionsInspector();
 
-            if ( actionList == null ) {
+            if (actionList == null)
+            {
                 return;
             }
 

@@ -20,14 +20,17 @@ namespace NodeCanvas.Tasks.Actions
 
         private float currentValue;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Mec.SetFloat {0} to {1}", string.IsNullOrEmpty(parameter.value) && !parameter.useBlackboard ? parameterHashID.ToString() : parameter.ToString(), setTo); }
         }
 
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( transitTime <= 0 ) {
+            if (transitTime <= 0)
+            {
                 Set(setTo.value);
                 EndAction();
                 return;
@@ -36,22 +39,28 @@ namespace NodeCanvas.Tasks.Actions
             currentValue = Get();
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
             Set(Mathf.Lerp(currentValue, setTo.value, elapsedTime / transitTime));
-            if ( elapsedTime >= transitTime ) {
+            if (elapsedTime >= transitTime)
+            {
                 EndAction(true);
             }
         }
 
-        float Get() {
-            if ( !string.IsNullOrEmpty(parameter.value) ) {
+        private float Get()
+        {
+            if (!string.IsNullOrEmpty(parameter.value))
+            {
                 return agent.GetFloat(parameter.value);
             }
             return agent.GetFloat(parameterHashID.value);
         }
 
-        void Set(float newValue) {
-            if ( !string.IsNullOrEmpty(parameter.value) ) {
+        private void Set(float newValue)
+        {
+            if (!string.IsNullOrEmpty(parameter.value))
+            {
                 agent.SetFloat(parameter.value, newValue);
                 return;
             }

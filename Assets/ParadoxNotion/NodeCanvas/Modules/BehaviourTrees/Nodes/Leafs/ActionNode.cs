@@ -15,41 +15,51 @@ namespace NodeCanvas.BehaviourTrees
         [SerializeField]
         private ActionTask _action;
 
-        public Task task {
+        public Task task
+        {
             get { return action; }
             set { action = (ActionTask)value; }
         }
 
-        public ActionTask action {
+        public ActionTask action
+        {
             get { return _action; }
             set { _action = value; }
         }
 
-        public override string name {
+        public override string name
+        {
             get { return base.name.ToUpper(); }
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( action == null ) {
+            if (action == null)
+            {
                 return Status.Optional;
             }
 
-            if ( status == Status.Resting || status == Status.Running ) {
+            if (status == Status.Resting || status == Status.Running)
+            {
                 return action.Execute(agent, blackboard);
             }
 
             return status;
         }
 
-        protected override void OnReset() {
-            if ( action != null ) {
+        protected override void OnReset()
+        {
+            if (action != null)
+            {
                 action.EndAction(null);
             }
         }
 
-        public override void OnGraphPaused() {
-            if ( action != null ) {
+        public override void OnGraphPaused()
+        {
+            if (action != null)
+            {
                 action.Pause();
             }
         }

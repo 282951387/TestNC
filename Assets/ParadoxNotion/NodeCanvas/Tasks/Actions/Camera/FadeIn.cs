@@ -11,13 +11,17 @@ namespace NodeCanvas.Tasks.Actions
 
         public float fadeTime = 1f;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             CameraFader.current.FadeIn(fadeTime);
         }
 
-        protected override void OnUpdate() {
-            if ( elapsedTime >= fadeTime )
+        protected override void OnUpdate()
+        {
+            if (elapsedTime >= fadeTime)
+            {
                 EndAction();
+            }
         }
     }
 }

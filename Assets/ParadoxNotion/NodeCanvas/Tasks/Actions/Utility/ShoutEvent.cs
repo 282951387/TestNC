@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -20,32 +20,40 @@ namespace NodeCanvas.Tasks.Actions
         private List<GraphOwner> receivedOwners;
         private float traveledDistance;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Shout Event [{0}]", eventName.ToString()); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             owners = Object.FindObjectsOfType<GraphOwner>();
             receivedOwners = new List<GraphOwner>();
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
             traveledDistance = Mathf.Lerp(0, shoutRange.value, elapsedTime / completionTime.value);
-            foreach ( var owner in owners ) {
-                var distance = ( agent.position - owner.transform.position ).magnitude;
-                if ( distance <= traveledDistance && !receivedOwners.Contains(owner) ) {
+            foreach (GraphOwner owner in owners)
+            {
+                float distance = (agent.position - owner.transform.position).magnitude;
+                if (distance <= traveledDistance && !receivedOwners.Contains(owner))
+                {
                     owner.SendEvent(eventName.value, null, this);
                     receivedOwners.Add(owner);
                 }
             }
 
-            if ( elapsedTime >= completionTime.value ) {
+            if (elapsedTime >= completionTime.value)
+            {
                 EndAction();
             }
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent != null ) {
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent != null)
+            {
                 Gizmos.color = new Color(1, 1, 1, 0.2f);
                 Gizmos.DrawWireSphere(agent.position, traveledDistance);
                 Gizmos.DrawWireSphere(agent.position, shoutRange.value);

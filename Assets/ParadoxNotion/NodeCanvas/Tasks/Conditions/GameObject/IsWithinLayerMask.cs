@@ -12,7 +12,8 @@ namespace NodeCanvas.Tasks.Conditions
 
         public BBParameter<LayerMask> targetLayers;
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return ParadoxNotion.ObjectUtils.IsInLayerMask(agent.gameObject, targetLayers.value);
         }
     }

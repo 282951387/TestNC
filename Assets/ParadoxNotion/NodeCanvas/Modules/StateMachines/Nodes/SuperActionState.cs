@@ -20,32 +20,41 @@ namespace NodeCanvas.StateMachines
 
         private bool enterListFinished = false;
 
-        public override void OnValidate(Graph assignedGraph) {
-            if ( _onEnterList == null ) {
+        public override void OnValidate(Graph assignedGraph)
+        {
+            if (_onEnterList == null)
+            {
                 _onEnterList = (ActionList)Task.Create(typeof(ActionList), assignedGraph);
                 _onEnterList.executionMode = ActionList.ActionsExecutionMode.ActionsRunInParallel;
             }
-            if ( _onUpdateList == null ) {
+            if (_onUpdateList == null)
+            {
                 _onUpdateList = (ActionList)Task.Create(typeof(ActionList), assignedGraph);
                 _onUpdateList.executionMode = ActionList.ActionsExecutionMode.ActionsRunInParallel;
             }
-            if ( _onExitList == null ) {
+            if (_onExitList == null)
+            {
                 _onExitList = (ActionList)Task.Create(typeof(ActionList), assignedGraph);
                 _onExitList.executionMode = ActionList.ActionsExecutionMode.ActionsRunInParallel;
             }
         }
 
-        protected override void OnEnter() {
+        protected override void OnEnter()
+        {
             enterListFinished = false;
             OnUpdate();
         }
 
-        protected override void OnUpdate() {
-            if ( !enterListFinished ) {
-                var enterListStatus = _onEnterList.Execute(graphAgent, graphBlackboard);
-                if ( enterListStatus != Status.Running ) {
+        protected override void OnUpdate()
+        {
+            if (!enterListFinished)
+            {
+                Status enterListStatus = _onEnterList.Execute(graphAgent, graphBlackboard);
+                if (enterListStatus != Status.Running)
+                {
                     enterListFinished = true;
-                    if ( _onUpdateList.actions.Count == 0 ) {
+                    if (_onUpdateList.actions.Count == 0)
+                    {
                         Finish(enterListStatus);
                     }
                 }
@@ -53,14 +62,16 @@ namespace NodeCanvas.StateMachines
             _onUpdateList.Execute(graphAgent, graphBlackboard);
         }
 
-        protected override void OnExit() {
+        protected override void OnExit()
+        {
             _onEnterList.EndAction(null);
             _onUpdateList.EndAction(null);
             _onExitList.Execute(graphAgent, graphBlackboard);
             _onExitList.EndAction(null);
         }
 
-        protected override void OnPause() {
+        protected override void OnPause()
+        {
             _onEnterList.Pause();
             _onUpdateList.Pause();
         }
@@ -77,7 +88,8 @@ namespace NodeCanvas.StateMachines
         [SerializeField, ParadoxNotion.Serialization.FullSerializer.fsIgnoreInBuild]
         private bool foldExit;
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
 
             GUILayout.BeginVertical(Styles.roundedBox);
             GUILayout.Label(string.Format("<i>{0} OnEnter Actions</i>", _onEnterList.actions.Count), Styles.leftLabel);
@@ -92,32 +104,37 @@ namespace NodeCanvas.StateMachines
             GUILayout.EndVertical();
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
 
             ShowTransitionsInspector();
 
-            if ( _onEnterList == null || _onUpdateList == null || _onExitList == null ) {
+            if (_onEnterList == null || _onUpdateList == null || _onExitList == null)
+            {
                 return;
             }
 
             EditorUtils.CoolLabel("Actions");
 
             foldEnter = UnityEditor.EditorGUILayout.Foldout(foldEnter, string.Format("OnEnter Actions ({0})", _onEnterList.actions.Count));
-            if ( foldEnter ) {
+            if (foldEnter)
+            {
                 _onEnterList.ShowListGUI();
                 _onEnterList.ShowNestedActionsGUI();
             }
             EditorUtils.Separator();
 
             foldUpdate = UnityEditor.EditorGUILayout.Foldout(foldUpdate, string.Format("OnUpdate Actions ({0})", _onUpdateList.actions.Count));
-            if ( foldUpdate ) {
+            if (foldUpdate)
+            {
                 _onUpdateList.ShowListGUI();
                 _onUpdateList.ShowNestedActionsGUI();
             }
             EditorUtils.Separator();
 
             foldExit = UnityEditor.EditorGUILayout.Foldout(foldExit, string.Format("OnExit Actions ({0})", _onExitList.actions.Count));
-            if ( foldExit ) {
+            if (foldExit)
+            {
                 _onExitList.ShowListGUI();
                 _onExitList.ShowNestedActionsGUI();
             }

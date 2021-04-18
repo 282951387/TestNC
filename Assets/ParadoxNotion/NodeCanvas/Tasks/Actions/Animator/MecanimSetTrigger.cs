@@ -15,14 +15,19 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<string> parameter;
         public BBParameter<int> parameterHashID;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Mec.SetTrigger {0}", string.IsNullOrEmpty(parameter.value) && !parameter.useBlackboard ? parameterHashID.ToString() : parameter.ToString()); }
         }
 
-        protected override void OnExecute() {
-            if ( !string.IsNullOrEmpty(parameter.value) ) {
+        protected override void OnExecute()
+        {
+            if (!string.IsNullOrEmpty(parameter.value))
+            {
                 agent.SetTrigger(parameter.value);
-            } else {
+            }
+            else
+            {
                 agent.SetTrigger(parameterHashID.value);
             }
             EndAction();

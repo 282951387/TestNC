@@ -24,26 +24,29 @@ namespace ParadoxNotion.Serialization.FullSerializer
         /// Serialize as reference?
         public bool AsReference { get; private set; }
 
-        internal fsMetaProperty(FieldInfo field) {
-            this.Field = field;
-            var attr = Field.RTGetAttribute<fsSerializeAsAttribute>(true);
-            this.JsonName = attr != null && !string.IsNullOrEmpty(attr.Name) ? attr.Name : field.Name;
-            this.ReadOnly = Field.RTIsDefined<fsReadOnlyAttribute>(true);
-            this.WriteOnly = Field.RTIsDefined<fsWriteOnlyAttribute>(true);
-            var autoInstanceAtt = StorageType.RTGetAttribute<fsAutoInstance>(true);
-            this.AutoInstance = autoInstanceAtt != null && autoInstanceAtt.makeInstance && !StorageType.IsAbstract;
-            this.AsReference = Field.RTIsDefined<fsSerializeAsReference>(true);
+        internal fsMetaProperty(FieldInfo field)
+        {
+            Field = field;
+            fsSerializeAsAttribute attr = Field.RTGetAttribute<fsSerializeAsAttribute>(true);
+            JsonName = attr != null && !string.IsNullOrEmpty(attr.Name) ? attr.Name : field.Name;
+            ReadOnly = Field.RTIsDefined<fsReadOnlyAttribute>(true);
+            WriteOnly = Field.RTIsDefined<fsWriteOnlyAttribute>(true);
+            fsAutoInstance autoInstanceAtt = StorageType.RTGetAttribute<fsAutoInstance>(true);
+            AutoInstance = autoInstanceAtt != null && autoInstanceAtt.makeInstance && !StorageType.IsAbstract;
+            AsReference = Field.RTIsDefined<fsSerializeAsReference>(true);
         }
 
         /// Reads a value from the property that this MetaProperty represents, using the given
         /// object instance as the context.
-        public object Read(object context) {
+        public object Read(object context)
+        {
             return Field.GetValue(context);
         }
 
         /// Writes a value to the property that this MetaProperty represents, using given object
         /// instance as the context.
-        public void Write(object context, object value) {
+        public void Write(object context, object value)
+        {
             Field.SetValue(context, value);
         }
     }

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using ParadoxNotion.Design;
+﻿using NodeCanvas.DialogueTrees;
 using NodeCanvas.Framework;
-using NodeCanvas.DialogueTrees;
+using ParadoxNotion.Design;
+using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -20,18 +20,23 @@ namespace NodeCanvas.Tasks.Actions
 
         private DialogueTreeController instance;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Start Dialogue {0}", dialogueTreeController); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             instance = isPrefab ? GameObject.Instantiate(dialogueTreeController.value) : dialogueTreeController.value;
 
-            if ( waitActionFinish ) {
-                instance.StartDialogue(agent, (success) => { if ( isPrefab ) { Object.Destroy(instance.gameObject); } EndAction(success); });
-            } else {
-                instance.StartDialogue(agent, (success) => { if ( isPrefab ) Object.Destroy(instance.gameObject); });
+            if (waitActionFinish)
+            {
+                instance.StartDialogue(agent, (success) => { if (isPrefab) { Object.Destroy(instance.gameObject); } EndAction(success); });
+            }
+            else
+            {
+                instance.StartDialogue(agent, (success) => { if (isPrefab) { Object.Destroy(instance.gameObject); } });
                 EndAction();
             }
         }

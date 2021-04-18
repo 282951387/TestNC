@@ -107,7 +107,10 @@ namespace NodeCanvas.BehaviourTrees
         ///Tick the tree once for the provided agent and with the provided blackboard
         private Status Tick(Component agent, IBlackboard blackboard)
         {
-            if (rootStatus != Status.Running) { primeNode.Reset(); }
+            if (rootStatus != Status.Running)
+            {
+                primeNode.Reset();
+            }
             return rootStatus = primeNode.Execute(agent, blackboard);
         }
 

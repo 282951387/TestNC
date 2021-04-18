@@ -10,13 +10,16 @@ namespace NodeCanvas.Editor
     ///A drawer for BlackboardSource
     public class BlackboardSourceDrawer : ObjectDrawer<BlackboardSource>
     {
-        public override BlackboardSource OnGUI(GUIContent content, BlackboardSource instance) {
-            if ( instance != null ) {
+        public override BlackboardSource OnGUI(GUIContent content, BlackboardSource instance)
+        {
+            if (instance != null)
+            {
                 BlackboardEditor.ShowVariables(instance, contextUnityObject);
                 return instance;
             }
 
-            if ( GUILayout.Button("Create Blackboard") ) {
+            if (GUILayout.Button("Create Blackboard"))
+            {
                 instance = new BlackboardSource();
             }
 

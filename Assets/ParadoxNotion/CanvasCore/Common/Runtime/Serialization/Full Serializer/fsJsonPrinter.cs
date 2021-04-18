@@ -10,29 +10,35 @@ namespace ParadoxNotion.Serialization.FullSerializer
     {
 
         /// Inserts the given number of indents into the builder.
-        private static void InsertSpacing(TextWriter stream, int count) {
-            for ( int i = 0; i < count; ++i ) {
+        private static void InsertSpacing(TextWriter stream, int count)
+        {
+            for (int i = 0; i < count; ++i)
+            {
                 stream.Write("    ");
             }
         }
 
         /// Escapes a string.
-        private static string EscapeString(string str) {
+        private static string EscapeString(string str)
+        {
 
             // Escaping a string is pretty allocation heavy, so we try hard to not do it.
             bool needsEscape = false;
-            for ( int i = 0; i < str.Length; ++i ) {
+            for (int i = 0; i < str.Length; ++i)
+            {
                 char c = str[i];
 
                 // unicode code point
                 int intChar = Convert.ToInt32(c);
-                if ( intChar < 0 || intChar > 127 ) {
+                if (intChar < 0 || intChar > 127)
+                {
                     needsEscape = true;
                     break;
                 }
 
                 // standard escape character
-                switch ( c ) {
+                switch (c)
+                {
                     case '"':
                     case '\\':
                     case '\a':
@@ -46,30 +52,35 @@ namespace ParadoxNotion.Serialization.FullSerializer
                         break;
                 }
 
-                if ( needsEscape ) {
+                if (needsEscape)
+                {
                     break;
                 }
             }
 
-            if ( needsEscape == false ) {
+            if (needsEscape == false)
+            {
                 return str;
             }
 
 
             StringBuilder result = new StringBuilder();
 
-            for ( int i = 0; i < str.Length; ++i ) {
+            for (int i = 0; i < str.Length; ++i)
+            {
                 char c = str[i];
 
                 // unicode code point
                 int intChar = Convert.ToInt32(c);
-                if ( intChar < 0 || intChar > 127 ) {
+                if (intChar < 0 || intChar > 127)
+                {
                     result.Append(string.Format("\\u{0:x4} ", intChar).Trim());
                     continue;
                 }
 
                 // standard escape character
-                switch ( c ) {
+                switch (c)
+                {
                     case '"': result.Append("\\\""); continue;
                     case '\\': result.Append(@"\\"); continue;
                     case '\a': result.Append(@"\a"); continue;
@@ -87,15 +98,24 @@ namespace ParadoxNotion.Serialization.FullSerializer
             return result.ToString();
         }
 
-        private static void BuildCompressedString(fsData data, TextWriter stream) {
-            switch ( data.Type ) {
+        private static void BuildCompressedString(fsData data, TextWriter stream)
+        {
+            switch (data.Type)
+            {
                 case fsDataType.Null:
                     stream.Write("null");
                     break;
 
                 case fsDataType.Boolean:
-                    if ( data.AsBool ) stream.Write("true");
-                    else stream.Write("false");
+                    if (data.AsBool)
+                    {
+                        stream.Write("true");
+                    }
+                    else
+                    {
+                        stream.Write("false");
+                    }
+
                     break;
 
                 case fsDataType.Double:
@@ -113,11 +133,17 @@ namespace ParadoxNotion.Serialization.FullSerializer
                     stream.Write('"');
                     break;
 
-                case fsDataType.Object: {
+                case fsDataType.Object:
+                    {
                         stream.Write('{');
                         bool comma = false;
-                        foreach ( var entry in data.AsDictionary ) {
-                            if ( comma ) stream.Write(',');
+                        foreach (System.Collections.Generic.KeyValuePair<string, fsData> entry in data.AsDictionary)
+                        {
+                            if (comma)
+                            {
+                                stream.Write(',');
+                            }
+
                             comma = true;
                             stream.Write('"');
                             stream.Write(entry.Key);
@@ -129,11 +155,17 @@ namespace ParadoxNotion.Serialization.FullSerializer
                         break;
                     }
 
-                case fsDataType.Array: {
+                case fsDataType.Array:
+                    {
                         stream.Write('[');
                         bool comma = false;
-                        foreach ( var entry in data.AsList ) {
-                            if ( comma ) stream.Write(',');
+                        foreach (fsData entry in data.AsList)
+                        {
+                            if (comma)
+                            {
+                                stream.Write(',');
+                            }
+
                             comma = true;
                             BuildCompressedString(entry, stream);
                         }
@@ -144,15 +176,24 @@ namespace ParadoxNotion.Serialization.FullSerializer
         }
 
         /// Formats this data into the given builder.
-        private static void BuildPrettyString(fsData data, TextWriter stream, int depth) {
-            switch ( data.Type ) {
+        private static void BuildPrettyString(fsData data, TextWriter stream, int depth)
+        {
+            switch (data.Type)
+            {
                 case fsDataType.Null:
                     stream.Write("null");
                     break;
 
                 case fsDataType.Boolean:
-                    if ( data.AsBool ) stream.Write("true");
-                    else stream.Write("false");
+                    if (data.AsBool)
+                    {
+                        stream.Write("true");
+                    }
+                    else
+                    {
+                        stream.Write("false");
+                    }
+
                     break;
 
                 case fsDataType.Double:
@@ -170,12 +211,15 @@ namespace ParadoxNotion.Serialization.FullSerializer
                     stream.Write('"');
                     break;
 
-                case fsDataType.Object: {
+                case fsDataType.Object:
+                    {
                         stream.Write('{');
                         stream.WriteLine();
                         bool comma = false;
-                        foreach ( var entry in data.AsDictionary ) {
-                            if ( comma ) {
+                        foreach (System.Collections.Generic.KeyValuePair<string, fsData> entry in data.AsDictionary)
+                        {
+                            if (comma)
+                            {
                                 stream.Write(',');
                                 stream.WriteLine();
                             }
@@ -195,15 +239,20 @@ namespace ParadoxNotion.Serialization.FullSerializer
 
                 case fsDataType.Array:
                     // special case for empty lists; we don't put an empty line between the brackets
-                    if ( data.AsList.Count == 0 ) {
+                    if (data.AsList.Count == 0)
+                    {
                         stream.Write("[]");
-                    } else {
+                    }
+                    else
+                    {
                         bool comma = false;
 
                         stream.Write('[');
                         stream.WriteLine();
-                        foreach ( var entry in data.AsList ) {
-                            if ( comma ) {
+                        foreach (fsData entry in data.AsList)
+                        {
+                            if (comma)
+                            {
                                 stream.Write(',');
                                 stream.WriteLine();
                             }
@@ -220,52 +269,63 @@ namespace ParadoxNotion.Serialization.FullSerializer
         }
 
         /// Returns fsData to json pretty or not
-        public static string ToJson(fsData data, bool pretty) {
-            if ( pretty ) { return PrettyJson(data); }
+        public static string ToJson(fsData data, bool pretty)
+        {
+            if (pretty) { return PrettyJson(data); }
             return CompressedJson(data);
         }
 
         /// Writes the pretty JSON output data to the given stream.
         /// <param name="outputStream">Where to write the printed data.</param>
-        public static void PrettyJson(fsData data, TextWriter outputStream) {
+        public static void PrettyJson(fsData data, TextWriter outputStream)
+        {
             BuildPrettyString(data, outputStream, 0);
         }
 
         /// Returns the data in a pretty printed JSON format.
-        public static string PrettyJson(fsData data) {
-            var sb = new StringBuilder();
-            using ( var writer = new StringWriter(sb) ) {
+        public static string PrettyJson(fsData data)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter writer = new StringWriter(sb))
+            {
                 BuildPrettyString(data, writer, 0);
                 return sb.ToString();
             }
         }
 
         /// Writes the compressed JSON output data to the given stream.
-        public static void CompressedJson(fsData data, StreamWriter outputStream) {
+        public static void CompressedJson(fsData data, StreamWriter outputStream)
+        {
             BuildCompressedString(data, outputStream);
         }
 
         /// Returns the data in a relatively compressed JSON format.
-        public static string CompressedJson(fsData data) {
-            var sb = new StringBuilder();
-            using ( var writer = new StringWriter(sb) ) {
+        public static string CompressedJson(fsData data)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter writer = new StringWriter(sb))
+            {
                 BuildCompressedString(data, writer);
                 return sb.ToString();
             }
         }
 
         /// Utility method that converts a double to a string.
-        private static string ConvertDoubleToString(double d) {
-            if ( Double.IsInfinity(d) || Double.IsNaN(d) )
+        private static string ConvertDoubleToString(double d)
+        {
+            if (Double.IsInfinity(d) || Double.IsNaN(d))
+            {
                 return d.ToString(CultureInfo.InvariantCulture);
+            }
 
             string doubledString = d.ToString(CultureInfo.InvariantCulture);
 
             // NOTE/HACK: If we don't serialize with a period or an exponent,
             // then the number will be deserialized as an Int64, not a double.
-            if ( doubledString.Contains(".") == false &&
+            if (doubledString.Contains(".") == false &&
                 doubledString.Contains("e") == false &&
-                doubledString.Contains("E") == false ) {
+                doubledString.Contains("E") == false)
+            {
                 doubledString += ".0";
             }
 

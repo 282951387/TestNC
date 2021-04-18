@@ -1,6 +1,6 @@
-using System.Linq;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Linq;
 using UnityEngine;
 
 
@@ -18,19 +18,28 @@ namespace NodeCanvas.BehaviourTrees
 
         private Node targetNode;
 
-        public override void OnGraphStarted() {
+        public override void OnGraphStarted()
+        {
             targetNode = graph.GetNodeWithTag<Node>(targetNodeTag);
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( string.IsNullOrEmpty(targetNodeTag) )
+            if (string.IsNullOrEmpty(targetNodeTag))
+            {
                 return Status.Failure;
+            }
 
-            if ( targetNode == null ) return Status.Failure;
+            if (targetNode == null)
+            {
+                return Status.Failure;
+            }
 
-            if ( graph.primeNode != targetNode )
+            if (graph.primeNode != targetNode)
+            {
                 graph.primeNode = targetNode;
+            }
 
             return Status.Success;
         }
@@ -40,11 +49,13 @@ namespace NodeCanvas.BehaviourTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Label("Switch To '" + targetNodeTag + "'");
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
             targetNodeTag = EditorUtils.Popup<string>("Node Tag", targetNodeTag, graph.GetAllTagedNodes<Node>().Select(n => n.tag));
         }
 

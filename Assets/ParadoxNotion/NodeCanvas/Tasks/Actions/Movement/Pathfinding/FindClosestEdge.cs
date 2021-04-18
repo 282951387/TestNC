@@ -20,8 +20,10 @@ namespace NodeCanvas.Tasks.Actions
 
         private NavMeshHit hit;
 
-        protected override void OnExecute() {
-            if ( NavMesh.FindClosestEdge(targetPosition.value, out hit, -1) ) {
+        protected override void OnExecute()
+        {
+            if (NavMesh.FindClosestEdge(targetPosition.value, out hit, -1))
+            {
                 saveFoundPosition.value = hit.position;
                 EndAction(true);
             }

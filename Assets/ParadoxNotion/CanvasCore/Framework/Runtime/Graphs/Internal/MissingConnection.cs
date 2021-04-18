@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using ParadoxNotion;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization;
-using ParadoxNotion;
+using UnityEngine;
 
 namespace NodeCanvas.Framework.Internal
 {
@@ -9,7 +9,7 @@ namespace NodeCanvas.Framework.Internal
     ///Missing node types are deserialized into this on deserialization and can load back if type is found
     [DoNotList]
     [Description("Please resolve the MissingConnection issue by either replacing the connection, importing the missing connection type, or refactoring the type in GraphRefactor.")]
-    sealed public class MissingConnection : Connection, IMissingRecoverable
+    public sealed class MissingConnection : Connection, IMissingRecoverable
     {
 
         [SerializeField]
@@ -17,12 +17,14 @@ namespace NodeCanvas.Framework.Internal
         [SerializeField]
         private string _recoveryState;
 
-        string IMissingRecoverable.missingType {
+        string IMissingRecoverable.missingType
+        {
             get { return _missingType; }
             set { _missingType = value; }
         }
 
-        string IMissingRecoverable.recoveryState {
+        string IMissingRecoverable.recoveryState
+        {
             get { return _recoveryState; }
             set { _recoveryState = value; }
         }
@@ -36,7 +38,8 @@ namespace NodeCanvas.Framework.Internal
         public override TipConnectionStyle tipConnectionStyle => TipConnectionStyle.None;
         public override ParadoxNotion.PlanarDirection direction => ParadoxNotion.PlanarDirection.Auto;
 
-        protected override void OnConnectionInspectorGUI() {
+        protected override void OnConnectionInspectorGUI()
+        {
             GUILayout.Label(_missingType.FormatError());
             GUILayout.Label(_recoveryState);
         }

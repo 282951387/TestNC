@@ -29,10 +29,12 @@ namespace NodeCanvas.Framework
         public NodeReference(T target) { Set(target); }
 
         ///Get referenced node given the graph it lives within
-        public T Get(Graph graph) {
+        public T Get(Graph graph)
+        {
             T reference;
-            if ( _targetNodeRef == null ) {
-                var _this = this;
+            if (_targetNodeRef == null)
+            {
+                NodeReference<T> _this = this;
                 reference = graph.GetAllNodesOfType<T>().FirstOrDefault(x => x.UID == _this._targetNodeUID);
                 _targetNodeRef = new WeakReference<T>(reference);
             }
@@ -41,8 +43,9 @@ namespace NodeCanvas.Framework
         }
 
         ///Set referenced node
-        public void Set(T target) {
-            if ( _targetNodeRef == null ) { _targetNodeRef = new WeakReference<T>(target); }
+        public void Set(T target)
+        {
+            if (_targetNodeRef == null) { _targetNodeRef = new WeakReference<T>(target); }
             _targetNodeRef.SetTarget(target);
             _targetNodeUID = target != null ? target.UID : null;
         }

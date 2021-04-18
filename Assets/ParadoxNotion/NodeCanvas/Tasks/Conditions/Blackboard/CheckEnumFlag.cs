@@ -1,7 +1,7 @@
-﻿using System;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion.Design;
+using System;
 
 [Category("✫ Blackboard")]
 public class CheckEnumFlag : ConditionTask
@@ -22,7 +22,10 @@ public class CheckEnumFlag : ConditionTask
     {
         DrawDefaultInspector();
 
-        if (Flag.varType != Variable.refType) Flag.SetType(Variable.refType);
+        if (Flag.varType != Variable.refType)
+        {
+            Flag.SetType(Variable.refType);
+        }
     }
 
 #endif

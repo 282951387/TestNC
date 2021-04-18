@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -18,11 +18,13 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<List<GameObject>> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "GetObjects in '" + targetLayers + "' as " + saveAs; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             saveAs.value = ParadoxNotion.ObjectUtils.FindGameObjectsWithinLayerMask(targetLayers.value).ToList();
             EndAction(saveAs.value.Count != 0);
         }

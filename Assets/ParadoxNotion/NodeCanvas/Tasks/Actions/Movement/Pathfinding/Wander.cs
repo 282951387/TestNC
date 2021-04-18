@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
-
-using NavMeshAgent = UnityEngine.AI.NavMeshAgent;
+using UnityEngine;
 using NavMesh = UnityEngine.AI.NavMesh;
+using NavMeshAgent = UnityEngine.AI.NavMeshAgent;
 using NavMeshHit = UnityEngine.AI.NavMeshHit;
 
 namespace NodeCanvas.Tasks.Actions
@@ -20,40 +19,51 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<float> maxWanderDistance = 20;
         public bool repeat = true;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             agent.speed = speed.value;
             DoWander();
         }
 
-        protected override void OnUpdate() {
-            if ( !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + keepDistance.value ) {
-                if ( repeat ) {
+        protected override void OnUpdate()
+        {
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + keepDistance.value)
+            {
+                if (repeat)
+                {
                     DoWander();
-                } else {
+                }
+                else
+                {
                     EndAction();
                 }
             }
         }
 
-        void DoWander() {
-            var min = minWanderDistance.value;
-            var max = maxWanderDistance.value;
+        private void DoWander()
+        {
+            float min = minWanderDistance.value;
+            float max = maxWanderDistance.value;
             min = Mathf.Clamp(min, 0.01f, max);
             max = Mathf.Clamp(max, min, max);
-            var wanderPos = agent.transform.position;
-            while ( ( wanderPos - agent.transform.position ).sqrMagnitude < ( min * min ) ) {
-                wanderPos = ( Random.insideUnitSphere * max ) + agent.transform.position;
+            Vector3 wanderPos = agent.transform.position;
+            while ((wanderPos - agent.transform.position).sqrMagnitude < (min * min))
+            {
+                wanderPos = (Random.insideUnitSphere * max) + agent.transform.position;
             }
 
             NavMeshHit hit;
-            if ( NavMesh.SamplePosition(wanderPos, out hit, float.PositiveInfinity, NavMesh.AllAreas) ) {
+            if (NavMesh.SamplePosition(wanderPos, out hit, float.PositiveInfinity, NavMesh.AllAreas))
+            {
                 agent.SetDestination(hit.position);
             }
         }
 
         protected override void OnPause() { OnStop(); }
-        protected override void OnStop() {
-            if ( agent != null && agent.gameObject.activeSelf ) {
+        protected override void OnStop()
+        {
+            if (agent != null && agent.gameObject.activeSelf)
+            {
                 agent.Warp(agent.transform.position);
                 agent.ResetPath();
             }

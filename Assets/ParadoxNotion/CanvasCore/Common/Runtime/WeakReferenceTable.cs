@@ -11,26 +11,32 @@ namespace ParadoxNotion
 
         public int Count => keys.Count;
 
-        public WeakReferenceTable() {
+        public WeakReferenceTable()
+        {
             keys = new List<WeakReference<TKey>>();
             values = new List<TValue>();
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             keys.Clear();
             values.Clear();
         }
 
-        public void Add(TKey key, TValue value) {
+        public void Add(TKey key, TValue value)
+        {
             CheckCount();
             keys.Insert(0, new WeakReference<TKey>(key));
             values.Insert(0, value);
         }
 
-        public void Remove(TKey key) {
+        public void Remove(TKey key)
+        {
             CheckCount();
-            for ( var i = keys.Count; i-- > 0; ) {
-                if ( keys[i].TryGetTarget(out TKey _k) && ReferenceEquals(_k, key) ) {
+            for (int i = keys.Count; i-- > 0;)
+            {
+                if (keys[i].TryGetTarget(out TKey _k) && ReferenceEquals(_k, key))
+                {
                     keys.RemoveAt(i);
                     values[i].Dispose();
                     values.RemoveAt(i);
@@ -38,16 +44,20 @@ namespace ParadoxNotion
             }
         }
 
-        public bool TryGetValueWithRefCheck(TKey key, out TValue value) {
+        public bool TryGetValueWithRefCheck(TKey key, out TValue value)
+        {
             CheckCount();
-            for ( var i = keys.Count; i-- > 0; ) {
+            for (int i = keys.Count; i-- > 0;)
+            {
                 TKey _k;
-                if ( !keys[i].TryGetTarget(out _k) ) {
+                if (!keys[i].TryGetTarget(out _k))
+                {
                     keys.RemoveAt(i);
                     values[i].Dispose();
                     values.RemoveAt(i);
                 }
-                if ( ReferenceEquals(_k, key) ) {
+                if (ReferenceEquals(_k, key))
+                {
                     value = values[i];
                     return true;
                 }
@@ -56,10 +66,13 @@ namespace ParadoxNotion
             return false;
         }
 
-        public void RemoveMissingReferences() {
+        public void RemoveMissingReferences()
+        {
             CheckCount();
-            for ( var i = keys.Count; i-- > 0; ) {
-                if ( !keys[i].TryGetTarget(out TKey _k) ) {
+            for (int i = keys.Count; i-- > 0;)
+            {
+                if (!keys[i].TryGetTarget(out TKey _k))
+                {
                     keys.RemoveAt(i);
                     values[i].Dispose();
                     values.RemoveAt(i);
@@ -67,8 +80,9 @@ namespace ParadoxNotion
             }
         }
 
-        void CheckCount() {
-            if ( keys.Count != values.Count ) { throw new Exception("Mismatched indeces"); }
+        private void CheckCount()
+        {
+            if (keys.Count != values.Count) { throw new Exception("Mismatched indeces"); }
         }
     }
 }

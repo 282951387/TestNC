@@ -21,8 +21,9 @@ namespace NodeCanvas.DialogueTrees
         public override int maxOutConnections { get { return 0; } }
         public override bool requireActorSelection { get { return false; } }
 
-        protected override Status OnExecute(Component agent, IBlackboard bb) {
-            if ( target == null ) { return Error("Target Node of Jumper node is null"); }
+        protected override Status OnExecute(Component agent, IBlackboard bb)
+        {
+            if (target == null) { return Error("Target Node of Jumper node is null"); }
             DLGTree.EnterNode(target);
             return Status.Success;
         }
@@ -31,7 +32,8 @@ namespace NodeCanvas.DialogueTrees
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Label(string.Format("<b>{0}</b>", target != null ? target.ToString() : "NONE"));
         }
 #endif

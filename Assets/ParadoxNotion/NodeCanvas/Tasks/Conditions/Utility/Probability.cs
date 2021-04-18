@@ -14,11 +14,13 @@ namespace NodeCanvas.Tasks.Conditions
         public BBParameter<float> probability = 0.5f;
         public BBParameter<float> maxValue = 1;
 
-        protected override string info {
-            get { return ( probability.value / maxValue.value * 100 ) + "%"; }
+        protected override string info
+        {
+            get { return (probability.value / maxValue.value * 100) + "%"; }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return Random.Range(0f, maxValue.value) <= probability.value;
         }
     }

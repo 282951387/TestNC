@@ -19,17 +19,22 @@ namespace NodeCanvas.BehaviourTrees
 
         private int lastRunningNodeIndex = 0;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            for ( var i = dynamic ? 0 : lastRunningNodeIndex; i < outConnections.Count; i++ ) {
+            for (int i = dynamic ? 0 : lastRunningNodeIndex; i < outConnections.Count; i++)
+            {
 
                 status = outConnections[i].Execute(agent, blackboard);
 
-                switch ( status ) {
+                switch (status)
+                {
                     case Status.Running:
 
-                        if ( dynamic && i < lastRunningNodeIndex ) {
-                            for ( var j = i + 1; j <= lastRunningNodeIndex; j++ ) {
+                        if (dynamic && i < lastRunningNodeIndex)
+                        {
+                            for (int j = i + 1; j <= lastRunningNodeIndex; j++)
+                            {
                                 outConnections[j].Reset();
                             }
                         }
@@ -39,8 +44,10 @@ namespace NodeCanvas.BehaviourTrees
 
                     case Status.Failure:
 
-                        if ( dynamic && i < lastRunningNodeIndex ) {
-                            for ( var j = i + 1; j <= lastRunningNodeIndex; j++ ) {
+                        if (dynamic && i < lastRunningNodeIndex)
+                        {
+                            for (int j = i + 1; j <= lastRunningNodeIndex; j++)
+                            {
                                 outConnections[j].Reset();
                             }
                         }
@@ -52,13 +59,16 @@ namespace NodeCanvas.BehaviourTrees
             return Status.Success;
         }
 
-        protected override void OnReset() {
+        protected override void OnReset()
+        {
             lastRunningNodeIndex = 0;
-            if ( random ) { outConnections = outConnections.Shuffle(); }
+            if (random) { outConnections = outConnections.Shuffle(); }
         }
 
-        public override void OnChildDisconnected(int index) {
-            if ( index != 0 && index == lastRunningNodeIndex ) {
+        public override void OnChildDisconnected(int index)
+        {
+            if (index != 0 && index == lastRunningNodeIndex)
+            {
                 lastRunningNodeIndex--;
             }
         }
@@ -69,9 +79,10 @@ namespace NodeCanvas.BehaviourTrees
         /////////GUI AND EDITOR STUFF////////////
         /////////////////////////////////////////
 #if UNITY_EDITOR
-        protected override void OnNodeGUI() {
-            if ( dynamic ) { GUILayout.Label("<b>DYNAMIC</b>"); }
-            if ( random ) { GUILayout.Label("<b>RANDOM</b>"); }
+        protected override void OnNodeGUI()
+        {
+            if (dynamic) { GUILayout.Label("<b>DYNAMIC</b>"); }
+            if (random) { GUILayout.Label("<b>RANDOM</b>"); }
         }
 #endif
 

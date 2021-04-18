@@ -38,44 +38,53 @@ namespace NodeCanvas.StateMachines
 
         ////
 
-        protected override void OnEnter() {
+        protected override void OnEnter()
+        {
 
-            if ( subGraph == null ) {
+            if (subGraph == null)
+            {
                 Finish(false);
                 return;
             }
 
             currentInstance = (BehaviourTree)this.CheckInstance();
-            currentInstance.repeat = ( executionMode == BTExecutionMode.Repeat );
+            currentInstance.repeat = (executionMode == BTExecutionMode.Repeat);
             currentInstance.updateInterval = 0;
             this.TryWriteAndBindMappedVariables();
             currentInstance.StartGraph(graph.agent, graph.blackboard.parent, Graph.UpdateMode.Manual, OnFinish);
             OnUpdate();
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
-            currentInstance.UpdateGraph(this.graph.deltaTime);
+            currentInstance.UpdateGraph(graph.deltaTime);
 
-            if ( !string.IsNullOrEmpty(successEvent) && currentInstance.rootStatus == Status.Success ) {
+            if (!string.IsNullOrEmpty(successEvent) && currentInstance.rootStatus == Status.Success)
+            {
                 currentInstance.Stop(true);
             }
 
-            if ( !string.IsNullOrEmpty(failureEvent) && currentInstance.rootStatus == Status.Failure ) {
+            if (!string.IsNullOrEmpty(failureEvent) && currentInstance.rootStatus == Status.Failure)
+            {
                 currentInstance.Stop(false);
             }
         }
 
-        void OnFinish(bool success) {
-            if ( this.status == Status.Running ) {
+        private void OnFinish(bool success)
+        {
+            if (status == Status.Running)
+            {
 
                 this.TryReadAndUnbindMappedVariables();
 
-                if ( !string.IsNullOrEmpty(successEvent) && success ) {
+                if (!string.IsNullOrEmpty(successEvent) && success)
+                {
                     SendEvent(successEvent);
                 }
 
-                if ( !string.IsNullOrEmpty(failureEvent) && !success ) {
+                if (!string.IsNullOrEmpty(failureEvent) && !success)
+                {
                     SendEvent(failureEvent);
                 }
 
@@ -83,14 +92,20 @@ namespace NodeCanvas.StateMachines
             }
         }
 
-        protected override void OnExit() {
-            if ( currentInstance != null ) {
-                if ( this.status == Status.Running ) {
+        protected override void OnExit()
+        {
+            if (currentInstance != null)
+            {
+                if (status == Status.Running)
+                {
                     this.TryReadAndUnbindMappedVariables();
                 }
-                if ( exitMode == BTExitMode.StopAndRestart ) {
+                if (exitMode == BTExitMode.StopAndRestart)
+                {
                     currentInstance.Stop();
-                } else {
+                }
+                else
+                {
                     currentInstance.Pause();
                 }
             }

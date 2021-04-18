@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR
 
-using UnityEngine;
-using UnityEditor;
-using ParadoxNotion.Design;
-using ParadoxNotion;
 using NodeCanvas.Framework;
+using ParadoxNotion;
+using ParadoxNotion.Design;
+using UnityEditor;
+using UnityEngine;
 
 namespace NodeCanvas.Editor
 {
@@ -13,13 +13,15 @@ namespace NodeCanvas.Editor
     public class SignalDefinitionInspector : UnityEditor.Editor
     {
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
 
             base.OnInspectorGUI();
 
-            var def = (SignalDefinition)target;
+            SignalDefinition def = (SignalDefinition)target;
 
-            if ( GUILayout.Button("Add Parameter") ) {
+            if (GUILayout.Button("Add Parameter"))
+            {
                 EditorUtils.ShowPreferedTypesSelectionMenu(typeof(object), (t) =>
                 {
                     UndoUtility.RecordObjectComplete(def, "Add Parameter");
@@ -29,12 +31,12 @@ namespace NodeCanvas.Editor
             }
 
             UndoUtility.CheckUndo(def, "Definition");
-            var options = new EditorUtils.ReorderableListOptions();
+            EditorUtils.ReorderableListOptions options = new EditorUtils.ReorderableListOptions();
             options.allowRemove = true;
             options.unityObjectContext = def;
             EditorUtils.ReorderableList(def.parameters, options, (i, picked) =>
             {
-                var parameter = def.parameters[i];
+                DynamicParameterDefinition parameter = def.parameters[i];
                 GUILayout.BeginHorizontal();
                 parameter.name = UnityEditor.EditorGUILayout.DelayedTextField(parameter.name, GUILayout.Width(150), GUILayout.ExpandWidth(true));
                 EditorUtils.ButtonTypePopup("", parameter.type, (t) => { parameter.type = t; });
@@ -43,7 +45,7 @@ namespace NodeCanvas.Editor
             UndoUtility.CheckDirty(def);
 
             EditorUtils.EndOfInspector();
-            if ( Event.current.isMouse ) { Repaint(); }
+            if (Event.current.isMouse) { Repaint(); }
         }
     }
 }

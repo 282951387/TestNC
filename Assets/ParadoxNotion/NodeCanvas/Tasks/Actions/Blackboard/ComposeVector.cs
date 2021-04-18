@@ -17,11 +17,13 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<Vector3> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "New Vector as " + saveAs; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             saveAs.value = new Vector3(x.value, y.value, z.value);
             EndAction();
         }

@@ -1,7 +1,7 @@
-﻿using System;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion.Design;
+using System;
 
 [Category("✫ Blackboard")]
 public class SetEnumFlag : ActionTask
@@ -17,10 +17,16 @@ public class SetEnumFlag : ActionTask
 
     protected override void OnExecute()
     {
-        var Value = (int)Variable.value;
+        int Value = (int)Variable.value;
 
-        if (Clear.value) Value &= ~(int)Flag.value;
-        else Value |= (int)Flag.value;
+        if (Clear.value)
+        {
+            Value &= ~(int)Flag.value;
+        }
+        else
+        {
+            Value |= (int)Flag.value;
+        }
 
         Variable.value = Enum.ToObject(Variable.varRef.varType, Value);
 
@@ -33,7 +39,10 @@ public class SetEnumFlag : ActionTask
     {
         DrawDefaultInspector();
 
-        if (Flag.varType != Variable.refType) Flag.SetType(Variable.refType);
+        if (Flag.varType != Variable.refType)
+        {
+            Flag.SetType(Variable.refType);
+        }
     }
 
 #endif

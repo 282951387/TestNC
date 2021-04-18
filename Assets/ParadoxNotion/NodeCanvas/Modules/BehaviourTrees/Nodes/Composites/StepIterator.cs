@@ -16,16 +16,19 @@ namespace NodeCanvas.BehaviourTrees
 
         private int current;
 
-        public override void OnGraphStarted() {
+        public override void OnGraphStarted()
+        {
             current = 0;
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
             current = current % outConnections.Count;
             return outConnections[current].Execute(agent, blackboard);
         }
 
-        protected override void OnReset() {
+        protected override void OnReset()
+        {
             current++;
         }
     }

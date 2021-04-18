@@ -18,17 +18,20 @@ namespace NodeCanvas.Framework.Internal
         [SerializeField]
         private string _recoveryState;
 
-        string IMissingRecoverable.missingType {
+        string IMissingRecoverable.missingType
+        {
             get { return _missingType; }
             set { _missingType = value; }
         }
 
-        string IMissingRecoverable.recoveryState {
+        string IMissingRecoverable.recoveryState
+        {
             get { return _recoveryState; }
             set { _recoveryState = value; }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get { return ReflectionTools.FriendlyTypeName(_missingType).FormatError(); }
         }
 
@@ -38,7 +41,8 @@ namespace NodeCanvas.Framework.Internal
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
             GUILayout.Label(_missingType.FormatError());
             GUILayout.Label(_recoveryState);
         }

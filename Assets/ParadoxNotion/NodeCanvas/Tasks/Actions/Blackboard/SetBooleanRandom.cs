@@ -14,11 +14,13 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<bool> boolVariable;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Set " + boolVariable + " Random"; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             boolVariable.value = Random.Range(0, 2) == 0 ? false : true;
             EndAction();
         }

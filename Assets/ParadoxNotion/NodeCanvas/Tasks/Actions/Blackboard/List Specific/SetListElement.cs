@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -15,9 +15,11 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<int> index;
         public BBParameter<T> newValue;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( index.value < 0 || index.value >= targetList.value.Count ) {
+            if (index.value < 0 || index.value >= targetList.value.Count)
+            {
                 EndAction(false);
                 return;
             }

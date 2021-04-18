@@ -17,11 +17,13 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<float> valueB;
         public bool perSecond;
 
-        protected override string info {
-            get { return string.Format("{0} {1} {2}{3}", valueA, OperationTools.GetOperationString(Operation), valueB, ( perSecond ? " Per Second" : "" )); }
+        protected override string info
+        {
+            get { return string.Format("{0} {1} {2}{3}", valueA, OperationTools.GetOperationString(Operation), valueB, (perSecond ? " Per Second" : "")); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             valueA.value = OperationTools.Operate(valueA.value, valueB.value, Operation, perSecond ? UnityEngine.Time.deltaTime : 1f);
             EndAction(true);
         }

@@ -21,21 +21,26 @@ namespace NodeCanvas.Tasks.Actions
 
         private float currentValue;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Set Layer " + layerIndex + ", weight " + layerWeight; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             currentValue = agent.GetLayerWeight(layerIndex.value);
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
             agent.SetLayerWeight(layerIndex.value, Mathf.Lerp(currentValue, layerWeight.value, elapsedTime / transitTime));
 
-            if ( elapsedTime >= transitTime )
+            if (elapsedTime >= transitTime)
+            {
                 EndAction(true);
+            }
         }
     }
 }

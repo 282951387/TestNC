@@ -5,10 +5,10 @@ namespace ParadoxNotion.Design
 
     ///Derive this to create custom attributes to be drawn with an AttributeDrawer<T>.
     [AttributeUsage(AttributeTargets.Field)]
-    abstract public class DrawerAttribute : Attribute
+    public abstract class DrawerAttribute : Attribute
     {
-        virtual public int priority { get { return int.MaxValue; } }
-        virtual public bool isDecorator { get { return false; } }
+        public virtual int priority { get { return int.MaxValue; } }
+        public virtual bool isDecorator { get { return false; } }
     }
 
     ///----------------------------------------------------------------------------------------------
@@ -25,11 +25,12 @@ namespace ParadoxNotion.Design
     [AttributeUsage(AttributeTargets.Field)]
     public class ShowIfAttribute : DrawerAttribute
     {
-        readonly public string fieldName;
-        readonly public int checkValue;
+        public readonly string fieldName;
+        public readonly int checkValue;
         public override bool isDecorator { get { return true; } }
         public override int priority { get { return 1; } }
-        public ShowIfAttribute(string fieldName, int checkValue) {
+        public ShowIfAttribute(string fieldName, int checkValue)
+        {
             this.fieldName = fieldName;
             this.checkValue = checkValue;
         }
@@ -47,13 +48,14 @@ namespace ParadoxNotion.Design
     [AttributeUsage(AttributeTargets.Field)]
     public class ShowButtonAttribute : DrawerAttribute
     {
-        readonly public string buttonTitle;
-        readonly public string methodName;
+        public readonly string buttonTitle;
+        public readonly string methodName;
         public override bool isDecorator { get { return true; } }
         public override int priority { get { return 3; } }
-        public ShowButtonAttribute(string buttonTitle, string methodnameCallback) {
+        public ShowButtonAttribute(string buttonTitle, string methodnameCallback)
+        {
             this.buttonTitle = buttonTitle;
-            this.methodName = methodnameCallback;
+            methodName = methodnameCallback;
         }
     }
 
@@ -61,10 +63,11 @@ namespace ParadoxNotion.Design
     [AttributeUsage(AttributeTargets.Field)]
     public class CallbackAttribute : DrawerAttribute
     {
-        readonly public string methodName;
+        public readonly string methodName;
         public override bool isDecorator { get { return true; } }
         public override int priority { get { return 4; } }
-        public CallbackAttribute(string methodName) {
+        public CallbackAttribute(string methodName)
+        {
             this.methodName = methodName;
         }
     }
@@ -76,11 +79,13 @@ namespace ParadoxNotion.Design
     public class MinValueAttribute : DrawerAttribute
     {
         public override int priority { get { return 5; } }
-        readonly public float min;
-        public MinValueAttribute(float min) {
+        public readonly float min;
+        public MinValueAttribute(float min)
+        {
             this.min = min;
         }
-        public MinValueAttribute(int min) {
+        public MinValueAttribute(int min)
+        {
             this.min = min;
         }
     }
@@ -103,8 +108,9 @@ namespace ParadoxNotion.Design
     [AttributeUsage(AttributeTargets.Field)]
     public class TextAreaFieldAttribute : DrawerAttribute
     {
-        readonly public int numberOfLines;
-        public TextAreaFieldAttribute(int numberOfLines) {
+        public readonly int numberOfLines;
+        public TextAreaFieldAttribute(int numberOfLines)
+        {
             this.numberOfLines = numberOfLines;
         }
     }
@@ -113,8 +119,9 @@ namespace ParadoxNotion.Design
     [AttributeUsage(AttributeTargets.Field)]
     public class PopupFieldAttribute : DrawerAttribute
     {
-        readonly public object[] options;
-        public PopupFieldAttribute(params object[] options) {
+        public readonly object[] options;
+        public PopupFieldAttribute(params object[] options)
+        {
             this.options = options;
         }
     }
@@ -123,13 +130,15 @@ namespace ParadoxNotion.Design
 	[AttributeUsage(AttributeTargets.Field)]
     public class SliderFieldAttribute : DrawerAttribute
     {
-        readonly public float min;
-        readonly public float max;
-        public SliderFieldAttribute(float min, float max) {
+        public readonly float min;
+        public readonly float max;
+        public SliderFieldAttribute(float min, float max)
+        {
             this.min = min;
             this.max = max;
         }
-        public SliderFieldAttribute(int min, int max) {
+        public SliderFieldAttribute(int min, int max)
+        {
             this.min = min;
             this.max = max;
         }

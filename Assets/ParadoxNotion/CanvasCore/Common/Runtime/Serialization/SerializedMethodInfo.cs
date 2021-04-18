@@ -24,9 +24,11 @@ namespace ParadoxNotion.Serialization
         private bool _hasChanged;
 
         ///serialize to strings info
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
             _hasChanged = false;
-            if ( _method != null ) {
+            if (_method != null)
+            {
                 _baseInfo = string.Format("{0}|{1}|{2}", _method.RTReflectedOrDeclaredType().FullName, _method.Name, _method.ReturnType.FullName);
                 _paramsInfo = string.Join("|", _method.GetParameters().Select(p => p.ParameterType.FullName).ToArray());
                 _genericArgumentsInfo = _method.IsGenericMethod ? string.Join("|", _method.RTGetGenericArguments().Select(a => a.FullName).ToArray()) : null;
@@ -34,69 +36,83 @@ namespace ParadoxNotion.Serialization
         }
 
         //deserialize from strings info
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
             _hasChanged = false;
 
-            if ( _baseInfo == null ) {
+            if (_baseInfo == null)
+            {
                 return;
             }
 
-            var split = _baseInfo.Split('|');
-            var type = ReflectionTools.GetType(split[0], true);
-            if ( type == null ) {
+            string[] split = _baseInfo.Split('|');
+            Type type = ReflectionTools.GetType(split[0], true);
+            if (type == null)
+            {
                 _method = null;
                 return;
             }
 
-            var name = split[1];
-            var returnType = split.Length >= 3 ? ReflectionTools.GetType(split[2], true) : null;
-            var isSerializedGeneric = !string.IsNullOrEmpty(_genericArgumentsInfo);
-            var paramTypeNames = string.IsNullOrEmpty(_paramsInfo) ? null : _paramsInfo.Split('|');
-            var parameterTypes = paramTypeNames != null ? new Type[paramTypeNames.Length] : Type.EmptyTypes;
-            var paramsFail = false;
-            for ( var i = 0; i < parameterTypes.Length; i++ ) {
-                var pType = ReflectionTools.GetType(paramTypeNames[i], true);
-                if ( pType == null ) {
+            string name = split[1];
+            Type returnType = split.Length >= 3 ? ReflectionTools.GetType(split[2], true) : null;
+            bool isSerializedGeneric = !string.IsNullOrEmpty(_genericArgumentsInfo);
+            string[] paramTypeNames = string.IsNullOrEmpty(_paramsInfo) ? null : _paramsInfo.Split('|');
+            Type[] parameterTypes = paramTypeNames != null ? new Type[paramTypeNames.Length] : Type.EmptyTypes;
+            bool paramsFail = false;
+            for (int i = 0; i < parameterTypes.Length; i++)
+            {
+                Type pType = ReflectionTools.GetType(paramTypeNames[i], true);
+                if (pType == null)
+                {
                     paramsFail = true;
                     break;
                 }
                 parameterTypes[i] = pType;
             }
 
-            if ( !paramsFail ) {
+            if (!paramsFail)
+            {
 
-                if ( isSerializedGeneric ) {
+                if (isSerializedGeneric)
+                {
 
-                    var genericArgTypeNames = _genericArgumentsInfo.Split('|');
-                    var genericArgTypes = new Type[genericArgTypeNames.Length];
-                    var genericArgsFail = false;
-                    for ( var i = 0; i < genericArgTypes.Length; i++ ) {
-                        var argType = ReflectionTools.GetType(genericArgTypeNames[i], true);
-                        if ( argType == null ) {
+                    string[] genericArgTypeNames = _genericArgumentsInfo.Split('|');
+                    Type[] genericArgTypes = new Type[genericArgTypeNames.Length];
+                    bool genericArgsFail = false;
+                    for (int i = 0; i < genericArgTypes.Length; i++)
+                    {
+                        Type argType = ReflectionTools.GetType(genericArgTypeNames[i], true);
+                        if (argType == null)
+                        {
                             genericArgsFail = true;
                             break;
                         }
                         genericArgTypes[i] = argType;
                     }
 
-                    if ( !genericArgsFail ) {
+                    if (!genericArgsFail)
+                    {
                         _method = type.RTGetMethod(name, parameterTypes, returnType, genericArgTypes);
                     }
 
-                } else {
+                }
+                else
+                {
                     _method = type.RTGetMethod(name, parameterTypes, returnType);
                 }
             }
 
             //fallback
-            if ( _method == null ) {
+            if (_method == null)
+            {
                 _hasChanged = true;
-                var methods = type.RTGetMethods();
+                MethodInfo[] methods = type.RTGetMethods();
                 _method = methods.FirstOrDefault(m => m.Name == name && m.GetParameters().Length == parameterTypes.Length && isSerializedGeneric == m.IsGenericMethod);
-                if ( _method == null ) { _method = methods.FirstOrDefault(m => m.Name == name); }
+                if (_method == null) { _method = methods.FirstOrDefault(m => m.Name == name); }
 
-                if ( _method != null && _method.IsGenericMethod ) {
-                    var argType = isSerializedGeneric ? ReflectionTools.GetType(_genericArgumentsInfo.Split('|').First(), true) : _method.GetFirstGenericParameterConstraintType();
+                if (_method != null && _method.IsGenericMethod)
+                {
+                    Type argType = isSerializedGeneric ? ReflectionTools.GetType(_genericArgumentsInfo.Split('|').First(), true) : _method.GetFirstGenericParameterConstraintType();
                     _method = _method.MakeGenericMethod(argType);
                 }
             }
@@ -105,7 +121,8 @@ namespace ParadoxNotion.Serialization
         //required
         public SerializedMethodInfo() { }
         ///Serialize a new MethodInfo
-        public SerializedMethodInfo(MethodInfo method) {
+        public SerializedMethodInfo(MethodInfo method)
+        {
             _hasChanged = false;
             _method = method;
         }
@@ -117,7 +134,8 @@ namespace ParadoxNotion.Serialization
         public override string ToString() { return AsString(); }
 
         //operator
-        public static implicit operator MethodInfo(SerializedMethodInfo value) {
+        public static implicit operator MethodInfo(SerializedMethodInfo value)
+        {
             return value != null ? value._method : null;
         }
     }

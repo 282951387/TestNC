@@ -19,35 +19,43 @@ namespace ParadoxNotion.Serialization
         [NonSerialized]
         private bool _hasChanged;
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
             _hasChanged = false;
-            if ( _constructor != null ) {
+            if (_constructor != null)
+            {
                 _baseInfo = _constructor.RTReflectedOrDeclaredType().FullName + "|" + "$Constructor";
                 _paramsInfo = string.Join("|", _constructor.GetParameters().Select(p => p.ParameterType.FullName).ToArray());
             }
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
             _hasChanged = false;
 
-            if ( _baseInfo == null ) {
+            if (_baseInfo == null)
+            {
                 return;
             }
 
-            var split = _baseInfo.Split('|');
-            var type = ReflectionTools.GetType(split[0], true);
-            if ( type == null ) {
+            string[] split = _baseInfo.Split('|');
+            Type type = ReflectionTools.GetType(split[0], true);
+            if (type == null)
+            {
                 _constructor = null;
                 return;
             }
 
-            var paramTypeNames = string.IsNullOrEmpty(_paramsInfo) ? null : _paramsInfo.Split('|');
-            var parameterTypes = paramTypeNames != null ? new Type[paramTypeNames.Length] : Type.EmptyTypes;
-            var paramsFail = false;
-            if ( paramTypeNames != null ) {
-                for ( var i = 0; i < paramTypeNames.Length; i++ ) {
-                    var pType = ReflectionTools.GetType(paramTypeNames[i], true);
-                    if ( pType == null ) {
+            string[] paramTypeNames = string.IsNullOrEmpty(_paramsInfo) ? null : _paramsInfo.Split('|');
+            Type[] parameterTypes = paramTypeNames != null ? new Type[paramTypeNames.Length] : Type.EmptyTypes;
+            bool paramsFail = false;
+            if (paramTypeNames != null)
+            {
+                for (int i = 0; i < paramTypeNames.Length; i++)
+                {
+                    Type pType = ReflectionTools.GetType(paramTypeNames[i], true);
+                    if (pType == null)
+                    {
                         paramsFail = true;
                         break;
                     }
@@ -55,21 +63,24 @@ namespace ParadoxNotion.Serialization
                 }
             }
 
-            if ( !paramsFail ) {
+            if (!paramsFail)
+            {
                 _constructor = type.RTGetConstructor(parameterTypes);
             }
 
             //fallback
-            if ( _constructor == null ) {
+            if (_constructor == null)
+            {
                 _hasChanged = true;
-                var constructors = type.RTGetConstructors();
+                ConstructorInfo[] constructors = type.RTGetConstructors();
                 _constructor = constructors.FirstOrDefault(c => c.GetParameters().Length == parameterTypes.Length);
-                if ( _constructor == null ) { _constructor = constructors.FirstOrDefault(); }
+                if (_constructor == null) { _constructor = constructors.FirstOrDefault(); }
             }
         }
 
         public SerializedConstructorInfo() { }
-        public SerializedConstructorInfo(ConstructorInfo constructor) {
+        public SerializedConstructorInfo(ConstructorInfo constructor)
+        {
             _hasChanged = false;
             _constructor = constructor;
         }
@@ -81,7 +92,8 @@ namespace ParadoxNotion.Serialization
         public override string ToString() { return AsString(); }
 
         //operator
-        public static implicit operator ConstructorInfo(SerializedConstructorInfo value) {
+        public static implicit operator ConstructorInfo(SerializedConstructorInfo value)
+        {
             return value != null ? value._constructor : null;
         }
 

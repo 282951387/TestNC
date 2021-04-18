@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Design;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 
@@ -23,67 +23,80 @@ namespace NodeCanvas.Tasks.Actions
 
         private MethodInfo targetMethod { get { return functionWrapper != null ? functionWrapper.GetMethod() : null; } }
 
-        public override System.Type agentType {
+        public override System.Type agentType
+        {
             get
             {
-                if ( targetMethod == null ) { return typeof(Transform); }
+                if (targetMethod == null) { return typeof(Transform); }
                 return targetMethod.IsStatic ? null : targetMethod.RTReflectedOrDeclaredType();
             }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( functionWrapper == null ) { return "No Action Selected"; }
-                if ( targetMethod == null ) { return functionWrapper.AsString().FormatError(); }
-                var mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
+                if (functionWrapper == null) { return "No Action Selected"; }
+                if (targetMethod == null) { return functionWrapper.AsString().FormatError(); }
+                string mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
                 return string.Format("[ {0}.{1}({2}) ]", mInfo, targetMethod.Name, functionWrapper.GetVariables().Length == 2 ? functionWrapper.GetVariables()[1].ToString() : "");
             }
         }
 
         ParadoxNotion.Serialization.ISerializedReflectedInfo IReflectedWrapper.GetSerializedInfo() { return functionWrapper?.GetSerializedMethod(); }
 
-        public override void OnValidate(ITaskSystem ownerSystem) {
-            if ( functionWrapper != null && functionWrapper.HasChanged() ) {
+        public override void OnValidate(ITaskSystem ownerSystem)
+        {
+            if (functionWrapper != null && functionWrapper.HasChanged())
+            {
                 SetMethod(functionWrapper.GetMethod());
             }
         }
 
-        protected override string OnInit() {
-            if ( targetMethod == null ) { return "Missing Method"; }
+        protected override string OnInit()
+        {
+            if (targetMethod == null) { return "Missing Method"; }
 
-            try {
+            try
+            {
                 functionWrapper.Init(targetMethod.IsStatic ? null : agent);
                 return null;
             }
             catch { return "ImplementedAction Error"; }
         }
 
-        protected override void OnUpdate() {
-            if ( functionWrapper == null ) {
+        protected override void OnUpdate()
+        {
+            if (functionWrapper == null)
+            {
                 EndAction(false);
                 return;
             }
 
             actionStatus = (Status)functionWrapper.Call();
 
-            if ( actionStatus == Status.Success ) {
+            if (actionStatus == Status.Success)
+            {
                 EndAction(true);
                 return;
             }
 
-            if ( actionStatus == Status.Failure ) {
+            if (actionStatus == Status.Failure)
+            {
                 EndAction(false);
                 return;
             }
         }
 
-        protected override void OnStop() {
+        protected override void OnStop()
+        {
             actionStatus = Status.Resting;
         }
 
-        void SetMethod(MethodInfo method) {
-            if ( method != null ) {
+        private void SetMethod(MethodInfo method)
+        {
+            if (method != null)
+            {
                 functionWrapper = ReflectedFunctionWrapper.Create(method, blackboard);
             }
         }
@@ -93,35 +106,43 @@ namespace NodeCanvas.Tasks.Actions
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
-            if ( !Application.isPlaying && GUILayout.Button("Select Action Method") ) {
-                var menu = new UnityEditor.GenericMenu();
-                if ( agent != null ) {
-                    foreach ( var comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags != HideFlags.HideInInspector) ) {
+            if (!Application.isPlaying && GUILayout.Button("Select Action Method"))
+            {
+                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
+                if (agent != null)
+                {
+                    foreach (Component comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags != HideFlags.HideInInspector))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(comp.GetType(), typeof(Status), typeof(object), SetMethod, 1, false, true, menu);
                     }
                     menu.AddSeparator("/");
                 }
 
-                foreach ( var t in TypePrefs.GetPreferedTypesList(typeof(object)) ) {
+                foreach (System.Type t in TypePrefs.GetPreferedTypesList(typeof(object)))
+                {
                     menu = EditorUtils.GetStaticMethodSelectionMenu(t, typeof(Status), typeof(object), SetMethod, 1, false, true, menu);
-                    if ( typeof(UnityEngine.Component).IsAssignableFrom(t) ) {
+                    if (typeof(UnityEngine.Component).IsAssignableFrom(t))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(t, typeof(Status), typeof(object), SetMethod, 1, false, true, menu);
                     }
                 }
-                menu.ShowAsBrowser("Select Action Method", this.GetType());
+                menu.ShowAsBrowser("Select Action Method", GetType());
                 Event.current.Use();
             }
 
-            if ( targetMethod != null ) {
+            if (targetMethod != null)
+            {
                 GUILayout.BeginVertical("box");
                 UnityEditor.EditorGUILayout.LabelField("Type", targetMethod.RTReflectedOrDeclaredType().FriendlyName());
                 UnityEditor.EditorGUILayout.LabelField("Selected Action Method:", targetMethod.Name);
                 GUILayout.EndVertical();
 
-                if ( targetMethod.GetParameters().Length == 1 ) {
-                    var paramName = targetMethod.GetParameters()[0].Name.SplitCamelCase();
+                if (targetMethod.GetParameters().Length == 1)
+                {
+                    string paramName = targetMethod.GetParameters()[0].Name.SplitCamelCase();
                     NodeCanvas.Editor.BBParameterEditor.ParameterField(paramName, functionWrapper.GetVariables()[1]);
                 }
             }

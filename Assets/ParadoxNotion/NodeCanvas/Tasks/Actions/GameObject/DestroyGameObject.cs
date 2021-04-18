@@ -13,15 +13,20 @@ namespace NodeCanvas.Tasks.Actions
         [Tooltip("DestroyImmediately is recomended if you are destroying objects in use of the framework.")]
         public bool immediately;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Destroy {0}", agentInfo); }
         }
 
         //in case it destroys self
-        protected override void OnUpdate() {
-            if ( immediately ) {
+        protected override void OnUpdate()
+        {
+            if (immediately)
+            {
                 Object.DestroyImmediate(agent.gameObject);
-            } else {
+            }
+            else
+            {
                 Object.Destroy(agent.gameObject);
             }
             EndAction();

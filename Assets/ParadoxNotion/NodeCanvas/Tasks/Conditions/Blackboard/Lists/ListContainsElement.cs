@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 
 
 namespace NodeCanvas.Tasks.Conditions
@@ -16,11 +16,13 @@ namespace NodeCanvas.Tasks.Conditions
         public BBParameter<List<T>> targetList;
         public BBParameter<T> checkElement;
 
-        protected override string info {
+        protected override string info
+        {
             get { return targetList + " contains " + checkElement; }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return targetList.value.Contains(checkElement.value);
         }
     }

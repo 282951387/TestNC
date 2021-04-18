@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 
 
 namespace NodeCanvas.Tasks.Actions
@@ -16,13 +16,16 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<T> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} = {1} [{2}]", saveAs, targetList, index); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( index.value < 0 || index.value >= targetList.value.Count ) {
+            if (index.value < 0 || index.value >= targetList.value.Count)
+            {
                 EndAction(false);
                 return;
             }

@@ -17,12 +17,14 @@ namespace NodeCanvas.DialogueTrees
         [SerializeField]
         private ConditionTask _condition;
 
-        public ConditionTask condition {
+        public ConditionTask condition
+        {
             get { return _condition; }
             set { _condition = value; }
         }
 
-        public Task task {
+        public Task task
+        {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }
@@ -30,17 +32,20 @@ namespace NodeCanvas.DialogueTrees
         public override int maxOutConnections { get { return 2; } }
         public override bool requireActorSelection { get { return true; } }
 
-        protected override Status OnExecute(Component agent, IBlackboard bb) {
+        protected override Status OnExecute(Component agent, IBlackboard bb)
+        {
 
-            if ( outConnections.Count == 0 ) {
+            if (outConnections.Count == 0)
+            {
                 return Error("There are no connections on the Dialogue Condition Node");
             }
 
-            if ( condition == null ) {
+            if (condition == null)
+            {
                 return Error("There is no Conidition on the Dialoge Condition Node");
             }
 
-            var isSuccess = condition.CheckOnce(finalActor.transform, graphBlackboard);
+            bool isSuccess = condition.CheckOnce(finalActor.transform, graphBlackboard);
             status = isSuccess ? Status.Success : Status.Failure;
             DLGTree.Continue(isSuccess ? 0 : 1);
             return status;
@@ -51,7 +56,8 @@ namespace NodeCanvas.DialogueTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        public override string GetConnectionInfo(int i) {
+        public override string GetConnectionInfo(int i)
+        {
             return i == 0 ? "Then" : "Else";
         }
 

@@ -18,11 +18,13 @@ namespace NodeCanvas.Editor
 
         private SerializedProperty parentBlackboardProp;
 
-        void OnEnable() {
+        private void OnEnable()
+        {
             parentBlackboardProp = serializedObject.FindProperty("_parentBlackboard");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             GUI.color = GUI.color.WithAlpha(parentBlackboardProp.objectReferenceValue ? 1 : 0.6f);
             EditorGUILayout.PropertyField(parentBlackboardProp, EditorUtils.GetTempContent("Parent Asset Blackboard", null, "Optional Parent Asset Blackboard to 'inherit' variables from."));
             serializedObject.ApplyModifiedProperties();
@@ -30,7 +32,8 @@ namespace NodeCanvas.Editor
 
             BlackboardEditor.ShowVariables(bb);
             EditorUtils.EndOfInspector();
-            if ( Event.current.isMouse ) {
+            if (Event.current.isMouse)
+            {
                 Repaint();
             }
         }

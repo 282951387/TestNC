@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -18,10 +18,12 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<List<T>> saveComponents;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            var objects = Object.FindObjectsOfType<T>();
-            if ( objects != null && objects.Length != 0 ) {
+            T[] objects = Object.FindObjectsOfType<T>();
+            if (objects != null && objects.Length != 0)
+            {
                 saveGameObjects.value = objects.Select(o => o.gameObject).ToList();
                 saveComponents.value = objects.ToList();
                 EndAction(true);

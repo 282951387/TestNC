@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -17,16 +17,21 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<List<GameObject>> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "GetObjects '" + searchName + "' as " + saveAs; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            var gos = new List<GameObject>();
-            foreach ( var go in Object.FindObjectsOfType<GameObject>() ) {
-                if ( go.name == searchName.value )
+            List<GameObject> gos = new List<GameObject>();
+            foreach (GameObject go in Object.FindObjectsOfType<GameObject>())
+            {
+                if (go.name == searchName.value)
+                {
                     gos.Add(go);
+                }
             }
 
             saveAs.value = gos;

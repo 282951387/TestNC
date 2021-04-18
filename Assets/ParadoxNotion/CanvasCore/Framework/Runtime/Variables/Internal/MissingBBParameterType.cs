@@ -11,12 +11,14 @@ namespace NodeCanvas.Framework.Internal
         [UnityEngine.SerializeField]
         private string _recoveryState;
 
-        string IMissingRecoverable.missingType {
+        string IMissingRecoverable.missingType
+        {
             get { return _missingType; }
             set { _missingType = value; }
         }
 
-        string IMissingRecoverable.recoveryState {
+        string IMissingRecoverable.recoveryState
+        {
             get { return _recoveryState; }
             set { _recoveryState = value; }
         }

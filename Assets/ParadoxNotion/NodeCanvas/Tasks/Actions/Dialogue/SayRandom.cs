@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using ParadoxNotion.Design;
+﻿using NodeCanvas.DialogueTrees;
 using NodeCanvas.Framework;
-using NodeCanvas.DialogueTrees;
+using ParadoxNotion.Design;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -15,11 +15,12 @@ namespace NodeCanvas.Tasks.Actions
 
         public List<Statement> statements = new List<Statement>();
 
-        protected override void OnExecute() {
-            var index = Random.Range(0, statements.Count);
-            var statement = statements[index];
-            var tempStatement = statement.BlackboardReplace(blackboard);
-            var info = new SubtitlesRequestInfo(agent, tempStatement, EndAction);
+        protected override void OnExecute()
+        {
+            int index = Random.Range(0, statements.Count);
+            Statement statement = statements[index];
+            IStatement tempStatement = statement.BlackboardReplace(blackboard);
+            SubtitlesRequestInfo info = new SubtitlesRequestInfo(agent, tempStatement, EndAction);
             DialogueTree.RequestSubtitles(info);
         }
 
@@ -29,16 +30,17 @@ namespace NodeCanvas.Tasks.Actions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
-            var options = new EditorUtils.ReorderableListOptions();
+        protected override void OnTaskInspectorGUI()
+        {
+            EditorUtils.ReorderableListOptions options = new EditorUtils.ReorderableListOptions();
             options.allowAdd = true;
             options.allowRemove = true;
             options.unityObjectContext = ownerSystem.contextObject;
             EditorUtils.ReorderableList(statements, options, (i, picked) =>
             {
-                if ( statements[i] == null ) { statements[i] = new Statement("..."); }
-                var statement = statements[i];
-                statement.text = UnityEditor.EditorGUILayout.TextArea(statement.text, (GUIStyle)"textField", GUILayout.Height(50));
+                if (statements[i] == null) { statements[i] = new Statement("..."); }
+                Statement statement = statements[i];
+                statement.text = UnityEditor.EditorGUILayout.TextArea(statement.text, "textField", GUILayout.Height(50));
                 statement.audio = (AudioClip)UnityEditor.EditorGUILayout.ObjectField("Audio Clip", statement.audio, typeof(AudioClip), false);
                 statement.meta = UnityEditor.EditorGUILayout.TextField("Meta", statement.meta);
                 EditorUtils.Separator();

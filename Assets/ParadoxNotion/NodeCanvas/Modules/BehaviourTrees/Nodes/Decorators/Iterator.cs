@@ -1,8 +1,8 @@
-using System.Collections;
 using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
-using ParadoxNotion.Design;
 using ParadoxNotion;
+using ParadoxNotion.Design;
+using System.Collections;
 using UnityEngine;
 
 
@@ -51,38 +51,46 @@ namespace NodeCanvas.BehaviourTrees
 
         private IList list => targetList != null ? targetList.value : null;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
             }
 
-            if ( list == null || list.Count == 0 ) {
+            if (list == null || list.Count == 0)
+            {
                 return Status.Failure;
             }
 
-            for ( var i = currentIndex; i < list.Count; i++ ) {
+            for (int i = currentIndex; i < list.Count; i++)
+            {
 
                 current.value = list[i];
                 storeIndex.value = i;
                 status = decoratedConnection.Execute(agent, blackboard);
 
-                if ( status == Status.Success && terminationCondition == TerminationConditions.FirstSuccess ) {
+                if (status == Status.Success && terminationCondition == TerminationConditions.FirstSuccess)
+                {
                     return Status.Success;
                 }
 
-                if ( status == Status.Failure && terminationCondition == TerminationConditions.FirstFailure ) {
+                if (status == Status.Failure && terminationCondition == TerminationConditions.FirstFailure)
+                {
                     return Status.Failure;
                 }
 
-                if ( status == Status.Running ) {
+                if (status == Status.Running)
+                {
                     currentIndex = i;
                     return Status.Running;
                 }
 
 
-                if ( currentIndex == list.Count - 1 || currentIndex == maxIteration.value - 1 ) {
-                    if ( resetIndex ) { currentIndex = 0; }
+                if (currentIndex == list.Count - 1 || currentIndex == maxIteration.value - 1)
+                {
+                    if (resetIndex) { currentIndex = 0; }
                     return status;
                 }
 
@@ -94,8 +102,9 @@ namespace NodeCanvas.BehaviourTrees
         }
 
 
-        protected override void OnReset() {
-            if ( resetIndex ) { currentIndex = 0; }
+        protected override void OnReset()
+        {
+            if (resetIndex) { currentIndex = 0; }
         }
 
 
@@ -103,22 +112,26 @@ namespace NodeCanvas.BehaviourTrees
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
 
             GUILayout.Label("For Each\t" + current + "\nIn\t" + targetList, Styles.leftLabel);
-            if ( terminationCondition != TerminationConditions.None ) {
+            if (terminationCondition != TerminationConditions.None)
+            {
                 GUILayout.Label("Break on " + terminationCondition.ToString());
             }
 
-            if ( Application.isPlaying ) {
-                GUILayout.Label("Index: " + currentIndex.ToString() + " / " + ( list != null && list.Count != 0 ? ( list.Count - 1 ).ToString() : "?" ));
+            if (Application.isPlaying)
+            {
+                GUILayout.Label("Index: " + currentIndex.ToString() + " / " + (list != null && list.Count != 0 ? (list.Count - 1).ToString() : "?"));
             }
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
             DrawDefaultInspector();
-            var argType = targetList.refType != null ? targetList.refType.GetEnumerableElementType() : null;
-            if ( current.varType != argType ) { current.SetType(argType); }
+            System.Type argType = targetList.refType != null ? targetList.refType.GetEnumerableElementType() : null;
+            if (current.varType != argType) { current.SetType(argType); }
         }
 #endif
 

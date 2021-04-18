@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using UnityEngine;
 
 namespace NodeCanvas.BehaviourTrees
 {
@@ -13,8 +13,9 @@ namespace NodeCanvas.BehaviourTrees
 
         public override int maxInConnections => -1;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
-            if ( status != Status.Running ) { decoratedConnection.Reset(); }
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
+            if (status != Status.Running) { decoratedConnection.Reset(); }
             return decoratedConnection.Execute(agent, blackboard);
         }
     }

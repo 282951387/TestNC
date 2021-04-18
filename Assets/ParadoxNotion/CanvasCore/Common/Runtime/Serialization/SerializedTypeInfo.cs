@@ -15,17 +15,20 @@ namespace ParadoxNotion.Serialization
         [NonSerialized]
         private Type _type;
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
-            if ( _type != null ) { _baseInfo = _type.FullName; }
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (_type != null) { _baseInfo = _type.FullName; }
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {
-            if ( _baseInfo == null ) { return; }
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            if (_baseInfo == null) { return; }
             _type = ReflectionTools.GetType(_baseInfo, true);
         }
 
         public SerializedTypeInfo() { }
-        public SerializedTypeInfo(Type info) {
+        public SerializedTypeInfo(Type info)
+        {
             _baseInfo = null;
             _type = info;
         }
@@ -35,7 +38,8 @@ namespace ParadoxNotion.Serialization
         public override string ToString() { return _baseInfo; }
 
         //operator
-        public static implicit operator Type(SerializedTypeInfo value) {
+        public static implicit operator Type(SerializedTypeInfo value)
+        {
             return value != null ? value._type : null;
         }
     }

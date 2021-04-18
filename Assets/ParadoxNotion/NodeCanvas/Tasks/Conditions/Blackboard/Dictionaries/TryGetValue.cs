@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace NodeCanvas.Tasks.Conditions
 {
@@ -18,17 +18,21 @@ namespace NodeCanvas.Tasks.Conditions
         [BlackboardOnly]
         public BBParameter<T> saveValueAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0}.TryGetValue({1} as {2})", targetDictionary, key, saveValueAs); }
         }
 
-        protected override bool OnCheck() {
-            if ( targetDictionary.value == null ) {
+        protected override bool OnCheck()
+        {
+            if (targetDictionary.value == null)
+            {
                 return false;
             }
 
             T result;
-            if ( targetDictionary.value.TryGetValue(key.value, out result) ) {
+            if (targetDictionary.value.TryGetValue(key.value, out result))
+            {
                 saveValueAs.value = result;
                 return true;
             }

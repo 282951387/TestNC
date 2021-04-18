@@ -21,19 +21,24 @@ namespace NodeCanvas.Tasks.Actions
 
         public SetActiveMode setTo = SetActiveMode.Toggle;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} {1}", setTo, agentInfo); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             bool value;
 
-            if ( setTo == SetActiveMode.Toggle ) {
+            if (setTo == SetActiveMode.Toggle)
+            {
 
                 value = !agent.gameObject.activeSelf;
 
-            } else {
+            }
+            else
+            {
 
                 value = (int)setTo == 1;
             }

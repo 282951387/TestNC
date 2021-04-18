@@ -22,10 +22,11 @@ namespace ParadoxNotion.Serialization.FullSerializer
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class fsSerializeAsAttribute : Attribute
     {
-        readonly public string Name;
+        public readonly string Name;
         public fsSerializeAsAttribute() { }
-        public fsSerializeAsAttribute(string name) {
-            this.Name = name;
+        public fsSerializeAsAttribute(string name)
+        {
+            Name = name;
         }
     }
 
@@ -37,7 +38,8 @@ namespace ParadoxNotion.Serialization.FullSerializer
     public class fsMigrateToAttribute : System.Attribute
     {
         public readonly System.Type targetType;
-        public fsMigrateToAttribute(System.Type targetType) {
+        public fsMigrateToAttribute(System.Type targetType)
+        {
             this.targetType = targetType;
         }
     }
@@ -48,7 +50,8 @@ namespace ParadoxNotion.Serialization.FullSerializer
     public class fsMigrateVersionsAttribute : System.Attribute
     {
         public readonly System.Type[] previousTypes;
-        public fsMigrateVersionsAttribute(params System.Type[] previousTypes) {
+        public fsMigrateVersionsAttribute(params System.Type[] previousTypes)
+        {
             this.previousTypes = previousTypes;
         }
     }
@@ -71,7 +74,8 @@ namespace ParadoxNotion.Serialization.FullSerializer
     public sealed class fsAutoInstance : Attribute
     {
         public readonly bool makeInstance;
-        public fsAutoInstance(bool makeInstance = true) {
+        public fsAutoInstance(bool makeInstance = true)
+        {
             this.makeInstance = makeInstance;
         }
     }

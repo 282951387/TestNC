@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ParadoxNotion;
+using System.Collections.Generic;
 using UnityEngine;
-using ParadoxNotion;
 
 namespace NodeCanvas.Framework
 {
@@ -12,7 +12,8 @@ namespace NodeCanvas.Framework
 
 #if UNITY_EDITOR
         [UnityEditor.InitializeOnLoadMethod]
-        static void Editor_Init() {
+        private static void Editor_Init()
+        {
             ParadoxNotion.Design.AssetTracker.BeginTrackingAssetsOfType(typeof(SignalDefinition));
         }
 #endif
@@ -24,28 +25,34 @@ namespace NodeCanvas.Framework
         private List<DynamicParameterDefinition> _parameters = new List<DynamicParameterDefinition>();
 
         ///The Signal parameters
-        public List<DynamicParameterDefinition> parameters {
+        public List<DynamicParameterDefinition> parameters
+        {
             get { return _parameters; }
             private set { _parameters = value; }
         }
 
         ///Invoke the Signal
-        public void Invoke(Transform sender, Transform receiver, bool isGlobal, params object[] args) {
-            if ( onInvoke != null ) {
+        public void Invoke(Transform sender, Transform receiver, bool isGlobal, params object[] args)
+        {
+            if (onInvoke != null)
+            {
                 onInvoke(sender, receiver, isGlobal, args);
             }
         }
 
         //...
-        public void AddParameter(string name, System.Type type) {
-            var param = new DynamicParameterDefinition(name, type);
+        public void AddParameter(string name, System.Type type)
+        {
+            DynamicParameterDefinition param = new DynamicParameterDefinition(name, type);
             _parameters.Add(param);
         }
 
         //...
-        public void RemoveParameter(string name) {
-            var param = _parameters.Find(p => p.name == name);
-            if ( param != null ) {
+        public void RemoveParameter(string name)
+        {
+            DynamicParameterDefinition param = _parameters.Find(p => p.name == name);
+            if (param != null)
+            {
                 _parameters.Remove(param);
             }
         }

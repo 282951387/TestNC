@@ -20,7 +20,8 @@ namespace NodeCanvas.DialogueTrees
         public override int maxOutConnections { get { return 0; } }
         public override bool requireActorSelection { get { return false; } }
 
-        protected override Status OnExecute(Component agent, IBlackboard bb) {
+        protected override Status OnExecute(Component agent, IBlackboard bb)
+        {
             status = (Status)finishState;
             DLGTree.Stop(finishState == CompactStatus.Success ? true : false);
             return status;
@@ -32,11 +33,13 @@ namespace NodeCanvas.DialogueTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Label("<b>" + finishState.ToString() + "</b>");
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
             DrawDefaultInspector();
         }
 

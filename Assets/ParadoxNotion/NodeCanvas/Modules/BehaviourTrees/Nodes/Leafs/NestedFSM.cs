@@ -1,7 +1,7 @@
-using System.Linq;
 using NodeCanvas.Framework;
 using NodeCanvas.StateMachines;
 using ParadoxNotion.Design;
+using System.Linq;
 using UnityEngine;
 
 
@@ -26,27 +26,33 @@ namespace NodeCanvas.BehaviourTrees
 
         ///----------------------------------------------------------------------------------------------
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( subGraph == null || subGraph.primeNode == null ) {
+            if (subGraph == null || subGraph.primeNode == null)
+            {
                 return Status.Optional;
             }
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 status = Status.Running;
                 this.TryStartSubGraph(agent, OnFSMFinish);
             }
 
-            if ( status == Status.Running ) {
-                currentInstance.UpdateGraph(this.graph.deltaTime);
+            if (status == Status.Running)
+            {
+                currentInstance.UpdateGraph(graph.deltaTime);
             }
 
-            if ( !string.IsNullOrEmpty(successState) && currentInstance.currentStateName == successState ) {
+            if (!string.IsNullOrEmpty(successState) && currentInstance.currentStateName == successState)
+            {
                 currentInstance.Stop(true);
                 return Status.Success;
             }
 
-            if ( !string.IsNullOrEmpty(failureState) && currentInstance.currentStateName == failureState ) {
+            if (!string.IsNullOrEmpty(failureState) && currentInstance.currentStateName == failureState)
+            {
                 currentInstance.Stop(false);
                 return Status.Failure;
             }
@@ -54,14 +60,18 @@ namespace NodeCanvas.BehaviourTrees
             return status;
         }
 
-        void OnFSMFinish(bool success) {
-            if ( status == Status.Running ) {
+        private void OnFSMFinish(bool success)
+        {
+            if (status == Status.Running)
+            {
                 status = success ? Status.Success : Status.Failure;
             }
         }
 
-        protected override void OnReset() {
-            if ( currentInstance != null ) {
+        protected override void OnReset()
+        {
+            if (currentInstance != null)
+            {
                 currentInstance.Stop();
             }
         }
@@ -69,9 +79,11 @@ namespace NodeCanvas.BehaviourTrees
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
             base.OnNodeInspectorGUI();
-            if ( subGraph != null ) {
+            if (subGraph != null)
+            {
                 successState = EditorUtils.Popup<string>("Success State", successState, subGraph.GetStateNames());
                 failureState = EditorUtils.Popup<string>("Failure State", failureState, subGraph.GetStateNames());
             }

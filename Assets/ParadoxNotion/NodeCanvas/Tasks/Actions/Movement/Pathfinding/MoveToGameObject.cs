@@ -18,24 +18,30 @@ namespace NodeCanvas.Tasks.Actions
 
         private Vector3? lastRequest;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Seek " + target; }
         }
 
-        protected override void OnExecute() {
-            if ( target.value == null ) { EndAction(false); return; }
+        protected override void OnExecute()
+        {
+            if (target.value == null) { EndAction(false); return; }
             agent.speed = speed.value;
-            if ( Vector3.Distance(agent.transform.position, target.value.transform.position) < agent.stoppingDistance + keepDistance.value ) {
+            if (Vector3.Distance(agent.transform.position, target.value.transform.position) < agent.stoppingDistance + keepDistance.value)
+            {
                 EndAction(true);
                 return;
             }
         }
 
-        protected override void OnUpdate() {
-            if ( target.value == null ) { EndAction(false); return; }
-            var pos = target.value.transform.position;
-            if ( lastRequest != pos ) {
-                if ( !agent.SetDestination(pos) ) {
+        protected override void OnUpdate()
+        {
+            if (target.value == null) { EndAction(false); return; }
+            Vector3 pos = target.value.transform.position;
+            if (lastRequest != pos)
+            {
+                if (!agent.SetDestination(pos))
+                {
                     EndAction(false);
                     return;
                 }
@@ -43,23 +49,28 @@ namespace NodeCanvas.Tasks.Actions
 
             lastRequest = pos;
 
-            if ( !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + keepDistance.value ) {
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + keepDistance.value)
+            {
                 EndAction(true);
             }
         }
 
 
         protected override void OnPause() { OnStop(); }
-        protected override void OnStop() {
-            if ( lastRequest != null && agent.gameObject.activeSelf ) {
+        protected override void OnStop()
+        {
+            if (lastRequest != null && agent.gameObject.activeSelf)
+            {
                 agent.Warp(agent.transform.position);
                 agent.ResetPath();
             }
             lastRequest = null;
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( target.value != null ) {
+        public override void OnDrawGizmosSelected()
+        {
+            if (target.value != null)
+            {
                 Gizmos.DrawWireSphere(target.value.transform.position, keepDistance.value);
             }
         }

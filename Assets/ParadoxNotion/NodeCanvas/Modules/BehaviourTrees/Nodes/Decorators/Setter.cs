@@ -17,9 +17,11 @@ namespace NodeCanvas.BehaviourTrees
         [ShowIf("revertToOriginal", 0)]
         public BBParameter<GameObject> newAgent;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
             }
 
@@ -32,7 +34,8 @@ namespace NodeCanvas.BehaviourTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Label(string.Format("Agent = {0}", revertToOriginal ? "Original" : newAgent.ToString()));
         }
 

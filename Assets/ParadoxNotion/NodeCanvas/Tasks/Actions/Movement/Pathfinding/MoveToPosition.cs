@@ -18,21 +18,27 @@ namespace NodeCanvas.Tasks.Actions
 
         private Vector3? lastRequest;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Seek " + targetPosition; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             agent.speed = speed.value;
-            if ( Vector3.Distance(agent.transform.position, targetPosition.value) < agent.stoppingDistance + keepDistance.value ) {
+            if (Vector3.Distance(agent.transform.position, targetPosition.value) < agent.stoppingDistance + keepDistance.value)
+            {
                 EndAction(true);
                 return;
             }
         }
 
-        protected override void OnUpdate() {
-            if ( lastRequest != targetPosition.value ) {
-                if ( !agent.SetDestination(targetPosition.value) ) {
+        protected override void OnUpdate()
+        {
+            if (lastRequest != targetPosition.value)
+            {
+                if (!agent.SetDestination(targetPosition.value))
+                {
                     EndAction(false);
                     return;
                 }
@@ -40,14 +46,17 @@ namespace NodeCanvas.Tasks.Actions
 
             lastRequest = targetPosition.value;
 
-            if ( !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + keepDistance.value ) {
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + keepDistance.value)
+            {
                 EndAction(true);
             }
         }
 
         protected override void OnPause() { OnStop(); }
-        protected override void OnStop() {
-            if ( lastRequest != null && agent.gameObject.activeSelf ) {
+        protected override void OnStop()
+        {
+            if (lastRequest != null && agent.gameObject.activeSelf)
+            {
                 agent.Warp(agent.transform.position);
                 agent.ResetPath();
             }

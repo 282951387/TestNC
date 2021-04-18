@@ -15,7 +15,8 @@ namespace NodeCanvas.Tasks.Actions
         public Color color = Color.white;
         public float timeToShow = 0.1f;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             Debug.DrawLine(from.value, to.value, color, timeToShow);
             EndAction(true);
         }

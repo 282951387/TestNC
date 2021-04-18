@@ -14,17 +14,20 @@ namespace NodeCanvas.Tasks.Conditions
 
         public MouseInteractionTypes checkType = MouseInteractionTypes.MouseEnter;
 
-        protected override string info {
+        protected override string info
+        {
             get { return checkType.ToString(); }
         }
 
-        protected override void OnEnable() {
+        protected override void OnEnable()
+        {
             router.onMouseEnter += OnMouseEnter;
             router.onMouseExit += OnMouseExit;
             router.onMouseOver += OnMouseOver;
         }
 
-        protected override void OnDisable() {
+        protected override void OnDisable()
+        {
             router.onMouseEnter -= OnMouseEnter;
             router.onMouseExit -= OnMouseExit;
             router.onMouseOver -= OnMouseOver;
@@ -32,20 +35,26 @@ namespace NodeCanvas.Tasks.Conditions
 
         protected override bool OnCheck() { return false; }
 
-        void OnMouseEnter(ParadoxNotion.EventData msg) {
-            if ( checkType == MouseInteractionTypes.MouseEnter ) {
+        private void OnMouseEnter(ParadoxNotion.EventData msg)
+        {
+            if (checkType == MouseInteractionTypes.MouseEnter)
+            {
                 YieldReturn(true);
             }
         }
 
-        void OnMouseExit(ParadoxNotion.EventData msg) {
-            if ( checkType == MouseInteractionTypes.MouseExit ) {
+        private void OnMouseExit(ParadoxNotion.EventData msg)
+        {
+            if (checkType == MouseInteractionTypes.MouseExit)
+            {
                 YieldReturn(true);
             }
         }
 
-        void OnMouseOver(ParadoxNotion.EventData msg) {
-            if ( checkType == MouseInteractionTypes.MouseOver ) {
+        private void OnMouseOver(ParadoxNotion.EventData msg)
+        {
+            if (checkType == MouseInteractionTypes.MouseOver)
+            {
                 YieldReturn(true);
             }
         }

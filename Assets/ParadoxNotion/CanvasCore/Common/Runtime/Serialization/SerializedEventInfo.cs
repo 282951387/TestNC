@@ -15,28 +15,34 @@ namespace ParadoxNotion.Serialization
         [NonSerialized]
         private EventInfo _event;
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
-            if ( _event != null ) {
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (_event != null)
+            {
                 _baseInfo = string.Format("{0}|{1}", _event.RTReflectedOrDeclaredType().FullName, _event.Name);
             }
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {
-            if ( _baseInfo == null ) {
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            if (_baseInfo == null)
+            {
                 return;
             }
-            var split = _baseInfo.Split('|');
-            var type = ReflectionTools.GetType(split[0], true);
-            if ( type == null ) {
+            string[] split = _baseInfo.Split('|');
+            Type type = ReflectionTools.GetType(split[0], true);
+            if (type == null)
+            {
                 _event = null;
                 return;
             }
-            var name = split[1];
+            string name = split[1];
             _event = type.RTGetEvent(name);
         }
 
         public SerializedEventInfo() { }
-        public SerializedEventInfo(EventInfo info) {
+        public SerializedEventInfo(EventInfo info)
+        {
             _event = info;
         }
 
@@ -45,7 +51,8 @@ namespace ParadoxNotion.Serialization
         public override string ToString() { return AsString(); }
 
         //operator
-        public static implicit operator EventInfo(SerializedEventInfo value) {
+        public static implicit operator EventInfo(SerializedEventInfo value)
+        {
             return value != null ? value._event : null;
         }
     }

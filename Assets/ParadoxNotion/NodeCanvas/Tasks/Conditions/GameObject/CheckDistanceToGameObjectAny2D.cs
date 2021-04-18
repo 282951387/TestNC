@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace NodeCanvas.Tasks.Conditions
@@ -25,34 +25,40 @@ namespace NodeCanvas.Tasks.Conditions
         [BlackboardOnly]
         public BBParameter<GameObject> closerResult;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Distance Any" + OperationTools.GetCompareString(checkType) + distance + " in " + targetObjects; }
         }
 
-        protected override bool OnCheck() {
-            var r = false;
-            var temp = new List<GameObject>();
-            foreach ( var o in targetObjects.value ) {
+        protected override bool OnCheck()
+        {
+            bool r = false;
+            List<GameObject> temp = new List<GameObject>();
+            foreach (GameObject o in targetObjects.value)
+            {
 
-                if ( o == agent.gameObject ) { continue; }
+                if (o == agent.gameObject) { continue; }
 
-                if ( OperationTools.Compare(Vector2.Distance(agent.position, o.transform.position), distance.value, checkType, floatingPoint) ) {
+                if (OperationTools.Compare(Vector2.Distance(agent.position, o.transform.position), distance.value, checkType, floatingPoint))
+                {
                     temp.Add(o);
                     r = true;
                 }
             }
 
-            if ( !allResults.isNone || !closerResult.isNone ) {
-                var ordered = temp.OrderBy(x => Vector2.Distance(agent.position, x.transform.position));
-                if ( !allResults.isNone ) { allResults.value = ordered.ToList(); }
-                if ( !closerResult.isNone ) { closerResult.value = ordered.FirstOrDefault(); }
+            if (!allResults.isNone || !closerResult.isNone)
+            {
+                IOrderedEnumerable<GameObject> ordered = temp.OrderBy(x => Vector2.Distance(agent.position, x.transform.position));
+                if (!allResults.isNone) { allResults.value = ordered.ToList(); }
+                if (!closerResult.isNone) { closerResult.value = ordered.FirstOrDefault(); }
             }
 
             return r;
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent != null ) { Gizmos.DrawWireSphere((Vector2)agent.position, distance.value); }
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent != null) { Gizmos.DrawWireSphere((Vector2)agent.position, distance.value); }
         }
     }
 }

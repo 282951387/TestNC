@@ -16,18 +16,23 @@ namespace ParadoxNotion.Serialization.FullSerializer
     {
         public override Type ModelType { get { return typeof(TModel); } }
 
-        public sealed override fsResult TrySerialize(object instance, out fsData serialized, Type storageType) {
-            var serializedDictionary = new Dictionary<string, fsData>();
-            var result = DoSerialize((TModel)instance, serializedDictionary);
+        public sealed override fsResult TrySerialize(object instance, out fsData serialized, Type storageType)
+        {
+            Dictionary<string, fsData> serializedDictionary = new Dictionary<string, fsData>();
+            fsResult result = DoSerialize((TModel)instance, serializedDictionary);
             serialized = new fsData(serializedDictionary);
             return result;
         }
 
-        public sealed override fsResult TryDeserialize(fsData data, ref object instance, Type storageType) {
-            var result = fsResult.Success;
-            if ( ( result += CheckType(data, fsDataType.Object) ).Failed ) return result;
+        public sealed override fsResult TryDeserialize(fsData data, ref object instance, Type storageType)
+        {
+            fsResult result = fsResult.Success;
+            if ((result += CheckType(data, fsDataType.Object)).Failed)
+            {
+                return result;
+            }
 
-            var obj = (TModel)instance;
+            TModel obj = (TModel)instance;
             result += DoDeserialize(data.AsDictionary, ref obj);
             instance = obj;
             return result;

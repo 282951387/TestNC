@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -27,30 +27,46 @@ namespace NodeCanvas.BehaviourTrees
 
         private List<Node> targetNodes;
 
-        public override void OnGraphStarted() {
+        public override void OnGraphStarted()
+        {
             targetNodes = graph.GetNodesWithTag<Node>(targetNodeTag).ToList();
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( string.IsNullOrEmpty(targetNodeTag) )
+            if (string.IsNullOrEmpty(targetNodeTag))
+            {
                 return Status.Failure;
+            }
 
-            if ( targetNodes.Count == 0 ) return Status.Failure;
+            if (targetNodes.Count == 0)
+            {
+                return Status.Failure;
+            }
 
-            if ( toggleMode == ToggleMode.Enable ) {
-                foreach ( var node in targetNodes )
+            if (toggleMode == ToggleMode.Enable)
+            {
+                foreach (Node node in targetNodes)
+                {
                     node.inConnections[0].isActive = true;
+                }
             }
 
-            if ( toggleMode == ToggleMode.Disable ) {
-                foreach ( var node in targetNodes )
+            if (toggleMode == ToggleMode.Disable)
+            {
+                foreach (Node node in targetNodes)
+                {
                     node.inConnections[0].isActive = false;
+                }
             }
 
-            if ( toggleMode == ToggleMode.Toggle ) {
-                foreach ( var node in targetNodes )
+            if (toggleMode == ToggleMode.Toggle)
+            {
+                foreach (Node node in targetNodes)
+                {
                     node.inConnections[0].isActive = !node.inConnections[0].isActive;
+                }
             }
 
             return Status.Success;
@@ -61,11 +77,13 @@ namespace NodeCanvas.BehaviourTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Label(string.Format("{0} '{1}'", toggleMode.ToString(), targetNodeTag));
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
             targetNodeTag = EditorUtils.Popup<string>("Node Tag", targetNodeTag, graph.GetAllTagedNodes<Node>().Select(n => n.tag));
             toggleMode = (ToggleMode)UnityEditor.EditorGUILayout.EnumPopup("Toggle Mode", toggleMode);
         }

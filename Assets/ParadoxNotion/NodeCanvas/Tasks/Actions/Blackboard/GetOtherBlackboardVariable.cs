@@ -16,13 +16,16 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBObjectParameter saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} = {1}", saveAs, targetVariableName); }
         }
 
-        protected override void OnExecute() {
-            var targetVar = agent.GetVariable(targetVariableName.value);
-            if ( targetVar == null ) {
+        protected override void OnExecute()
+        {
+            Variable targetVar = agent.GetVariable(targetVariableName.value);
+            if (targetVar == null)
+            {
                 EndAction(false);
                 return;
             }
@@ -36,11 +39,14 @@ namespace NodeCanvas.Tasks.Actions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
-            if ( GUILayout.Button("Select Target Variable Type") ) {
+        protected override void OnTaskInspectorGUI()
+        {
+            if (GUILayout.Button("Select Target Variable Type"))
+            {
                 EditorUtils.ShowPreferedTypesSelectionMenu(typeof(object), (t) => { saveAs.SetType(t); });
             }
-            if ( saveAs.varType != typeof(object) ) {
+            if (saveAs.varType != typeof(object))
+            {
                 DrawDefaultInspector();
             }
         }

@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using ParadoxNotion;
+﻿using ParadoxNotion;
+using System.Linq;
 using UnityEngine;
 
 
@@ -18,7 +18,8 @@ namespace NodeCanvas.Framework
 
         //required
         public CanvasGroup() { }
-        public CanvasGroup(Rect rect, string name) {
+        public CanvasGroup(Rect rect, string name)
+        {
             this.rect = rect;
             this.name = name;
         }
@@ -32,23 +33,28 @@ namespace NodeCanvas.Framework
             None, Dragging, Renaming, Scaling
         }
 
-        public Node[] GatherContainedNodes(Graph graph) {
+        public Node[] GatherContainedNodes(Graph graph)
+        {
             containedNodes = graph.allNodes.Where(n => rect.Encapsulates(n.rect)).ToArray();
             return containedNodes;
         }
 
-        public Rect AdjustToContainedNodes() {
-            if ( autoGroup && containedNodes != null && containedNodes.Length > 0 ) {
+        public Rect AdjustToContainedNodes()
+        {
+            if (autoGroup && containedNodes != null && containedNodes.Length > 0)
+            {
                 rect = RectUtils.GetBoundRect(containedNodes.Select(n => n.rect).ToArray()).ExpandBy(20, 65, 20, 20);
             }
             return rect;
         }
 
-        public void FlushContainedNodes() {
+        public void FlushContainedNodes()
+        {
             containedNodes = null;
         }
 
-        public void GatherAjustAndFlushContainedNodes(Graph graph) {
+        public void GatherAjustAndFlushContainedNodes(Graph graph)
+        {
             GatherContainedNodes(graph);
             AdjustToContainedNodes();
             FlushContainedNodes();

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions
@@ -15,14 +15,17 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<T> targetElement;
         public BBParameter<int> targetIndex;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Insert {0} in {1} at {2}", targetElement, targetList, targetIndex); }
         }
 
-        protected override void OnExecute() {
-            var index = targetIndex.value;
-            var list = targetList.value;
-            if ( index < 0 || index >= list.Count ) {
+        protected override void OnExecute()
+        {
+            int index = targetIndex.value;
+            List<T> list = targetList.value;
+            if (index < 0 || index >= list.Count)
+            {
                 EndAction(false);
                 return;
             }

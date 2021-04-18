@@ -1,7 +1,7 @@
 ﻿#if UNITY_EDITOR
 
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace ParadoxNotion.Design
 {
@@ -14,7 +14,8 @@ namespace ParadoxNotion.Design
         static Icons() { Load(); }
 
         [InitializeOnLoadMethod]
-        static void Load() {
+        private static void Load()
+        {
             playIcon = EditorGUIUtility.FindTexture("d_PlayButton");
             pauseIcon = EditorGUIUtility.FindTexture("d_PauseButton");
             stepIcon = EditorGUIUtility.FindTexture("d_StepButton");
@@ -62,7 +63,8 @@ namespace ParadoxNotion.Design
         ///----------------------------------------------------------------------------------------------
 
         ///Returns a type icon
-        public static Texture GetTypeIcon(System.Type type) {
+        public static Texture GetTypeIcon(System.Type type)
+        {
             return TypePrefs.GetTypeIcon(type);
         }
     }

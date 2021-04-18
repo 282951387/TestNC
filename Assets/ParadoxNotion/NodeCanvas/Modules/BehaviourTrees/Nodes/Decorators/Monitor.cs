@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using NodeCanvas.Framework;
+using ParadoxNotion.Design;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NodeCanvas.Framework;
-using ParadoxNotion.Design;
 
 namespace NodeCanvas.BehaviourTrees
 {
@@ -36,36 +36,44 @@ namespace NodeCanvas.BehaviourTrees
         [SerializeField]
         private ActionTask _action;
 
-        public ActionTask action {
+        public ActionTask action
+        {
             get { return _action; }
             set { _action = value; }
         }
 
-        public Task task {
+        public Task task
+        {
             get { return action; }
             set { action = (ActionTask)value; }
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
             }
 
-            var newChildStatus = decoratedConnection.Execute(agent, blackboard);
-            if ( action == null ) {
+            Status newChildStatus = decoratedConnection.Execute(agent, blackboard);
+            if (action == null)
+            {
                 return newChildStatus;
             }
 
-            if ( status != newChildStatus ) {
-                var execute = false;
+            if (status != newChildStatus)
+            {
+                bool execute = false;
                 execute |= newChildStatus == Status.Success && monitorMode == MonitorMode.Success;
                 execute |= newChildStatus == Status.Failure && monitorMode == MonitorMode.Failure;
                 execute |= monitorMode == MonitorMode.AnyStatus && newChildStatus != Status.Running;
 
-                if ( execute ) {
+                if (execute)
+                {
                     decoratorActionStatus = action.Execute(agent, blackboard);
-                    if ( decoratorActionStatus == Status.Running ) {
+                    if (decoratorActionStatus == Status.Running)
+                    {
                         return Status.Running;
                     }
                 }
@@ -74,8 +82,10 @@ namespace NodeCanvas.BehaviourTrees
             return returnMode == ReturnStatusMode.NewDecoratorActionStatus && decoratorActionStatus != Status.Resting ? decoratorActionStatus : newChildStatus;
         }
 
-        protected override void OnReset() {
-            if ( action != null ) {
+        protected override void OnReset()
+        {
+            if (action != null)
+            {
                 action.EndAction(null);
                 decoratorActionStatus = Status.Resting;
             }
@@ -86,7 +96,8 @@ namespace NodeCanvas.BehaviourTrees
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Label(string.Format("<b>[On {0}]</b>", monitorMode.ToString()));
         }
 

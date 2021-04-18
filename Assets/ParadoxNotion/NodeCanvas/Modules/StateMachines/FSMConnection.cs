@@ -13,38 +13,46 @@ namespace NodeCanvas.StateMachines
         [SerializeField]
         private ConditionTask _condition;
 
-        public ConditionTask condition {
+        public ConditionTask condition
+        {
             get { return _condition; }
             set { _condition = value; }
         }
 
-        public Task task {
+        public Task task
+        {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }
 
-        public FSM.TransitionCallMode transitionCallMode {
+        public FSM.TransitionCallMode transitionCallMode
+        {
             get { return _transitionCallMode; }
             private set { _transitionCallMode = value; }
         }
 
         //...
-        public void EnableCondition(Component agent, IBlackboard blackboard) {
-            if ( condition != null ) {
+        public void EnableCondition(Component agent, IBlackboard blackboard)
+        {
+            if (condition != null)
+            {
                 condition.Enable(agent, blackboard);
             }
         }
 
         //...
-        public void DisableCondition() {
-            if ( condition != null ) {
+        public void DisableCondition()
+        {
+            if (condition != null)
+            {
                 condition.Disable();
             }
         }
 
         ///Perform the transition disregarding whether or not the condition (if any) is valid
-        public void PerformTransition() {
-            ( graph as FSM ).EnterState((FSMState)targetNode, transitionCallMode);
+        public void PerformTransition()
+        {
+            (graph as FSM).EnterState((FSMState)targetNode, transitionCallMode);
         }
 
 
@@ -52,26 +60,32 @@ namespace NodeCanvas.StateMachines
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        public override ParadoxNotion.PlanarDirection direction {
+        public override ParadoxNotion.PlanarDirection direction
+        {
             get { return ParadoxNotion.PlanarDirection.Auto; }
         }
 
-        public override TipConnectionStyle tipConnectionStyle {
+        public override TipConnectionStyle tipConnectionStyle
+        {
             get { return TipConnectionStyle.Arrow; }
         }
 
-        public override bool animate {
+        public override bool animate
+        {
             get { return status == Status.Failure; }
         }
 
-        protected override string GetConnectionInfo() {
-            var result = transitionCallMode == FSM.TransitionCallMode.Normal ? string.Empty : string.Format("<b>[{0}]</b>\n", transitionCallMode.ToString());
+        protected override string GetConnectionInfo()
+        {
+            string result = transitionCallMode == FSM.TransitionCallMode.Normal ? string.Empty : string.Format("<b>[{0}]</b>\n", transitionCallMode.ToString());
             result += condition != null ? condition.summaryInfo : "OnFinish";
             return result;
         }
 
-        protected override void OnConnectionInspectorGUI() {
-            if ( Editor.Prefs.showNodeInfo ) {
+        protected override void OnConnectionInspectorGUI()
+        {
+            if (Editor.Prefs.showNodeInfo)
+            {
                 UnityEditor.EditorGUILayout.HelpBox("Stacked Call Mode will push the current state to the stack and pop return to it later when any other state without outgoing transitions has been encountered. If you decide to use this feature make sure that you are not cycle stacking states.", UnityEditor.MessageType.None);
             }
             transitionCallMode = (FSM.TransitionCallMode)UnityEditor.EditorGUILayout.EnumPopup("Call Mode (Experimental)", transitionCallMode);

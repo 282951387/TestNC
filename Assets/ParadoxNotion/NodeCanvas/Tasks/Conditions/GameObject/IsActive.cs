@@ -10,7 +10,8 @@ namespace NodeCanvas.Tasks.Conditions
     public class IsActive : ConditionTask<Transform>
     {
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return agent.gameObject.activeInHierarchy;
         }
     }

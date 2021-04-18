@@ -41,40 +41,66 @@ namespace NodeCanvas.Tasks.Actions
         private Vector3 final;
         private bool ponging = false;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( ponging )
+            if (ponging)
+            {
                 final = original;
+            }
 
-            if ( transformMode == TransformMode.Position )
+            if (transformMode == TransformMode.Position)
+            {
                 original = agent.localPosition;
-            if ( transformMode == TransformMode.Rotation )
-                original = agent.localEulerAngles;
-            if ( transformMode == TransformMode.Scale )
-                original = agent.localScale;
+            }
 
-            if ( !ponging )
-                final = targetPosition.value + ( mode == TweenMode.Additive ? original : Vector3.zero );
+            if (transformMode == TransformMode.Rotation)
+            {
+                original = agent.localEulerAngles;
+            }
+
+            if (transformMode == TransformMode.Scale)
+            {
+                original = agent.localScale;
+            }
+
+            if (!ponging)
+            {
+                final = targetPosition.value + (mode == TweenMode.Additive ? original : Vector3.zero);
+            }
 
             ponging = playMode == PlayMode.PingPong;
 
-            if ( ( original - final ).magnitude < 0.1f )
+            if ((original - final).magnitude < 0.1f)
+            {
                 EndAction();
+            }
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
-            var value = Vector3.Lerp(original, final, curve.value.Evaluate(elapsedTime / time.value));
+            Vector3 value = Vector3.Lerp(original, final, curve.value.Evaluate(elapsedTime / time.value));
 
-            if ( transformMode == TransformMode.Position )
+            if (transformMode == TransformMode.Position)
+            {
                 agent.localPosition = value;
-            if ( transformMode == TransformMode.Rotation )
-                agent.localEulerAngles = value;
-            if ( transformMode == TransformMode.Scale )
-                agent.localScale = value;
+            }
 
-            if ( elapsedTime >= time.value )
+            if (transformMode == TransformMode.Rotation)
+            {
+                agent.localEulerAngles = value;
+            }
+
+            if (transformMode == TransformMode.Scale)
+            {
+                agent.localScale = value;
+            }
+
+            if (elapsedTime >= time.value)
+            {
                 EndAction(true);
+            }
         }
     }
 }

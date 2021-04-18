@@ -11,15 +11,18 @@ namespace ParadoxNotion
 
         public int Count => list.Count;
 
-        public WeakReferenceList() {
+        public WeakReferenceList()
+        {
             list = new List<WeakReference<T>>();
         }
 
-        public WeakReferenceList(int capacity) {
+        public WeakReferenceList(int capacity)
+        {
             list = new List<WeakReference<T>>(capacity);
         }
 
-        public T this[int i] {
+        public T this[int i]
+        {
             get
             {
                 list[i].TryGetTarget(out T reference);
@@ -31,22 +34,29 @@ namespace ParadoxNotion
             }
         }
 
-        public void Add(T item) {
+        public void Add(T item)
+        {
             list.Add(new WeakReference<T>(item));
         }
 
-        public void Remove(T item) {
-            for ( var i = list.Count; i-- > 0; ) {
-                var element = list[i];
-                if ( element.TryGetTarget(out T reference) && ReferenceEquals(reference, item) ) {
+        public void Remove(T item)
+        {
+            for (int i = list.Count; i-- > 0;)
+            {
+                WeakReference<T> element = list[i];
+                if (element.TryGetTarget(out T reference) && ReferenceEquals(reference, item))
+                {
                     list.Remove(element);
                 }
             }
         }
 
-        public bool Contains(T item, out int index) {
-            for ( var i = 0; i < list.Count; i++ ) {
-                if ( list[i].TryGetTarget(out T target) && ReferenceEquals(target, item) ) {
+        public bool Contains(T item, out int index)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].TryGetTarget(out T target) && ReferenceEquals(target, item))
+                {
                     index = i;
                     return true;
                 }
@@ -55,24 +65,30 @@ namespace ParadoxNotion
             return false;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             list.Clear();
         }
 
-        public List<T> ToReferenceList() {
-            var result = new List<T>();
-            for ( var i = 0; i < list.Count; i++ ) {
-                var element = list[i];
-                if ( element.TryGetTarget(out T reference) ) {
+        public List<T> ToReferenceList()
+        {
+            List<T> result = new List<T>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                WeakReference<T> element = list[i];
+                if (element.TryGetTarget(out T reference))
+                {
                     result.Add(reference);
                 }
             }
             return result;
         }
 
-        public static implicit operator WeakReferenceList<T>(List<T> value) {
-            var result = new WeakReferenceList<T>(value.Count);
-            for ( var i = 0; i < value.Count; i++ ) {
+        public static implicit operator WeakReferenceList<T>(List<T> value)
+        {
+            WeakReferenceList<T> result = new WeakReferenceList<T>(value.Count);
+            for (int i = 0; i < value.Count; i++)
+            {
                 result.Add(value[i]);
             }
             return result;

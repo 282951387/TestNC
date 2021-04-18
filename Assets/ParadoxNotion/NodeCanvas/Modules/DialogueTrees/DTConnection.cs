@@ -11,7 +11,8 @@ namespace NodeCanvas.DialogueTrees
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        public override ParadoxNotion.PlanarDirection direction {
+        public override ParadoxNotion.PlanarDirection direction
+        {
             get { return ParadoxNotion.PlanarDirection.Vertical; }
         }
 

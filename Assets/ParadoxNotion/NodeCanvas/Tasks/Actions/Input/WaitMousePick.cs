@@ -29,15 +29,19 @@ namespace NodeCanvas.Tasks.Actions
         private int buttonID;
         private RaycastHit hit;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Wait Object '{0}' Click. Save As {1}", buttonKey, saveObjectAs); }
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
             buttonID = (int)buttonKey;
-            if ( Input.GetMouseButtonDown(buttonID) ) {
-                if ( Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask) ) {
+            if (Input.GetMouseButtonDown(buttonID))
+            {
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask))
+                {
                     savePositionAs.value = hit.point;
                     saveObjectAs.value = hit.collider.gameObject;
                     saveDistanceAs.value = hit.distance;

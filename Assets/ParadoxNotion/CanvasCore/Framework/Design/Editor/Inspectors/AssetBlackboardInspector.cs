@@ -12,7 +12,8 @@ namespace NodeCanvas.Editor
 
         private AssetBlackboard bb { get { return (AssetBlackboard)target; } }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             BlackboardEditor.ShowVariables(bb);
             EditorUtils.EndOfInspector();
             Repaint();

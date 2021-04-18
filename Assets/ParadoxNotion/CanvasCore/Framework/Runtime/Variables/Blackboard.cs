@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using NodeCanvas.Framework.Internal;
+﻿using NodeCanvas.Framework.Internal;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 
 namespace NodeCanvas.Framework
@@ -23,7 +23,7 @@ namespace NodeCanvas.Framework
         ///there is still the old one to fallback to.
 
         [Tooltip("An optional Parent Blackboard Asset to 'inherit' variables from.")]
-        [SerializeField] private AssetBlackboard _parentBlackboard = null;
+        [SerializeField] private readonly AssetBlackboard _parentBlackboard = null;
         [SerializeField] private string _serializedBlackboard;
         [SerializeField] private List<UnityEngine.Object> _objectReferences;
         [SerializeField] private SerializationPair[] _serializedVariables;
@@ -38,23 +38,27 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Self Serialize blackboard
-        public void SelfSerialize() {
+        public void SelfSerialize()
+        {
 
-            if ( haltForUndo /*|| ParadoxNotion.Services.Threader.applicationIsPlaying || Application.isPlaying*/ ) {
+            if (haltForUndo /*|| ParadoxNotion.Services.Threader.applicationIsPlaying || Application.isPlaying*/ )
+            {
                 return;
             }
 
-            var newReferences = new List<UnityEngine.Object>();
-            var newSerialization = JSONSerializer.Serialize(typeof(BlackboardSource), _blackboard, newReferences);
-            if ( newSerialization != _serializedBlackboard || !newReferences.SequenceEqual(_objectReferences) || ( _serializedVariables == null || _serializedVariables.Length != _blackboard.variables.Count ) ) {
+            List<UnityEngine.Object> newReferences = new List<UnityEngine.Object>();
+            string newSerialization = JSONSerializer.Serialize(typeof(BlackboardSource), _blackboard, newReferences);
+            if (newSerialization != _serializedBlackboard || !newReferences.SequenceEqual(_objectReferences) || (_serializedVariables == null || _serializedVariables.Length != _blackboard.variables.Count))
+            {
 
                 haltForUndo = true;
                 UndoUtility.RecordObject(this, UndoUtility.GetLastOperationNameOr("Blackboard Change"));
                 haltForUndo = false;
 
                 _serializedVariables = new SerializationPair[_blackboard.variables.Count];
-                for ( var i = 0; i < _blackboard.variables.Count; i++ ) {
-                    var serializedVariable = new SerializationPair();
+                for (int i = 0; i < _blackboard.variables.Count; i++)
+                {
+                    SerializationPair serializedVariable = new SerializationPair();
                     serializedVariable._json = JSONSerializer.Serialize(typeof(Variable), _blackboard.variables.ElementAt(i).Value, serializedVariable._references);
                     _serializedVariables[i] = serializedVariable;
                 }
@@ -65,18 +69,22 @@ namespace NodeCanvas.Framework
         }
 
         ///Self Deserialize blackboard
-        public void SelfDeserialize() {
+        public void SelfDeserialize()
+        {
 
             _blackboard = new BlackboardSource();
-            if ( !string.IsNullOrEmpty(_serializedBlackboard) /*&& ( _serializedVariables == null || _serializedVariables.Length == 0 )*/ ) {
+            if (!string.IsNullOrEmpty(_serializedBlackboard) /*&& ( _serializedVariables == null || _serializedVariables.Length == 0 )*/ )
+            {
                 JSONSerializer.TryDeserializeOverwrite<BlackboardSource>(_blackboard, _serializedBlackboard, _objectReferences);
             }
 
             //this is to handle prefab overrides
-            if ( _serializedVariables != null && _serializedVariables.Length > 0 ) {
+            if (_serializedVariables != null && _serializedVariables.Length > 0)
+            {
                 _blackboard.variables.Clear();
-                for ( var i = 0; i < _serializedVariables.Length; i++ ) {
-                    var variable = JSONSerializer.Deserialize<Variable>(_serializedVariables[i]._json, _serializedVariables[i]._references);
+                for (int i = 0; i < _serializedVariables.Length; i++)
+                {
+                    Variable variable = JSONSerializer.Deserialize<Variable>(_serializedVariables[i]._json, _serializedVariables[i]._references);
                     _blackboard.variables[variable.name] = variable;
                 }
             }
@@ -84,18 +92,20 @@ namespace NodeCanvas.Framework
 
         ///Serialize the blackboard to json with optional list to store object references within.
         ///Use this in runtime for blackboard save/load
-        public string Serialize(List<UnityEngine.Object> references, bool pretyJson = false) {
+        public string Serialize(List<UnityEngine.Object> references, bool pretyJson = false)
+        {
             return JSONSerializer.Serialize(typeof(BlackboardSource), _blackboard, references, pretyJson);
         }
 
         ///Deserialize the blackboard from json with optional list of object references to read serializedreferences from.
         ///We deserialize ON TOP of existing variables so that external references to them stay intact.
         ///Use this in runtime for blackboard save/load
-        public bool Deserialize(string json, List<UnityEngine.Object> references, bool removeMissingVariables = true) {
-            var deserializedBB = JSONSerializer.Deserialize<BlackboardSource>(json, references);
-            if ( deserializedBB == null ) { return false; }
+        public bool Deserialize(string json, List<UnityEngine.Object> references, bool removeMissingVariables = true)
+        {
+            BlackboardSource deserializedBB = JSONSerializer.Deserialize<BlackboardSource>(json, references);
+            if (deserializedBB == null) { return false; }
             this.OverwriteFrom(deserializedBB, removeMissingVariables);
-            this.InitializePropertiesBinding(( (IBlackboard)this ).propertiesBindTarget, true);
+            this.InitializePropertiesBinding(((IBlackboard)this).propertiesBindTarget, true);
             return true;
         }
 
@@ -111,15 +121,28 @@ namespace NodeCanvas.Framework
         IBlackboard IBlackboard.parent => _parentBlackboard;
         string IBlackboard.independantVariablesFieldName => nameof(_serializedVariables);
 
-        void IBlackboard.TryInvokeOnVariableAdded(Variable variable) { if ( onVariableAdded != null ) onVariableAdded(variable); }
-        void IBlackboard.TryInvokeOnVariableRemoved(Variable variable) { if ( onVariableRemoved != null ) onVariableRemoved(variable); }
+        void IBlackboard.TryInvokeOnVariableAdded(Variable variable)
+        {
+            if (onVariableAdded != null)
+            {
+                onVariableAdded(variable);
+            }
+        }
+        void IBlackboard.TryInvokeOnVariableRemoved(Variable variable)
+        {
+            if (onVariableRemoved != null)
+            {
+                onVariableRemoved(variable);
+            }
+        }
 
         ///----------------------------------------------------------------------------------------------
 
         //...
-        virtual protected void Awake() {
+        protected virtual void Awake()
+        {
             _identifier = gameObject.name;
-            this.InitializePropertiesBinding(( (IBlackboard)this ).propertiesBindTarget, false);
+            this.InitializePropertiesBinding(((IBlackboard)this).propertiesBindTarget, false);
         }
 
         ///----------------------------------------------------------------------------------------------
@@ -151,25 +174,28 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         [ContextMenu("Show Json")]
-        void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, this.name); }
+        private void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, name); }
 
         ///----------------------------------------------------------------------------------------------
 
         ///Saves the Blackboard in PlayerPrefs with saveKey being it's name. You can use this for a Save system
-        public string Save() { return Save(this.name); }
+        public string Save() { return Save(name); }
         ///Saves the Blackboard in PlayerPrefs in the provided saveKey. You can use this for a Save system
-        public string Save(string saveKey) {
-            var json = Serialize(null);
+        public string Save(string saveKey)
+        {
+            string json = Serialize(null);
             PlayerPrefs.SetString(saveKey, json);
             return json;
         }
 
         ///Loads back the Blackboard from PlayerPrefs saveKey same as it's name. You can use this for a Save system
-        public bool Load() { return Load(this.name); }
+        public bool Load() { return Load(name); }
         ///Loads back the Blackboard from PlayerPrefs of the provided saveKey. You can use this for a Save system
-        public bool Load(string saveKey) {
-            var json = PlayerPrefs.GetString(saveKey);
-            if ( string.IsNullOrEmpty(json) ) {
+        public bool Load(string saveKey)
+        {
+            string json = PlayerPrefs.GetString(saveKey);
+            if (string.IsNullOrEmpty(json))
+            {
                 Debug.Log("No data to load blackboard variables from key " + saveKey);
                 return false;
             }
@@ -178,7 +204,7 @@ namespace NodeCanvas.Framework
 
         ///----------------------------------------------------------------------------------------------
 
-        virtual protected void OnValidate() { _identifier = gameObject.name; }
+        protected virtual void OnValidate() { _identifier = gameObject.name; }
         public override string ToString() { return _identifier; }
     }
 }

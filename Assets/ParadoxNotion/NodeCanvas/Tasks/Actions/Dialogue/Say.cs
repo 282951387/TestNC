@@ -1,7 +1,7 @@
-﻿using ParadoxNotion.Design;
+﻿using NodeCanvas.DialogueTrees;
 using NodeCanvas.Framework;
-using NodeCanvas.DialogueTrees;
 using ParadoxNotion;
+using ParadoxNotion.Design;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -14,12 +14,14 @@ namespace NodeCanvas.Tasks.Actions
 
         public Statement statement = new Statement("This is a dialogue text...");
 
-        protected override string info {
-            get { return string.Format("<i>' {0} '</i>", ( statement.text.CapLength(30) )); }
+        protected override string info
+        {
+            get { return string.Format("<i>' {0} '</i>", (statement.text.CapLength(30))); }
         }
 
-        protected override void OnExecute() {
-            var tempStatement = statement.BlackboardReplace(blackboard);
+        protected override void OnExecute()
+        {
+            IStatement tempStatement = statement.BlackboardReplace(blackboard);
             DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(agent, tempStatement, EndAction));
         }
     }

@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections;
 
 
 namespace NodeCanvas.Tasks.Conditions
@@ -14,11 +14,13 @@ namespace NodeCanvas.Tasks.Conditions
         [BlackboardOnly]
         public BBParameter<IList> targetList;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} Is Empty", targetList); }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return targetList.value.Count == 0;
         }
     }

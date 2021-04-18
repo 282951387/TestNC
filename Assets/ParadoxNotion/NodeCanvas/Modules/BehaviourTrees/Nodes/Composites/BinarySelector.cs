@@ -24,34 +24,42 @@ namespace NodeCanvas.BehaviourTrees
         public override int maxOutConnections { get { return 2; } }
         public override Alignment2x2 commentsAlignment { get { return Alignment2x2.Right; } }
 
-        public override string name {
+        public override string name
+        {
             get { return base.name.ToUpper(); }
         }
 
-        public Task task {
+        public Task task
+        {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }
 
-        private ConditionTask condition {
+        private ConditionTask condition
+        {
             get { return _condition; }
             set { _condition = value; }
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( condition == null || outConnections.Count < 2 ) {
+            if (condition == null || outConnections.Count < 2)
+            {
                 return Status.Optional;
             }
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 condition.Enable(agent, blackboard);
             }
 
-            if ( dynamic || status == Status.Resting ) {
-                var lastIndex = succeedIndex;
+            if (dynamic || status == Status.Resting)
+            {
+                int lastIndex = succeedIndex;
                 succeedIndex = condition.Check(agent, blackboard) ? 0 : 1;
-                if ( succeedIndex != lastIndex ) {
+                if (succeedIndex != lastIndex)
+                {
                     outConnections[lastIndex].Reset();
                 }
             }
@@ -59,8 +67,9 @@ namespace NodeCanvas.BehaviourTrees
             return outConnections[succeedIndex].Execute(agent, blackboard);
         }
 
-        protected override void OnReset() {
-            if ( condition != null ) { condition.Disable(); }
+        protected override void OnReset()
+        {
+            if (condition != null) { condition.Disable(); }
         }
 
 
@@ -69,12 +78,15 @@ namespace NodeCanvas.BehaviourTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        public override string GetConnectionInfo(int i) {
+        public override string GetConnectionInfo(int i)
+        {
             return i == 0 ? "TRUE" : "FALSE";
         }
 
-        protected override void OnNodeGUI() {
-            if ( dynamic ) {
+        protected override void OnNodeGUI()
+        {
+            if (dynamic)
+            {
                 GUILayout.Label("<b>DYNAMIC</b>");
             }
         }

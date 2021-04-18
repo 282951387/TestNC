@@ -13,12 +13,15 @@ namespace NodeCanvas.Tasks.Conditions
         [BlackboardOnly]
         public BBParameter<bool> trigger;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Trigger {0}", trigger); }
         }
 
-        protected override bool OnCheck() {
-            if ( trigger.value ) {
+        protected override bool OnCheck()
+        {
+            if (trigger.value)
+            {
                 trigger.value = false;
                 return true;
             }

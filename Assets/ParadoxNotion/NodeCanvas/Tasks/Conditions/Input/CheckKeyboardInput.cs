@@ -14,20 +14,28 @@ namespace NodeCanvas.Tasks.Conditions
         public PressTypes pressType = PressTypes.Down;
         public KeyCode key = KeyCode.Space;
 
-        protected override string info {
+        protected override string info
+        {
             get { return pressType.ToString() + " " + key.ToString(); }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
 
-            if ( pressType == PressTypes.Down )
+            if (pressType == PressTypes.Down)
+            {
                 return Input.GetKeyDown(key);
+            }
 
-            if ( pressType == PressTypes.Up )
+            if (pressType == PressTypes.Up)
+            {
                 return Input.GetKeyUp(key);
+            }
 
-            if ( pressType == PressTypes.Pressed )
+            if (pressType == PressTypes.Pressed)
+            {
                 return Input.GetKey(key);
+            }
 
             return false;
         }
@@ -38,7 +46,8 @@ namespace NodeCanvas.Tasks.Conditions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
             UnityEditor.EditorGUILayout.BeginHorizontal();
             pressType = (PressTypes)UnityEditor.EditorGUILayout.EnumPopup(pressType);

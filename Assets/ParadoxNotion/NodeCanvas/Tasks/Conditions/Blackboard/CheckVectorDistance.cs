@@ -17,13 +17,15 @@ namespace NodeCanvas.Tasks.Conditions
         public CompareMethod comparison = CompareMethod.EqualTo;
         public BBParameter<float> distance;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Distance ({0}, {1}) {2} {3}", vectorA, vectorB, OperationTools.GetCompareString(comparison), distance); }
         }
 
-        protected override bool OnCheck() {
-            var d = Vector3.Distance(vectorA.value, vectorB.value);
-            return OperationTools.Compare((float)d, (float)distance.value, comparison, 0f);
+        protected override bool OnCheck()
+        {
+            float d = Vector3.Distance(vectorA.value, vectorB.value);
+            return OperationTools.Compare(d, distance.value, comparison, 0f);
         }
     }
 }

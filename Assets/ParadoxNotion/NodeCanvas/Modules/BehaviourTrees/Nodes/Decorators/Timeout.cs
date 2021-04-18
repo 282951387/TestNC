@@ -14,15 +14,19 @@ namespace NodeCanvas.BehaviourTrees
 
         public BBParameter<float> timeout = 1;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
             }
 
             status = decoratedConnection.Execute(agent, blackboard);
-            if ( status == Status.Running ) {
-                if ( elapsedTime >= timeout.value ) {
+            if (status == Status.Running)
+            {
+                if (elapsedTime >= timeout.value)
+                {
                     decoratedConnection.Reset();
                     return Status.Failure;
                 }
@@ -35,10 +39,11 @@ namespace NodeCanvas.BehaviourTrees
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
+        protected override void OnNodeGUI()
+        {
             GUILayout.Space(25);
-            var pRect = new Rect(5, GUILayoutUtility.GetLastRect().y, rect.width - 10, 20);
-            var t = 1 - ( elapsedTime / timeout.value );
+            Rect pRect = new Rect(5, GUILayoutUtility.GetLastRect().y, rect.width - 10, 20);
+            float t = 1 - (elapsedTime / timeout.value);
             UnityEditor.EditorGUI.ProgressBar(pRect, t, elapsedTime > 0 ? string.Format("Timeouting ({0})", elapsedTime.ToString("0.0")) : "Ready");
         }
 

@@ -16,22 +16,28 @@ namespace NodeCanvas.BehaviourTrees
         private ConditionTask _condition;
         private bool accessed;
 
-        public Task task {
+        public Task task
+        {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }
 
-        private ConditionTask condition {
+        private ConditionTask condition
+        {
             get { return _condition; }
             set { _condition = value; }
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 //this part is so that Wait node can be used as leaf too
-                if ( condition != null ) {
-                    if ( status == Status.Resting ) {
+                if (condition != null)
+                {
+                    if (status == Status.Resting)
+                    {
                         condition.Enable(agent, blackboard);
                     }
                     return condition.Check(agent, blackboard) ? Status.Success : Status.Running;
@@ -40,25 +46,32 @@ namespace NodeCanvas.BehaviourTrees
                 return Status.Optional;
             }
 
-            if ( condition == null ) {
+            if (condition == null)
+            {
                 return decoratedConnection.Execute(agent, blackboard);
             }
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 condition.Enable(agent, blackboard);
             }
 
-            if ( accessed ) return decoratedConnection.Execute(agent, blackboard);
+            if (accessed)
+            {
+                return decoratedConnection.Execute(agent, blackboard);
+            }
 
-            if ( condition.Check(agent, blackboard) ) {
+            if (condition.Check(agent, blackboard))
+            {
                 accessed = true;
             }
 
             return accessed ? decoratedConnection.Execute(agent, blackboard) : Status.Running;
         }
 
-        protected override void OnReset() {
-            if ( condition != null ) { condition.Disable(); }
+        protected override void OnReset()
+        {
+            if (condition != null) { condition.Disable(); }
             accessed = false;
         }
     }

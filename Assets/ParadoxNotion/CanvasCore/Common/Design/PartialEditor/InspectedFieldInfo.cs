@@ -20,11 +20,12 @@ namespace ParadoxNotion.Design
         public object[] attributes;
 
         //...
-        public InspectedFieldInfo(UnityEngine.Object unityObjectContext, FieldInfo field, object parentInstanceContext, object[] attributes) {
+        public InspectedFieldInfo(UnityEngine.Object unityObjectContext, FieldInfo field, object parentInstanceContext, object[] attributes)
+        {
             this.unityObjectContext = unityObjectContext;
             this.field = field;
             this.parentInstanceContext = parentInstanceContext;
-            this.wrapperInstanceContext = parentInstanceContext;
+            wrapperInstanceContext = parentInstanceContext;
             this.attributes = attributes;
         }
     }

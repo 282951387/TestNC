@@ -1,18 +1,20 @@
-﻿using UnityEngine;
+﻿using NodeCanvas.DialogueTrees;
 using System.Collections;
-using NodeCanvas.DialogueTrees;
+using UnityEngine;
 
 public class ClickToStartDialogue : MonoBehaviour
 {
 
     public DialogueTreeController dialogueController;
 
-    void OnMouseDown() {
+    private void OnMouseDown()
+    {
         gameObject.SetActive(false);
         dialogueController.StartDialogue(OnDialogueEnd);
     }
 
-    void OnDialogueEnd(bool success) {
+    private void OnDialogueEnd(bool success)
+    {
         gameObject.SetActive(true);
     }
 }

@@ -15,18 +15,22 @@ namespace NodeCanvas.BehaviourTrees
 
         private int current;
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            for ( var i = current; i < outConnections.Count; i++ ) {
+            for (int i = current; i < outConnections.Count; i++)
+            {
 
                 status = outConnections[i].Execute(agent, blackboard);
 
-                if ( status == Status.Running ) {
+                if (status == Status.Running)
+                {
                     current = i;
                     return Status.Running;
                 }
 
-                if ( status == Status.Success ) {
+                if (status == Status.Success)
+                {
                     SendToBack(i);
                     return Status.Success;
                 }
@@ -35,13 +39,15 @@ namespace NodeCanvas.BehaviourTrees
             return Status.Failure;
         }
 
-        void SendToBack(int i) {
-            var c = outConnections[i];
+        private void SendToBack(int i)
+        {
+            Connection c = outConnections[i];
             outConnections.RemoveAt(i);
             outConnections.Add(c);
         }
 
-        protected override void OnReset() {
+        protected override void OnReset()
+        {
             current = 0;
         }
     }

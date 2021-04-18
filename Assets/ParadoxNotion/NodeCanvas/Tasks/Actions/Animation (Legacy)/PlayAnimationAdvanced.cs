@@ -29,43 +29,57 @@ namespace NodeCanvas.Tasks.Actions
         private int dir = -1;
         private Transform mixTransform;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Anim " + animationClip.ToString(); }
         }
 
-        protected override string OnInit() {
+        protected override string OnInit()
+        {
             agent.AddClip(animationClip.value, animationClip.value.name);
             animationClip.value.legacy = true;
             return null;
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( playDirection == PlayDirections.Toggle )
+            if (playDirection == PlayDirections.Toggle)
+            {
                 dir = -dir;
+            }
 
-            if ( playDirection == PlayDirections.Backward )
+            if (playDirection == PlayDirections.Backward)
+            {
                 dir = -1;
+            }
 
-            if ( playDirection == PlayDirections.Forward )
+            if (playDirection == PlayDirections.Forward)
+            {
                 dir = 1;
+            }
 
             agent.AddClip(animationClip.value, animationClip.value.name);
             animationToPlay = animationClip.value.name;
 
-            if ( !string.IsNullOrEmpty(mixTransformName.value) ) {
+            if (!string.IsNullOrEmpty(mixTransformName.value))
+            {
                 mixTransform = FindTransform(agent.transform, mixTransformName.value);
-                if ( !mixTransform ) {
+                if (!mixTransform)
+                {
                     ParadoxNotion.Services.Logger.LogWarning("Cant find transform with name '" + mixTransformName.value + "' for PlayAnimation Action", LogTag.EXECUTION, this);
                 }
 
-            } else {
+            }
+            else
+            {
                 mixTransform = null;
             }
 
             animationToPlay = animationClip.value.name;
 
-            if ( mixTransform ) {
+            if (mixTransform)
+            {
                 agent[animationToPlay].AddMixingTransform(mixTransform, true);
             }
 
@@ -75,34 +89,46 @@ namespace NodeCanvas.Tasks.Actions
             agent[animationToPlay].wrapMode = animationWrap;
             agent[animationToPlay].blendMode = blendMode;
 
-            if ( queueAnimation ) {
+            if (queueAnimation)
+            {
                 agent.CrossFadeQueued(animationToPlay, crossFadeTime);
-            } else {
+            }
+            else
+            {
                 agent.CrossFade(animationToPlay, crossFadeTime);
             }
 
-            if ( !waitActionFinish ) {
+            if (!waitActionFinish)
+            {
                 EndAction(true);
             }
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
-            if ( elapsedTime >= ( agent[animationToPlay].length / playbackSpeed ) - crossFadeTime ) {
+            if (elapsedTime >= (agent[animationToPlay].length / playbackSpeed) - crossFadeTime)
+            {
                 EndAction(true);
             }
         }
 
-        Transform FindTransform(Transform parent, string name) {
+        private Transform FindTransform(Transform parent, string name)
+        {
 
-            if ( parent.name == name )
+            if (parent.name == name)
+            {
                 return parent;
+            }
 
-            var transforms = parent.GetComponentsInChildren<Transform>();
+            Transform[] transforms = parent.GetComponentsInChildren<Transform>();
 
-            foreach ( var t in transforms ) {
-                if ( t.name == name )
+            foreach (Transform t in transforms)
+            {
+                if (t.name == name)
+                {
                     return t;
+                }
             }
 
             return null;

@@ -25,16 +25,18 @@ namespace NodeCanvas.Tasks.Actions
 
         public bool repeat;
 
-        protected override void OnUpdate() {
-            var targetRotation = agent.rotation * Quaternion.Euler(Vector3.up * turn.value * 10);
+        protected override void OnUpdate()
+        {
+            Quaternion targetRotation = agent.rotation * Quaternion.Euler(Vector3.up * turn.value * 10);
             agent.rotation = Quaternion.Slerp(agent.rotation, targetRotation, rotationSpeed.value * Time.deltaTime);
 
-            var forwardMovement = agent.forward * forward.value * moveSpeed.value * Time.deltaTime;
-            var strafeMovement = agent.right * strafe.value * moveSpeed.value * Time.deltaTime;
-            var upMovement = agent.up * up.value * moveSpeed.value * Time.deltaTime;
+            Vector3 forwardMovement = agent.forward * forward.value * moveSpeed.value * Time.deltaTime;
+            Vector3 strafeMovement = agent.right * strafe.value * moveSpeed.value * Time.deltaTime;
+            Vector3 upMovement = agent.up * up.value * moveSpeed.value * Time.deltaTime;
             agent.position += strafeMovement + forwardMovement + upMovement;
 
-            if ( !repeat ) {
+            if (!repeat)
+            {
                 EndAction();
             }
         }

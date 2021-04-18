@@ -17,16 +17,20 @@ namespace NodeCanvas.Tasks.Conditions
         [SliderField(1, 180)]
         public BBParameter<float> viewAngle = 70f;
 
-        protected override string info {
+        protected override string info
+        {
             get { return checkTarget + " in view angle"; }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return Vector3.Angle(checkTarget.value.transform.position - agent.position, agent.forward) < viewAngle.value;
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent != null ) {
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent != null)
+            {
                 Gizmos.matrix = Matrix4x4.TRS(agent.position, agent.rotation, Vector3.one);
                 Gizmos.DrawFrustum(Vector3.zero, viewAngle.value, 5, 0, 1f);
             }

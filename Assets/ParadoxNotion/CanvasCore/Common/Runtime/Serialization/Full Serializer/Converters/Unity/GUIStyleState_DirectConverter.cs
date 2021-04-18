@@ -7,8 +7,9 @@ namespace ParadoxNotion.Serialization.FullSerializer.Internal.DirectConverters
 {
     public class GUIStyleState_DirectConverter : fsDirectConverter<GUIStyleState>
     {
-        protected override fsResult DoSerialize(GUIStyleState model, Dictionary<string, fsData> serialized) {
-            var result = fsResult.Success;
+        protected override fsResult DoSerialize(GUIStyleState model, Dictionary<string, fsData> serialized)
+        {
+            fsResult result = fsResult.Success;
 
             result += SerializeMember(serialized, null, "background", model.background);
             result += SerializeMember(serialized, null, "textColor", model.textColor);
@@ -16,21 +17,23 @@ namespace ParadoxNotion.Serialization.FullSerializer.Internal.DirectConverters
             return result;
         }
 
-        protected override fsResult DoDeserialize(Dictionary<string, fsData> data, ref GUIStyleState model) {
-            var result = fsResult.Success;
+        protected override fsResult DoDeserialize(Dictionary<string, fsData> data, ref GUIStyleState model)
+        {
+            fsResult result = fsResult.Success;
 
-            var t0 = model.background;
+            Texture2D t0 = model.background;
             result += DeserializeMember(data, null, "background", out t0);
             model.background = t0;
 
-            var t2 = model.textColor;
+            Color t2 = model.textColor;
             result += DeserializeMember(data, null, "textColor", out t2);
             model.textColor = t2;
 
             return result;
         }
 
-        public override object CreateInstance(fsData data, Type storageType) {
+        public override object CreateInstance(fsData data, Type storageType)
+        {
             return new GUIStyleState();
         }
     }

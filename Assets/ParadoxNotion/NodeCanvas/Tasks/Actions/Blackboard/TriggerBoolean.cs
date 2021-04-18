@@ -14,19 +14,23 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<bool> variable;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Trigger {0}", variable); }
         }
 
-        protected override void OnExecute() {
-            if ( variable.value == false ) {
+        protected override void OnExecute()
+        {
+            if (variable.value == false)
+            {
                 variable.value = true;
                 StartCoroutine(Flip());
             }
             EndAction();
         }
 
-        IEnumerator Flip() {
+        private IEnumerator Flip()
+        {
             yield return null;
             variable.value = false;
         }

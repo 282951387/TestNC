@@ -21,27 +21,33 @@ namespace NodeCanvas.BehaviourTrees
 
         ///----------------------------------------------------------------------------------------------
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( subGraph == null || subGraph.primeNode == null ) {
+            if (subGraph == null || subGraph.primeNode == null)
+            {
                 return Status.Optional;
             }
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 this.TryStartSubGraph(agent);
             }
 
-            currentInstance.UpdateGraph(this.graph.deltaTime);
+            currentInstance.UpdateGraph(graph.deltaTime);
 
-            if ( currentInstance.repeat && currentInstance.rootStatus != Status.Running ) {
+            if (currentInstance.repeat && currentInstance.rootStatus != Status.Running)
+            {
                 this.TryReadAndUnbindMappedVariables();
             }
 
             return currentInstance.rootStatus;
         }
 
-        protected override void OnReset() {
-            if ( currentInstance != null ) {
+        protected override void OnReset()
+        {
+            if (currentInstance != null)
+            {
                 currentInstance.Stop();
             }
         }

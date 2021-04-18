@@ -10,7 +10,8 @@ namespace NodeCanvas.Tasks.Actions
     public class DebugBeep : ActionTask
     {
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.Beep();
 #endif

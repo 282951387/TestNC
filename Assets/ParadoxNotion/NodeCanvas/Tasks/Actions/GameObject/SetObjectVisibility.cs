@@ -21,19 +21,24 @@ namespace NodeCanvas.Tasks.Actions
 
         public SetVisibleMode setTo = SetVisibleMode.Toggle;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("{0} {1}", setTo, agentInfo); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             bool value;
 
-            if ( setTo == SetVisibleMode.Toggle ) {
+            if (setTo == SetVisibleMode.Toggle)
+            {
 
                 value = !agent.enabled;
 
-            } else {
+            }
+            else
+            {
 
                 value = (int)setTo == 1;
             }

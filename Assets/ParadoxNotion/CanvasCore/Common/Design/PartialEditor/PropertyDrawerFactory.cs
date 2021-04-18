@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR
 
-using UnityEngine;
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using UnityEngine;
 
 namespace ParadoxNotion.Design
 {
@@ -17,33 +17,41 @@ namespace ParadoxNotion.Design
         private static Dictionary<Type, IObjectDrawer> objectDrawers = new Dictionary<Type, IObjectDrawer>();
         private static Dictionary<Type, IAttributeDrawer> attributeDrawers = new Dictionary<Type, IAttributeDrawer>();
 
-        public static void FlushMem() {
+        public static void FlushMem()
+        {
             objectDrawers = new Dictionary<Type, IObjectDrawer>();
             attributeDrawers = new Dictionary<Type, IAttributeDrawer>();
         }
 
         ///Return an object drawer instance of target inspected type
-        public static IObjectDrawer GetObjectDrawer(Type objectType) {
+        public static IObjectDrawer GetObjectDrawer(Type objectType)
+        {
             IObjectDrawer result = null;
-            if ( objectDrawers.TryGetValue(objectType, out result) ) {
+            if (objectDrawers.TryGetValue(objectType, out result))
+            {
                 return result;
             }
 
             // look for specific drawer first
             Type fallbackDrawerType = null;
-            foreach ( var drawerType in ReflectionTools.GetImplementationsOf(typeof(IObjectDrawer)) ) {
-                if ( drawerType != typeof(DefaultObjectDrawer) ) {
-                    var args = drawerType.BaseType.RTGetGenericArguments();
-                    if ( args.Length == 1 ) {
-                        if ( args[0].IsEquivalentTo(objectType) ) {
+            foreach (Type drawerType in ReflectionTools.GetImplementationsOf(typeof(IObjectDrawer)))
+            {
+                if (drawerType != typeof(DefaultObjectDrawer))
+                {
+                    Type[] args = drawerType.BaseType.RTGetGenericArguments();
+                    if (args.Length == 1)
+                    {
+                        if (args[0].IsEquivalentTo(objectType))
+                        {
                             return objectDrawers[objectType] = Activator.CreateInstance(drawerType) as IObjectDrawer;
                         }
-                        if ( args[0].IsAssignableFrom(objectType) ) { fallbackDrawerType = drawerType; }
+                        if (args[0].IsAssignableFrom(objectType)) { fallbackDrawerType = drawerType; }
                     }
                 }
             }
 
-            if ( fallbackDrawerType != null ) {
+            if (fallbackDrawerType != null)
+            {
                 return objectDrawers[objectType] = Activator.CreateInstance(fallbackDrawerType) as IObjectDrawer;
             }
 
@@ -63,16 +71,21 @@ namespace ParadoxNotion.Design
         ///Return an attribute drawer instance of target attribute instance
         public static IAttributeDrawer GetAttributeDrawer(DrawerAttribute att) { return GetAttributeDrawer(att.GetType()); }
         ///Return an attribute drawer instance of target attribute type
-        public static IAttributeDrawer GetAttributeDrawer(Type attributeType) {
+        public static IAttributeDrawer GetAttributeDrawer(Type attributeType)
+        {
             IAttributeDrawer result = null;
-            if ( attributeDrawers.TryGetValue(attributeType, out result) ) {
+            if (attributeDrawers.TryGetValue(attributeType, out result))
+            {
                 return result;
             }
 
-            foreach ( var drawerType in ReflectionTools.GetImplementationsOf(typeof(IAttributeDrawer)) ) {
-                if ( drawerType != typeof(DefaultAttributeDrawer) ) {
-                    var args = drawerType.BaseType.RTGetGenericArguments();
-                    if ( args.Length == 1 && args[0].IsAssignableFrom(attributeType) ) {
+            foreach (Type drawerType in ReflectionTools.GetImplementationsOf(typeof(IAttributeDrawer)))
+            {
+                if (drawerType != typeof(DefaultAttributeDrawer))
+                {
+                    Type[] args = drawerType.BaseType.RTGetGenericArguments();
+                    if (args.Length == 1 && args[0].IsAssignableFrom(attributeType))
+                    {
                         return attributeDrawers[attributeType] = Activator.CreateInstance(drawerType) as IAttributeDrawer;
                     }
                 }
@@ -98,7 +111,7 @@ namespace ParadoxNotion.Design
     ///----------------------------------------------------------------------------------------------
 
     ///Derive this to create custom drawers for T assignable object types.
-    abstract public class ObjectDrawer<T> : IObjectDrawer
+    public abstract class ObjectDrawer<T> : IObjectDrawer
     {
         ///info
         protected InspectedFieldInfo info { get; private set; }
@@ -121,51 +134,56 @@ namespace ParadoxNotion.Design
 
 
         ///Begin GUI
-        object IObjectDrawer.DrawGUI(GUIContent content, object instance, InspectedFieldInfo info) {
+        object IObjectDrawer.DrawGUI(GUIContent content, object instance, InspectedFieldInfo info)
+        {
             this.content = content;
             this.instance = (T)instance;
             this.info = info;
 
-            this.attributes = info.attributes != null ? info.attributes.OfType<DrawerAttribute>().OrderBy(a => a.priority).ToArray() : null;
+            attributes = info.attributes != null ? info.attributes.OfType<DrawerAttribute>().OrderBy(a => a.priority).ToArray() : null;
 
-            this.attributeIndex = -1;
-            var result = ( this as IObjectDrawer ).MoveNextDrawer();
+            attributeIndex = -1;
+            object result = (this as IObjectDrawer).MoveNextDrawer();
 
             // //flush references
             this.info = default(InspectedFieldInfo);
             this.content = null;
             this.instance = default(T);
-            this.attributes = null;
+            attributes = null;
 
             return result;
         }
 
         ///Show the next attribute drawer in order, or the object drawer itself of no attribute drawer is left to show.
-        object IObjectDrawer.MoveNextDrawer() {
+        object IObjectDrawer.MoveNextDrawer()
+        {
             attributeIndex++;
-            if ( attributes != null && attributeIndex < attributes.Length ) {
-                var currentDrawerAttribute = attributes[attributeIndex];
-                var drawer = PropertyDrawerFactory.GetAttributeDrawer(currentDrawerAttribute);
+            if (attributes != null && attributeIndex < attributes.Length)
+            {
+                DrawerAttribute currentDrawerAttribute = attributes[attributeIndex];
+                IAttributeDrawer drawer = PropertyDrawerFactory.GetAttributeDrawer(currentDrawerAttribute);
                 return drawer.DrawGUI(this, content, instance, currentDrawerAttribute, info);
             }
             return OnGUI(content, instance);
         }
 
         ///Override to implement GUI. Return the modified instance at the end.
-        abstract public T OnGUI(GUIContent content, T instance);
+        public abstract T OnGUI(GUIContent content, T instance);
     }
 
     ///The default object drawer implementation able to inspect most types
     public class DefaultObjectDrawer : ObjectDrawer<object>
     {
 
-        private Type objectType;
+        private readonly Type objectType;
 
-        public DefaultObjectDrawer(Type objectType) {
+        public DefaultObjectDrawer(Type objectType)
+        {
             this.objectType = objectType;
         }
 
-        public override object OnGUI(GUIContent content, object instance) {
+        public override object OnGUI(GUIContent content, object instance)
+        {
             return EditorUtils.DrawEditorFieldDirect(content, instance, objectType, info);
         }
     }
@@ -173,7 +191,7 @@ namespace ParadoxNotion.Design
     ///----------------------------------------------------------------------------------------------
 
     ///Derive this to create custom drawers for T DrawerAttribute.
-    abstract public class AttributeDrawer<T> : IAttributeDrawer where T : DrawerAttribute
+    public abstract class AttributeDrawer<T> : IAttributeDrawer where T : DrawerAttribute
     {
 
         ///info
@@ -197,14 +215,15 @@ namespace ParadoxNotion.Design
         protected UnityEngine.Object contextUnityObject { get { return info.unityObjectContext; } }
 
         ///Begin GUI
-        object IAttributeDrawer.DrawGUI(IObjectDrawer objectDrawer, GUIContent content, object instance, DrawerAttribute attribute, InspectedFieldInfo info) {
+        object IAttributeDrawer.DrawGUI(IObjectDrawer objectDrawer, GUIContent content, object instance, DrawerAttribute attribute, InspectedFieldInfo info)
+        {
             this.objectDrawer = objectDrawer;
             this.content = content;
             this.instance = instance;
             this.attribute = (T)attribute;
 
             this.info = info;
-            var result = OnGUI(content, instance);
+            object result = OnGUI(content, instance);
 
             //flush references
             this.info = default(InspectedFieldInfo);
@@ -217,7 +236,7 @@ namespace ParadoxNotion.Design
         }
 
         ///Override to implement GUI. Return the modified instance at the end.
-        abstract public object OnGUI(GUIContent content, object instance);
+        public abstract object OnGUI(GUIContent content, object instance);
         ///Show the next attribute drawer in order, or the object drawer itself of no attribute drawer is left to show.
         protected object MoveNextDrawer() { return objectDrawer.MoveNextDrawer(); }
     }
@@ -226,13 +245,15 @@ namespace ParadoxNotion.Design
     public class DefaultAttributeDrawer : AttributeDrawer<DrawerAttribute>
     {
 
-        private Type attributeType;
+        private readonly Type attributeType;
 
-        public DefaultAttributeDrawer(Type attributeType) {
+        public DefaultAttributeDrawer(Type attributeType)
+        {
             this.attributeType = attributeType;
         }
 
-        public override object OnGUI(GUIContent content, object instance) {
+        public override object OnGUI(GUIContent content, object instance)
+        {
             GUILayout.Label(string.Format("Implementation of '{0}' drawer attribute not found.", attributeType));
             return MoveNextDrawer();
         }

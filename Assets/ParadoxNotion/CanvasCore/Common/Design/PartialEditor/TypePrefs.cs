@@ -1,15 +1,15 @@
 ﻿#if UNITY_EDITOR
 
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
+using ParadoxNotion.Serialization;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine;
 using NavMesh = UnityEngine.AI.NavMesh;
 using NavMeshAgent = UnityEngine.AI.NavMeshAgent;
-using ParadoxNotion.Serialization;
 
 namespace ParadoxNotion.Design
 {
@@ -116,26 +116,32 @@ namespace ParadoxNotion.Design
 
 
         //The default prefered types list
-        private static string defaultTypesListString {
+        private static string defaultTypesListString
+        {
             get { return string.Join("|", defaultTypesList.OrderBy(t => t.Namespace).ThenBy(t => t.Name).Select(t => t.FullName).ToArray()); }
         }
 
         ///----------------------------------------------------------------------------------------------
 
         [InitializeOnLoadMethod]
-        static void LoadTypes() {
+        private static void LoadTypes()
+        {
             _preferedTypesAll = new List<Type>();
 
-            if ( TryLoadSyncFile(ref _preferedTypesAll) ) {
+            if (TryLoadSyncFile(ref _preferedTypesAll))
+            {
                 SetPreferedTypesList(_preferedTypesAll);
                 return;
             }
 
-            foreach ( var s in EditorPrefs.GetString(TYPES_PREFS_KEY, defaultTypesListString).Split('|') ) {
-                var resolvedType = ReflectionTools.GetType(s, /*fallback?*/ true);
-                if ( resolvedType != null ) {
+            foreach (string s in EditorPrefs.GetString(TYPES_PREFS_KEY, defaultTypesListString).Split('|'))
+            {
+                Type resolvedType = ReflectionTools.GetType(s, /*fallback?*/ true);
+                if (resolvedType != null)
+                {
                     _preferedTypesAll.Add(resolvedType);
-                } else { ParadoxNotion.Services.Logger.Log("Missing type in Preferred Types Editor. Type removed."); }
+                }
+                else { ParadoxNotion.Services.Logger.Log("Missing type in Preferred Types Editor. Type removed."); }
             }
             //re-write back, so that fallback type resolved are saved
             SetPreferedTypesList(_preferedTypesAll);
@@ -143,78 +149,92 @@ namespace ParadoxNotion.Design
 
         ///Get the prefered types set by the user.
         public static List<Type> GetPreferedTypesList(bool filterOutFunctionalOnlyTypes = false) { return GetPreferedTypesList(typeof(object), filterOutFunctionalOnlyTypes); }
-        public static List<Type> GetPreferedTypesList(Type baseType, bool filterOutFunctionalOnlyTypes = false) {
+        public static List<Type> GetPreferedTypesList(Type baseType, bool filterOutFunctionalOnlyTypes = false)
+        {
 
-            if ( _preferedTypesAll == null || _preferedTypesFiltered == null ) {
+            if (_preferedTypesAll == null || _preferedTypesFiltered == null)
+            {
                 LoadTypes();
             }
 
-            if ( baseType == typeof(object) ) {
+            if (baseType == typeof(object))
+            {
                 return filterOutFunctionalOnlyTypes ? _preferedTypesFiltered : _preferedTypesAll;
             }
 
-            if ( filterOutFunctionalOnlyTypes ) {
+            if (filterOutFunctionalOnlyTypes)
+            {
                 return _preferedTypesFiltered.Where(t => t != null && baseType.IsAssignableFrom(t)).ToList();
             }
             return _preferedTypesAll.Where(t => t != null && baseType.IsAssignableFrom(t)).ToList();
         }
 
         ///Set the prefered types list for the user
-        public static void SetPreferedTypesList(List<Type> types) {
-            var finalTypes = types
+        public static void SetPreferedTypesList(List<Type> types)
+        {
+            List<Type> finalTypes = types
             .Where(t => t != null && !t.IsGenericType)
             .OrderBy(t => t.Namespace)
             .ThenBy(t => t.Name)
             .ToList();
-            var joined = string.Join("|", finalTypes.Select(t => t.FullName).ToArray());
+            string joined = string.Join("|", finalTypes.Select(t => t.FullName).ToArray());
             EditorPrefs.SetString(TYPES_PREFS_KEY, joined);
             _preferedTypesAll = finalTypes;
 
-            var finalTypesFiltered = finalTypes
+            List<Type> finalTypesFiltered = finalTypes
             .Where(t => !functionalTypesBlacklist.Contains(t) /*&& !t.IsInterface && !t.IsAbstract*/ )
             .ToList();
             _preferedTypesFiltered = finalTypesFiltered;
 
             TrySaveSyncFile(finalTypes);
 
-            if ( onPreferredTypesChanged != null ) {
+            if (onPreferredTypesChanged != null)
+            {
                 onPreferredTypesChanged();
             }
         }
 
         ///Append a type to the list
-        public static void AddType(Type type) {
-            var current = GetPreferedTypesList(typeof(object));
-            if ( !current.Contains(type) ) {
+        public static void AddType(Type type)
+        {
+            List<Type> current = GetPreferedTypesList(typeof(object));
+            if (!current.Contains(type))
+            {
                 current.Add(type);
             }
             SetPreferedTypesList(current);
         }
 
         ///Reset the prefered types to the default ones
-        public static void ResetTypeConfiguration() {
+        public static void ResetTypeConfiguration()
+        {
             SetPreferedTypesList(defaultTypesList);
         }
 
         ///----------------------------------------------------------------------------------------------
 
         ///Is there a typePrefs file in sync? returns it's path.
-        public static string SyncFilePath() {
-            var syncFile = EditorGUIUtility.Load(SYNC_FILE_NAME);
-            var absPath = EditorUtils.AssetToSystemPath(syncFile);
-            if ( !string.IsNullOrEmpty(absPath) ) {
+        public static string SyncFilePath()
+        {
+            UnityEngine.Object syncFile = EditorGUIUtility.Load(SYNC_FILE_NAME);
+            string absPath = EditorUtils.AssetToSystemPath(syncFile);
+            if (!string.IsNullOrEmpty(absPath))
+            {
                 return absPath;
             }
             return null;
         }
 
         //Will try load from file found in DefaultEditorResources
-        static bool TryLoadSyncFile(ref List<Type> result) {
-            var absPath = SyncFilePath();
-            if ( !string.IsNullOrEmpty(absPath) ) {
-                var json = System.IO.File.ReadAllText(absPath);
-                var temp = JSONSerializer.Deserialize<List<Type>>(json);
-                if ( temp != null ) {
+        private static bool TryLoadSyncFile(ref List<Type> result)
+        {
+            string absPath = SyncFilePath();
+            if (!string.IsNullOrEmpty(absPath))
+            {
+                string json = System.IO.File.ReadAllText(absPath);
+                List<Type> temp = JSONSerializer.Deserialize<List<Type>>(json);
+                if (temp != null)
+                {
                     result = temp;
                     return true;
                 }
@@ -223,10 +243,12 @@ namespace ParadoxNotion.Design
         }
 
         //Will try save to file found in DefaultEditorResources
-        static void TrySaveSyncFile(List<Type> types) {
-            var absPath = SyncFilePath();
-            if ( !string.IsNullOrEmpty(absPath) ) {
-                var json = JSONSerializer.Serialize(typeof(List<Type>), types, null, true);
+        private static void TrySaveSyncFile(List<Type> types)
+        {
+            string absPath = SyncFilePath();
+            if (!string.IsNullOrEmpty(absPath))
+            {
+                string json = JSONSerializer.Serialize(typeof(List<Type>), types, null, true);
                 System.IO.File.WriteAllText(absPath, json);
             }
         }
@@ -251,26 +273,32 @@ namespace ParadoxNotion.Design
         };
 
         ///Get color for type
-        public static Color GetTypeColor(MemberInfo info) {
-            if ( !EditorGUIUtility.isProSkin ) { return Color.white; }
-            if ( info == null ) { return Color.black; }
-            var type = info is Type ? info as Type : info.ReflectedType;
-            if ( type == null ) { return Color.black; }
+        public static Color GetTypeColor(MemberInfo info)
+        {
+            if (!EditorGUIUtility.isProSkin) { return Color.white; }
+            if (info == null) { return Color.black; }
+            Type type = info is Type ? info as Type : info.ReflectedType;
+            if (type == null) { return Color.black; }
 
             Color color;
-            if ( typeColors.TryGetValue(type, out color) ) {
+            if (typeColors.TryGetValue(type, out color))
+            {
                 return color;
             }
 
-            foreach ( var pair in typeColors ) {
+            foreach (KeyValuePair<Type, Color> pair in typeColors)
+            {
 
-                if ( pair.Key.IsAssignableFrom(type) ) {
+                if (pair.Key.IsAssignableFrom(type))
+                {
                     return typeColors[type] = pair.Value;
                 }
 
-                if ( typeof(IEnumerable).IsAssignableFrom(type) ) {
-                    var elementType = type.GetEnumerableElementType();
-                    if ( elementType != null ) {
+                if (typeof(IEnumerable).IsAssignableFrom(type))
+                {
+                    Type elementType = type.GetEnumerableElementType();
+                    if (elementType != null)
+                    {
                         return typeColors[type] = GetTypeColor(elementType);
                     }
                 }
@@ -280,8 +308,10 @@ namespace ParadoxNotion.Design
         }
 
         ///Get the hex color preference for a type
-        public static string GetTypeHexColor(Type type) {
-            if ( !EditorGUIUtility.isProSkin ) {
+        public static string GetTypeHexColor(Type type)
+        {
+            if (!EditorGUIUtility.isProSkin)
+            {
                 return "#000000";
             }
             return ColorUtils.ColorToHex(GetTypeColor(type));
@@ -298,73 +328,93 @@ namespace ParadoxNotion.Design
         private static Dictionary<string, Texture> typeIcons = new Dictionary<string, Texture>(StringComparer.OrdinalIgnoreCase);
 
         ///Get icon for type
-        public static Texture GetTypeIcon(MemberInfo info, bool fallbackToDefault = true) {
-            if ( info == null ) { return null; }
-            var type = info is Type ? info as Type : info.ReflectedType;
-            if ( type == null ) { return null; }
+        public static Texture GetTypeIcon(MemberInfo info, bool fallbackToDefault = true)
+        {
+            if (info == null) { return null; }
+            Type type = info is Type ? info as Type : info.ReflectedType;
+            if (type == null) { return null; }
 
             Texture texture = null;
-            if ( typeIcons.TryGetValue(type.FullName, out texture) ) {
-                if ( texture != null ) {
-                    if ( texture.name != DEFAULT_TYPE_ICON_NAME || fallbackToDefault ) {
+            if (typeIcons.TryGetValue(type.FullName, out texture))
+            {
+                if (texture != null)
+                {
+                    if (texture.name != DEFAULT_TYPE_ICON_NAME || fallbackToDefault)
+                    {
                         return texture;
                     }
                 }
                 return null;
             }
 
-            if ( texture == null ) {
-                if ( type.IsEnumerableCollection() ) {
-                    var elementType = type.GetEnumerableElementType();
-                    if ( elementType != null ) {
+            if (texture == null)
+            {
+                if (type.IsEnumerableCollection())
+                {
+                    Type elementType = type.GetEnumerableElementType();
+                    if (elementType != null)
+                    {
                         texture = GetTypeIcon(elementType);
                     }
                 }
             }
 
-            if ( typeof(UnityEngine.Object).IsAssignableFrom(type) ) {
+            if (typeof(UnityEngine.Object).IsAssignableFrom(type))
+            {
                 texture = AssetPreview.GetMiniTypeThumbnail(type);
-                if ( texture == null && ( typeof(MonoBehaviour).IsAssignableFrom(type) || typeof(ScriptableObject).IsAssignableFrom(type) ) ) {
+                if (texture == null && (typeof(MonoBehaviour).IsAssignableFrom(type) || typeof(ScriptableObject).IsAssignableFrom(type)))
+                {
                     texture = EditorGUIUtility.ObjectContent(EditorUtils.MonoScriptFromType(type), null).image;
-                    if ( texture == null ) {
+                    if (texture == null)
+                    {
                         texture = Icons.csIcon;
                     }
                 }
             }
 
-            if ( texture == null ) {
+            if (texture == null)
+            {
                 texture = Resources.Load<Texture>(IMPLICIT_ICONS_PATH + type.FullName);
             }
 
             ///Explicit icons not in dark theme
-            if ( EditorGUIUtility.isProSkin ) {
-                if ( texture == null ) {
-                    var iconAtt = type.RTGetAttribute<IconAttribute>(true);
-                    if ( iconAtt != null ) {
+            if (EditorGUIUtility.isProSkin)
+            {
+                if (texture == null)
+                {
+                    IconAttribute iconAtt = type.RTGetAttribute<IconAttribute>(true);
+                    if (iconAtt != null)
+                    {
                         texture = GetTypeIcon(iconAtt, null);
                     }
                 }
             }
 
-            if ( texture == null ) {
-                var current = type.BaseType;
-                while ( current != null ) {
+            if (texture == null)
+            {
+                Type current = type.BaseType;
+                while (current != null)
+                {
                     texture = Resources.Load<Texture>(IMPLICIT_ICONS_PATH + current.FullName);
                     current = current.BaseType;
-                    if ( texture != null ) {
+                    if (texture != null)
+                    {
                         break;
                     }
                 }
             }
 
-            if ( texture == null ) {
+            if (texture == null)
+            {
                 texture = Resources.Load<Texture>(IMPLICIT_ICONS_PATH + DEFAULT_TYPE_ICON_NAME);
             }
 
             typeIcons[type.FullName] = texture;
 
-            if ( texture != null ) { //it should not be
-                if ( texture.name != DEFAULT_TYPE_ICON_NAME || fallbackToDefault ) {
+            if (texture != null)
+            { //it should not be
+                if (texture.name != DEFAULT_TYPE_ICON_NAME || fallbackToDefault)
+                {
                     return texture;
                 }
             }
@@ -372,26 +422,32 @@ namespace ParadoxNotion.Design
         }
 
         ///Get icon from [IconAttribute] info
-        public static Texture GetTypeIcon(IconAttribute iconAttribute, object instance = null) {
-            if ( iconAttribute == null ) { return null; }
+        public static Texture GetTypeIcon(IconAttribute iconAttribute, object instance = null)
+        {
+            if (iconAttribute == null) { return null; }
 
-            if ( instance != null && !string.IsNullOrEmpty(iconAttribute.runtimeIconTypeCallback) ) {
-                var callbackMethod = instance.GetType().RTGetMethod(iconAttribute.runtimeIconTypeCallback);
+            if (instance != null && !string.IsNullOrEmpty(iconAttribute.runtimeIconTypeCallback))
+            {
+                MethodInfo callbackMethod = instance.GetType().RTGetMethod(iconAttribute.runtimeIconTypeCallback);
                 return callbackMethod != null && callbackMethod.ReturnType == typeof(Type) ? GetTypeIcon((Type)callbackMethod.Invoke(instance, null), false) : null;
             }
 
-            if ( iconAttribute.fromType != null ) {
+            if (iconAttribute.fromType != null)
+            {
                 return GetTypeIcon(iconAttribute.fromType, true);
             }
 
             Texture texture = null;
-            if ( typeIcons.TryGetValue(iconAttribute.iconName, out texture) ) {
+            if (typeIcons.TryGetValue(iconAttribute.iconName, out texture))
+            {
                 return texture;
             }
 
-            if ( !string.IsNullOrEmpty(iconAttribute.iconName) ) {
+            if (!string.IsNullOrEmpty(iconAttribute.iconName))
+            {
                 texture = Resources.Load<Texture>(EXPLICIT_ICONS_PATH + iconAttribute.iconName);
-                if ( texture == null ) { //for user made icons where user don't have to know the path
+                if (texture == null)
+                { //for user made icons where user don't have to know the path
                     texture = Resources.Load<Texture>(iconAttribute.iconName);
                 }
             }
@@ -404,26 +460,31 @@ namespace ParadoxNotion.Design
         private static Dictionary<string, string> typeDocs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         ///Get documentation for type fetched either by the [Description] attribute, or it's xml doc.
-        public static string GetTypeDoc(MemberInfo info) {
-            if ( info == null ) { return null; }
-            var type = info is Type ? info as Type : info.ReflectedType;
-            if ( type == null ) { return null; }
+        public static string GetTypeDoc(MemberInfo info)
+        {
+            if (info == null) { return null; }
+            Type type = info is Type ? info as Type : info.ReflectedType;
+            if (type == null) { return null; }
 
             string doc = null;
-            if ( typeDocs.TryGetValue(type.FullName, out doc) ) {
+            if (typeDocs.TryGetValue(type.FullName, out doc))
+            {
                 return doc;
             }
 
-            var descAtt = type.RTGetAttribute<DescriptionAttribute>(true);
-            if ( descAtt != null ) {
+            DescriptionAttribute descAtt = type.RTGetAttribute<DescriptionAttribute>(true);
+            if (descAtt != null)
+            {
                 doc = descAtt.description;
             }
 
-            if ( doc == null ) {
+            if (doc == null)
+            {
                 doc = DocsByReflection.GetMemberSummary(type);
             }
 
-            if ( doc == null ) {
+            if (doc == null)
+            {
                 doc = "No Documentation";
             }
 

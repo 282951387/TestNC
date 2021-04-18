@@ -23,10 +23,14 @@ namespace NodeCanvas.Tasks.Conditions
 
 
         protected override bool OnCheck() { return false; }
-        void OnCustomEvent(string eventName, ParadoxNotion.IEventData msg) {
-            if ( eventName.Equals(this.eventName.value, System.StringComparison.OrdinalIgnoreCase) ) {
-                var receivedValue = msg.valueBoxed;
-                if ( ObjectUtils.AnyEquals(receivedValue, value.value) ) {
+
+        private void OnCustomEvent(string eventName, ParadoxNotion.IEventData msg)
+        {
+            if (eventName.Equals(this.eventName.value, System.StringComparison.OrdinalIgnoreCase))
+            {
+                object receivedValue = msg.valueBoxed;
+                if (ObjectUtils.AnyEquals(receivedValue, value.value))
+                {
                     Logger.Log(string.Format("Event Received from ({0}): '{1}'", agent.gameObject.name, eventName), LogTag.EVENT, this);
                     YieldReturn(true);
                 }

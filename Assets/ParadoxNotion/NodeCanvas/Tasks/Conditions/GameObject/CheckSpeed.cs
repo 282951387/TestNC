@@ -1,7 +1,7 @@
-using UnityEngine;
 using NodeCanvas.Framework;
 using ParadoxNotion;
 using ParadoxNotion.Design;
+using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions
 {
@@ -17,13 +17,15 @@ namespace NodeCanvas.Tasks.Actions
         [SliderField(0, 0.1f)]
         public float differenceThreshold = 0.05f;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Speed" + OperationTools.GetCompareString(checkType) + value; }
         }
 
-        protected override bool OnCheck() {
-            var speed = agent.velocity.magnitude;
-            return OperationTools.Compare((float)speed, (float)value.value, checkType, differenceThreshold);
+        protected override bool OnCheck()
+        {
+            float speed = agent.velocity.magnitude;
+            return OperationTools.Compare(speed, value.value, checkType, differenceThreshold);
         }
     }
 }

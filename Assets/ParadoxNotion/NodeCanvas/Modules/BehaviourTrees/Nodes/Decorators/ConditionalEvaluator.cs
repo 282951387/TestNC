@@ -23,41 +23,52 @@ namespace NodeCanvas.BehaviourTrees
         private ConditionTask _condition;
         private bool accessed;
 
-        public Task task {
+        public Task task
+        {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }
 
-        private ConditionTask condition {
+        private ConditionTask condition
+        {
             get { return _condition; }
             set { _condition = value; }
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null ) {
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
             }
 
-            if ( condition == null ) {
+            if (condition == null)
+            {
                 return decoratedConnection.Execute(agent, blackboard);
             }
 
-            if ( status == Status.Resting ) {
+            if (status == Status.Resting)
+            {
                 condition.Enable(agent, blackboard);
             }
 
-            if ( isDynamic ) {
+            if (isDynamic)
+            {
 
-                if ( condition.Check(agent, blackboard) ) {
+                if (condition.Check(agent, blackboard))
+                {
                     return decoratedConnection.Execute(agent, blackboard);
                 }
                 decoratedConnection.Reset();
                 return (Status)conditionFailReturn;
 
-            } else {
+            }
+            else
+            {
 
-                if ( status != Status.Running ) {
+                if (status != Status.Running)
+                {
                     accessed = condition.Check(agent, blackboard);
                 }
 
@@ -65,8 +76,9 @@ namespace NodeCanvas.BehaviourTrees
             }
         }
 
-        protected override void OnReset() {
-            if ( condition != null ) { condition.Disable(); }
+        protected override void OnReset()
+        {
+            if (condition != null) { condition.Disable(); }
             accessed = false;
         }
 
@@ -75,11 +87,13 @@ namespace NodeCanvas.BehaviourTrees
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnNodeGUI() {
-            if ( isDynamic ){ GUILayout.Label("<b>DYNAMIC</b>"); }
+        protected override void OnNodeGUI()
+        {
+            if (isDynamic) { GUILayout.Label("<b>DYNAMIC</b>"); }
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
             base.OnNodeInspectorGUI();
             EditorUtils.Separator();
         }

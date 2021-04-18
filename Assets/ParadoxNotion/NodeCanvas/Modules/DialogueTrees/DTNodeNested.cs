@@ -1,19 +1,19 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
-using ParadoxNotion.Design;
-using UnityEngine;
 using NodeCanvas.Framework.Internal;
+using ParadoxNotion.Design;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace NodeCanvas.DialogueTrees
 {
     [Category("SubGraphs")]
     [Color("ffe4e1")]
-    abstract public class DTNodeNested<T> : DTNode, IGraphAssignable<T> where T : Graph
+    public abstract class DTNodeNested<T> : DTNode, IGraphAssignable<T> where T : Graph
     {
         [SerializeField] private List<BBMappingParameter> _variablesMap;
 
-        abstract public T subGraph { get; set; }
-        abstract public BBParameter subGraphParameter { get; }
+        public abstract T subGraph { get; set; }
+        public abstract BBParameter subGraphParameter { get; }
 
         public T currentInstance { get; set; }
         public Dictionary<Graph, Graph> instances { get; set; }

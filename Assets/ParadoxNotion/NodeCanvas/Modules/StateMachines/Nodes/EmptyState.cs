@@ -9,11 +9,13 @@ namespace NodeCanvas.StateMachines
     public class EmptyState : FSMState
     {
 
-        public override string name {
+        public override string name
+        {
             get { return base.name.ToUpper(); }
         }
 
-        protected override void OnEnter() {
+        protected override void OnEnter()
+        {
             Finish();
             CheckTransitions();
         }

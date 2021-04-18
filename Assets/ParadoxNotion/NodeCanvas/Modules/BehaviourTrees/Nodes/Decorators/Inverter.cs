@@ -13,14 +13,18 @@ namespace NodeCanvas.BehaviourTrees
     public class Inverter : BTDecorator
     {
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( decoratedConnection == null )
+            if (decoratedConnection == null)
+            {
                 return Status.Optional;
+            }
 
             status = decoratedConnection.Execute(agent, blackboard);
 
-            switch ( status ) {
+            switch (status)
+            {
                 case Status.Success:
                     return Status.Failure;
                 case Status.Failure:

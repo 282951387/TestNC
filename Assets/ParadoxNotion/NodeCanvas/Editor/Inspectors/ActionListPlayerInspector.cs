@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR
 
-using UnityEngine;
-using UnityEditor;
+using NodeCanvas.Editor;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
-using NodeCanvas.Editor;
+using UnityEditor;
+using UnityEngine;
 
 namespace NodeCanvas.Editor
 {
@@ -13,11 +13,13 @@ namespace NodeCanvas.Editor
     public class ActionListPlayerInspector : UnityEditor.Editor
     {
 
-        private ActionListPlayer list {
+        private ActionListPlayer list
+        {
             get { return (ActionListPlayer)target; }
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
 
             GUI.skin.label.richText = true;
             GUILayout.Space(10);
@@ -27,7 +29,8 @@ namespace NodeCanvas.Editor
             TaskEditor.TaskFieldSingle(list.actionList, null, false);
             EditorUtils.EndOfInspector();
 
-            if ( Event.current.isMouse || list.actionList.isRunning ) {
+            if (Event.current.isMouse || list.actionList.isRunning)
+            {
                 Repaint();
             }
         }

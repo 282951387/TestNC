@@ -1,8 +1,8 @@
-﻿using System;
+﻿using ParadoxNotion;
+using ParadoxNotion.Serialization;
+using System;
 using System.Linq;
 using System.Reflection;
-using ParadoxNotion;
-using ParadoxNotion.Serialization;
 using UnityEngine;
 
 
@@ -10,7 +10,7 @@ namespace NodeCanvas.Framework.Internal
 {
 
     ///Wraps a MethodInfo with the relevant BBParameters to be called within a Reflection based Task
-    abstract public class ReflectedWrapper : IReflectedWrapper
+    public abstract class ReflectedWrapper : IReflectedWrapper
     {
 
         //required
@@ -19,9 +19,15 @@ namespace NodeCanvas.Framework.Internal
         [SerializeField]
         protected SerializedMethodInfo _targetMethod;
 
-        public static ReflectedWrapper Create(MethodInfo method, IBlackboard bb) {
-            if ( method == null ) return null;
-            if ( method.ReturnType == typeof(void) ) {
+        public static ReflectedWrapper Create(MethodInfo method, IBlackboard bb)
+        {
+            if (method == null)
+            {
+                return null;
+            }
+
+            if (method.ReturnType == typeof(void))
+            {
                 return ReflectedActionWrapper.Create(method, bb);
             }
             return ReflectedFunctionWrapper.Create(method, bb);
@@ -29,51 +35,92 @@ namespace NodeCanvas.Framework.Internal
 
         ISerializedReflectedInfo IReflectedWrapper.GetSerializedInfo() { return _targetMethod; }
 
-        public void SetVariablesBB(IBlackboard bb) { foreach ( var bbVar in GetVariables() ) bbVar.bb = bb; }
+        public void SetVariablesBB(IBlackboard bb)
+        {
+            foreach (BBParameter bbVar in GetVariables())
+            {
+                bbVar.bb = bb;
+            }
+        }
         public SerializedMethodInfo GetSerializedMethod() { return _targetMethod; }
         public MethodInfo GetMethod() { return _targetMethod; }
         public bool HasChanged() { return _targetMethod != null ? _targetMethod.HasChanged() : false; }
         public string AsString() { return _targetMethod != null ? _targetMethod.AsString() : null; }
         public override string ToString() { return AsString(); }
 
-        abstract public BBParameter[] GetVariables();
-        abstract public void Init(object instance);
+        public abstract BBParameter[] GetVariables();
+        public abstract void Init(object instance);
     }
 
 
 
     ///Wraps a MethodInfo Action with the relevant BBVariables to be commonly called within a Reflection based Task
-    abstract public class ReflectedActionWrapper : ReflectedWrapper
+    public abstract class ReflectedActionWrapper : ReflectedWrapper
     {
 
-        new public static ReflectedActionWrapper Create(MethodInfo method, IBlackboard bb) {
-            if ( method == null ) return null;
-            Type type = null;
-            var parameters = method.GetParameters();
-            if ( parameters.Length == 0 ) type = typeof(ReflectedAction);
-            if ( parameters.Length == 1 ) type = typeof(ReflectedAction<>);
-            if ( parameters.Length == 2 ) type = typeof(ReflectedAction<,>);
-            if ( parameters.Length == 3 ) type = typeof(ReflectedAction<,,>);
-            if ( parameters.Length == 4 ) type = typeof(ReflectedAction<,,,>);
-            if ( parameters.Length == 5 ) type = typeof(ReflectedAction<,,,,>);
-            if ( parameters.Length == 6 ) type = typeof(ReflectedAction<,,,,,>);
+        public static new ReflectedActionWrapper Create(MethodInfo method, IBlackboard bb)
+        {
+            if (method == null)
+            {
+                return null;
+            }
 
-            var argTypes = new Type[parameters.Length];
-            for ( var i = 0; i < parameters.Length; i++ ) {
-                var parameter = parameters[i];
-                var pType = parameter.ParameterType.IsByRef ? parameter.ParameterType.GetElementType() : parameter.ParameterType;
+            Type type = null;
+            ParameterInfo[] parameters = method.GetParameters();
+            if (parameters.Length == 0)
+            {
+                type = typeof(ReflectedAction);
+            }
+
+            if (parameters.Length == 1)
+            {
+                type = typeof(ReflectedAction<>);
+            }
+
+            if (parameters.Length == 2)
+            {
+                type = typeof(ReflectedAction<,>);
+            }
+
+            if (parameters.Length == 3)
+            {
+                type = typeof(ReflectedAction<,,>);
+            }
+
+            if (parameters.Length == 4)
+            {
+                type = typeof(ReflectedAction<,,,>);
+            }
+
+            if (parameters.Length == 5)
+            {
+                type = typeof(ReflectedAction<,,,,>);
+            }
+
+            if (parameters.Length == 6)
+            {
+                type = typeof(ReflectedAction<,,,,,>);
+            }
+
+            Type[] argTypes = new Type[parameters.Length];
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                ParameterInfo parameter = parameters[i];
+                Type pType = parameter.ParameterType.IsByRef ? parameter.ParameterType.GetElementType() : parameter.ParameterType;
                 argTypes[i] = pType;
             }
 
-            var o = (ReflectedActionWrapper)Activator.CreateInstance(argTypes.Length > 0 ? type.RTMakeGenericType(argTypes) : type);
+            ReflectedActionWrapper o = (ReflectedActionWrapper)Activator.CreateInstance(argTypes.Length > 0 ? type.RTMakeGenericType(argTypes) : type);
             o._targetMethod = new SerializedMethodInfo(method);
 
             BBParameter.SetBBFields(o, bb);
 
-            var bbParams = o.GetVariables();
-            for ( int i = 0; i < parameters.Length; i++ ) {
-                var p = parameters[i];
-                if ( p.IsOptional ) {
+            BBParameter[] bbParams = o.GetVariables();
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                ParameterInfo p = parameters[i];
+                if (p.IsOptional)
+                {
                     bbParams[i].value = p.DefaultValue;
                 }
             }
@@ -81,42 +128,77 @@ namespace NodeCanvas.Framework.Internal
             return o;
         }
 
-        abstract public void Call();
+        public abstract void Call();
     }
 
     ///Wraps a MethodInfo Function with the relevant BBVariables to be commonly called within a Reflection based Task
-    abstract public class ReflectedFunctionWrapper : ReflectedWrapper
+    public abstract class ReflectedFunctionWrapper : ReflectedWrapper
     {
 
-        new public static ReflectedFunctionWrapper Create(MethodInfo method, IBlackboard bb) {
-            if ( method == null ) return null;
-            Type type = null;
-            var parameters = method.GetParameters();
-            if ( parameters.Length == 0 ) type = typeof(ReflectedFunction<>);
-            if ( parameters.Length == 1 ) type = typeof(ReflectedFunction<,>);
-            if ( parameters.Length == 2 ) type = typeof(ReflectedFunction<,,>);
-            if ( parameters.Length == 3 ) type = typeof(ReflectedFunction<,,,>);
-            if ( parameters.Length == 4 ) type = typeof(ReflectedFunction<,,,,>);
-            if ( parameters.Length == 5 ) type = typeof(ReflectedFunction<,,,,,>);
-            if ( parameters.Length == 6 ) type = typeof(ReflectedFunction<,,,,,,>);
+        public static new ReflectedFunctionWrapper Create(MethodInfo method, IBlackboard bb)
+        {
+            if (method == null)
+            {
+                return null;
+            }
 
-            var argTypes = new Type[parameters.Length + 1];
+            Type type = null;
+            ParameterInfo[] parameters = method.GetParameters();
+            if (parameters.Length == 0)
+            {
+                type = typeof(ReflectedFunction<>);
+            }
+
+            if (parameters.Length == 1)
+            {
+                type = typeof(ReflectedFunction<,>);
+            }
+
+            if (parameters.Length == 2)
+            {
+                type = typeof(ReflectedFunction<,,>);
+            }
+
+            if (parameters.Length == 3)
+            {
+                type = typeof(ReflectedFunction<,,,>);
+            }
+
+            if (parameters.Length == 4)
+            {
+                type = typeof(ReflectedFunction<,,,,>);
+            }
+
+            if (parameters.Length == 5)
+            {
+                type = typeof(ReflectedFunction<,,,,,>);
+            }
+
+            if (parameters.Length == 6)
+            {
+                type = typeof(ReflectedFunction<,,,,,,>);
+            }
+
+            Type[] argTypes = new Type[parameters.Length + 1];
             argTypes[0] = method.ReturnType;
-            for ( var i = 0; i < parameters.Length; i++ ) {
-                var parameter = parameters[i];
-                var pType = parameter.ParameterType.IsByRef ? parameter.ParameterType.GetElementType() : parameter.ParameterType;
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                ParameterInfo parameter = parameters[i];
+                Type pType = parameter.ParameterType.IsByRef ? parameter.ParameterType.GetElementType() : parameter.ParameterType;
                 argTypes[i + 1] = pType;
             }
 
-            var o = (ReflectedFunctionWrapper)Activator.CreateInstance(type.RTMakeGenericType(argTypes.ToArray()));
+            ReflectedFunctionWrapper o = (ReflectedFunctionWrapper)Activator.CreateInstance(type.RTMakeGenericType(argTypes.ToArray()));
             o._targetMethod = new SerializedMethodInfo(method);
 
             BBParameter.SetBBFields(o, bb);
 
-            var bbParams = o.GetVariables();
-            for ( int i = 0; i < parameters.Length; i++ ) {
-                var p = parameters[i];
-                if ( p.IsOptional ) {
+            BBParameter[] bbParams = o.GetVariables();
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                ParameterInfo p = parameters[i];
+                if (p.IsOptional)
+                {
                     bbParams[i + 1].value = p.DefaultValue; //index 0 is return value
                 }
             }
@@ -124,6 +206,6 @@ namespace NodeCanvas.Framework.Internal
             return o;
         }
 
-        abstract public object Call();
+        public abstract object Call();
     }
 }

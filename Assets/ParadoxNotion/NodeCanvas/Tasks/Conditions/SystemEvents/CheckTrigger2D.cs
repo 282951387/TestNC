@@ -22,38 +22,48 @@ namespace NodeCanvas.Tasks.Conditions
 
         private bool stay;
 
-        protected override string info {
-            get { return CheckType.ToString() + ( specifiedTagOnly ? ( " '" + objectTag + "' tag" ) : "" ); }
+        protected override string info
+        {
+            get { return CheckType.ToString() + (specifiedTagOnly ? (" '" + objectTag + "' tag") : ""); }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return CheckType == TriggerTypes.TriggerStay ? stay : false;
         }
 
-        protected override void OnEnable() {
+        protected override void OnEnable()
+        {
             router.onTriggerEnter2D += OnTriggerEnter2D;
             router.onTriggerExit2D += OnTriggerExit2D;
         }
 
-        protected override void OnDisable() {
+        protected override void OnDisable()
+        {
             router.onTriggerEnter2D -= OnTriggerEnter2D;
             router.onTriggerExit2D -= OnTriggerExit2D;
         }
 
-        public void OnTriggerEnter2D(ParadoxNotion.EventData<Collider2D> data) {
-            if ( !specifiedTagOnly || data.value.gameObject.CompareTag(objectTag) ) {
+        public void OnTriggerEnter2D(ParadoxNotion.EventData<Collider2D> data)
+        {
+            if (!specifiedTagOnly || data.value.gameObject.CompareTag(objectTag))
+            {
                 stay = true;
-                if ( CheckType == TriggerTypes.TriggerEnter || CheckType == TriggerTypes.TriggerStay ) {
+                if (CheckType == TriggerTypes.TriggerEnter || CheckType == TriggerTypes.TriggerStay)
+                {
                     saveGameObjectAs.value = data.value.gameObject;
                     YieldReturn(true);
                 }
             }
         }
 
-        public void OnTriggerExit2D(ParadoxNotion.EventData<Collider2D> data) {
-            if ( !specifiedTagOnly || data.value.gameObject.CompareTag(objectTag) ) {
+        public void OnTriggerExit2D(ParadoxNotion.EventData<Collider2D> data)
+        {
+            if (!specifiedTagOnly || data.value.gameObject.CompareTag(objectTag))
+            {
                 stay = false;
-                if ( CheckType == TriggerTypes.TriggerExit ) {
+                if (CheckType == TriggerTypes.TriggerExit)
+                {
                     saveGameObjectAs.value = data.value.gameObject;
                     YieldReturn(true);
                 }
@@ -78,38 +88,48 @@ namespace NodeCanvas.Tasks.Conditions
 
         private bool stay;
 
-        protected override string info {
-            get { return CheckType.ToString() + ( specifiedTagOnly ? ( " '" + objectTag + "' tag" ) : "" ); }
+        protected override string info
+        {
+            get { return CheckType.ToString() + (specifiedTagOnly ? (" '" + objectTag + "' tag") : ""); }
         }
 
-        protected override bool OnCheck() {
+        protected override bool OnCheck()
+        {
             return CheckType == TriggerTypes.TriggerStay ? stay : false;
         }
 
-        protected override void OnEnable() {
+        protected override void OnEnable()
+        {
             router.onTriggerEnter2D += OnTriggerEnter2D;
             router.onTriggerExit2D += OnTriggerExit2D;
         }
 
-        protected override void OnDisable() {
+        protected override void OnDisable()
+        {
             router.onTriggerEnter2D -= OnTriggerEnter2D;
             router.onTriggerExit2D -= OnTriggerExit2D;
         }
 
-        public void OnTriggerEnter2D(ParadoxNotion.EventData<Collider2D> data) {
-            if ( !specifiedTagOnly || data.value.gameObject.CompareTag(objectTag) ) {
+        public void OnTriggerEnter2D(ParadoxNotion.EventData<Collider2D> data)
+        {
+            if (!specifiedTagOnly || data.value.gameObject.CompareTag(objectTag))
+            {
                 stay = true;
-                if ( CheckType == TriggerTypes.TriggerEnter || CheckType == TriggerTypes.TriggerStay ) {
+                if (CheckType == TriggerTypes.TriggerEnter || CheckType == TriggerTypes.TriggerStay)
+                {
                     saveGameObjectAs.value = data.value.gameObject;
                     YieldReturn(true);
                 }
             }
         }
 
-        public void OnTriggerExit2D(ParadoxNotion.EventData<Collider2D> data) {
-            if ( !specifiedTagOnly || data.value.gameObject.CompareTag(objectTag) ) {
+        public void OnTriggerExit2D(ParadoxNotion.EventData<Collider2D> data)
+        {
+            if (!specifiedTagOnly || data.value.gameObject.CompareTag(objectTag))
+            {
                 stay = false;
-                if ( CheckType == TriggerTypes.TriggerExit ) {
+                if (CheckType == TriggerTypes.TriggerExit)
+                {
                     saveGameObjectAs.value = data.value.gameObject;
                     YieldReturn(true);
                 }

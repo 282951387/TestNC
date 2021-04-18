@@ -15,11 +15,13 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<GameObject> saveAs;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Find Object " + gameObjectName + " as " + saveAs; }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             saveAs.value = GameObject.Find(gameObjectName.value);
             EndAction();

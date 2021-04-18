@@ -6,14 +6,16 @@ namespace ParadoxNotion
 
     ///Defines a dynamic (type-wise) parameter.
     [Serializable]
-    sealed public class DynamicParameterDefinition : ISerializationCallbackReceiver
+    public sealed class DynamicParameterDefinition : ISerializationCallbackReceiver
     {
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
-            if ( type != null ) { _type = type.FullName; }
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (type != null) { _type = type.FullName; }
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
             type = ReflectionTools.GetType(_type, /*fallback?*/ true);
         }
 
@@ -25,18 +27,20 @@ namespace ParadoxNotion
         private string _type;
 
         //The ID of the definition port
-        public string ID {
+        public string ID
+        {
             get
             {
                 //for correct update prior versions
-                if ( string.IsNullOrEmpty(_ID) ) { _ID = name; }
+                if (string.IsNullOrEmpty(_ID)) { _ID = name; }
                 return _ID;
             }
             private set { _ID = value; }
         }
 
         //The name of the definition port
-        public string name {
+        public string name
+        {
             get { return _name; }
             set { _name = value; }
         }
@@ -45,8 +49,9 @@ namespace ParadoxNotion
         public Type type { get; set; }
 
         public DynamicParameterDefinition() { }
-        public DynamicParameterDefinition(string name, Type type) {
-            this.ID = Guid.NewGuid().ToString();
+        public DynamicParameterDefinition(string name, Type type)
+        {
+            ID = Guid.NewGuid().ToString();
             this.name = name;
             this.type = type;
         }

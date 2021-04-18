@@ -1,7 +1,7 @@
-﻿using System;
-using ParadoxNotion;
+﻿using ParadoxNotion;
 using ParadoxNotion.Serialization;
 using ParadoxNotion.Serialization.FullSerializer;
+using System;
 
 namespace NodeCanvas.Framework.Internal
 {
@@ -11,31 +11,38 @@ namespace NodeCanvas.Framework.Internal
     public class fsBBParameterProcessor : fsRecoveryProcessor<BBParameter, MissingBBParameterType>
     {
         //...
-        public override void OnBeforeDeserializeAfterInstanceCreation(Type storageType, object instance, ref fsData data) {
+        public override void OnBeforeDeserializeAfterInstanceCreation(Type storageType, object instance, ref fsData data)
+        {
 
-            if ( ParadoxNotion.Services.Threader.applicationIsPlaying ) {
+            if (ParadoxNotion.Services.Threader.applicationIsPlaying)
+            {
                 return;
             }
 
             //Check if the previous state is already an object and whether it's empty (default values), or it contains certain BBParameter fields.
             //This way avoid extra work if previous state is already a BBParameter.
             //There is no other way to find out if the previous state is BBParameter or not. It's no bullet proof, but not harmfull anyway.
-            if ( data.IsDictionary ) {
-                var dict = data.AsDictionary;
-                if ( dict.Count == 0 || dict.ContainsKey("_value") || dict.ContainsKey("_name") ) {
+            if (data.IsDictionary)
+            {
+                System.Collections.Generic.Dictionary<string, fsData> dict = data.AsDictionary;
+                if (dict.Count == 0 || dict.ContainsKey("_value") || dict.ContainsKey("_name"))
+                {
                     return;
                 }
             }
 
-            var bbParam = instance as BBParameter;
-            if ( bbParam != null && bbParam.GetType().RTIsGenericType() ) {
-                var varType = bbParam.varType;
-                var serializer = new fsSerializer();
+            BBParameter bbParam = instance as BBParameter;
+            if (bbParam != null && bbParam.GetType().RTIsGenericType())
+            {
+                Type varType = bbParam.varType;
+                fsSerializer serializer = new fsSerializer();
                 object prevInstance = null;
                 //try deserialize previous json state to current BBParameter T type.
-                if ( serializer.TryDeserialize(data, varType, ref prevInstance).Succeeded ) {
+                if (serializer.TryDeserialize(data, varType, ref prevInstance).Succeeded)
+                {
                     //if success and assignalbes, set the BBParameter instance value and serialize back again.
-                    if ( prevInstance != null && varType.RTIsAssignableFrom(prevInstance.GetType()) ) {
+                    if (prevInstance != null && varType.RTIsAssignableFrom(prevInstance.GetType()))
+                    {
                         bbParam.value = prevInstance;
                         serializer.TrySerialize(storageType, instance, out data);
                     }

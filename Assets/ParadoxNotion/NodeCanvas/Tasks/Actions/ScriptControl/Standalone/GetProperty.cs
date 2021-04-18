@@ -1,10 +1,10 @@
-﻿using System.Reflection;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Design;
-using UnityEngine;
 using System.Linq;
+using System.Reflection;
+using UnityEngine;
 
 
 namespace NodeCanvas.Tasks.Actions
@@ -21,36 +21,42 @@ namespace NodeCanvas.Tasks.Actions
 
         private MethodInfo targetMethod { get { return functionWrapper != null ? functionWrapper.GetMethod() : null; } }
 
-        public override System.Type agentType {
+        public override System.Type agentType
+        {
             get
             {
-                if ( targetMethod == null ) { return typeof(Transform); }
+                if (targetMethod == null) { return typeof(Transform); }
                 return targetMethod.IsStatic ? null : targetMethod.RTReflectedOrDeclaredType();
             }
         }
 
-        protected override string info {
+        protected override string info
+        {
             get
             {
-                if ( functionWrapper == null ) { return "No Property Selected"; }
-                if ( targetMethod == null ) { return functionWrapper.AsString().FormatError(); }
-                var mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
+                if (functionWrapper == null) { return "No Property Selected"; }
+                if (targetMethod == null) { return functionWrapper.AsString().FormatError(); }
+                string mInfo = targetMethod.IsStatic ? targetMethod.RTReflectedOrDeclaredType().FriendlyName() : agentInfo;
                 return string.Format("{0} = {1}.{2}", functionWrapper.GetVariables()[0], mInfo, targetMethod.Name);
             }
         }
 
         ParadoxNotion.Serialization.ISerializedReflectedInfo IReflectedWrapper.GetSerializedInfo() { return functionWrapper?.GetSerializedMethod(); }
 
-        public override void OnValidate(ITaskSystem ownerSystem) {
-            if ( functionWrapper != null && functionWrapper.HasChanged() ) {
+        public override void OnValidate(ITaskSystem ownerSystem)
+        {
+            if (functionWrapper != null && functionWrapper.HasChanged())
+            {
                 SetMethod(functionWrapper.GetMethod());
             }
         }
 
-        protected override string OnInit() {
-            if ( targetMethod == null ) { return "Missing Property"; }
+        protected override string OnInit()
+        {
+            if (targetMethod == null) { return "Missing Property"; }
 
-            try {
+            try
+            {
                 functionWrapper.Init(targetMethod.IsStatic ? null : agent);
                 return null;
             }
@@ -58,9 +64,11 @@ namespace NodeCanvas.Tasks.Actions
         }
 
         //do it by invoking method
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
-            if ( functionWrapper == null ) {
+            if (functionWrapper == null)
+            {
                 EndAction(false);
                 return;
             }
@@ -69,8 +77,10 @@ namespace NodeCanvas.Tasks.Actions
             EndAction();
         }
 
-        void SetMethod(MethodInfo method) {
-            if ( method != null ) {
+        private void SetMethod(MethodInfo method)
+        {
+            if (method != null)
+            {
                 functionWrapper = ReflectedFunctionWrapper.Create(method, blackboard);
             }
         }
@@ -80,28 +90,35 @@ namespace NodeCanvas.Tasks.Actions
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
+        protected override void OnTaskInspectorGUI()
+        {
 
-            if ( !Application.isPlaying && GUILayout.Button("Select Property") ) {
-                var menu = new UnityEditor.GenericMenu();
-                if ( agent != null ) {
-                    foreach ( var comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags != HideFlags.HideInInspector) ) {
+            if (!Application.isPlaying && GUILayout.Button("Select Property"))
+            {
+                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
+                if (agent != null)
+                {
+                    foreach (Component comp in agent.GetComponents(typeof(Component)).Where(c => c.hideFlags != HideFlags.HideInInspector))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(comp.GetType(), typeof(object), typeof(object), SetMethod, 0, true, true, menu);
                     }
                     menu.AddSeparator("/");
                 }
-                foreach ( var t in TypePrefs.GetPreferedTypesList(typeof(object)) ) {
+                foreach (System.Type t in TypePrefs.GetPreferedTypesList(typeof(object)))
+                {
                     menu = EditorUtils.GetStaticMethodSelectionMenu(t, typeof(object), typeof(object), SetMethod, 0, true, true, menu);
-                    if ( typeof(UnityEngine.Component).IsAssignableFrom(t) ) {
+                    if (typeof(UnityEngine.Component).IsAssignableFrom(t))
+                    {
                         menu = EditorUtils.GetInstanceMethodSelectionMenu(t, typeof(object), typeof(object), SetMethod, 0, true, true, menu);
                     }
                 }
-                menu.ShowAsBrowser("Select Property", this.GetType());
+                menu.ShowAsBrowser("Select Property", GetType());
                 Event.current.Use();
             }
 
 
-            if ( targetMethod != null ) {
+            if (targetMethod != null)
+            {
                 GUILayout.BeginVertical("box");
                 UnityEditor.EditorGUILayout.LabelField("Type", targetMethod.RTReflectedOrDeclaredType().FriendlyName());
                 UnityEditor.EditorGUILayout.LabelField("Property", targetMethod.Name);

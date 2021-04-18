@@ -16,11 +16,13 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<string> targetVariableName;
         public BBObjectParameter newValue;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("<b>{0}</b> = {1}", targetVariableName.ToString(), newValue != null ? newValue.ToString() : ""); }
         }
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
             agent.SetVariableValue(targetVariableName.value, newValue.value);
             EndAction();
         }
@@ -30,12 +32,15 @@ namespace NodeCanvas.Tasks.Actions
         ////////////////////////////////////////
 #if UNITY_EDITOR
 
-        protected override void OnTaskInspectorGUI() {
-            if ( GUILayout.Button("Select Target Variable Type") ) {
+        protected override void OnTaskInspectorGUI()
+        {
+            if (GUILayout.Button("Select Target Variable Type"))
+            {
                 EditorUtils.ShowPreferedTypesSelectionMenu(typeof(object), (t) => { newValue.SetType(t); });
             }
 
-            if ( newValue.varType != typeof(object) ) {
+            if (newValue.varType != typeof(object))
+            {
                 DrawDefaultInspector();
             }
         }

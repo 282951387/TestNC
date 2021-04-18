@@ -6,7 +6,7 @@ namespace NodeCanvas.Framework.Internal
     [Serializable]
     public class BBMappingParameter : BBObjectParameter
     {
-        [UnityEngine.SerializeField] private string _targetSubGraphVariableID;
+        [UnityEngine.SerializeField] private readonly string _targetSubGraphVariableID;
         [UnityEngine.SerializeField] private bool _canRead;
         [UnityEngine.SerializeField] private bool _canWrite;
 
@@ -15,7 +15,8 @@ namespace NodeCanvas.Framework.Internal
         public bool canWrite { get { return _canWrite; } set { _canWrite = value; } }
 
         public BBMappingParameter() : base() { }
-        public BBMappingParameter(Variable subVariable) {
+        public BBMappingParameter(Variable subVariable)
+        {
             _targetSubGraphVariableID = subVariable.ID;
             base.SetType(subVariable.varType);
         }

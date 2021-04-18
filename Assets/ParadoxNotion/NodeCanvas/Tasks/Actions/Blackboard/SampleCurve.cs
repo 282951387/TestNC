@@ -18,7 +18,8 @@ namespace NodeCanvas.Tasks.Actions
         [BlackboardOnly]
         public BBParameter<float> saveAs;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             saveAs.value = curve.value.Evaluate(sampleAt.value);
             EndAction();

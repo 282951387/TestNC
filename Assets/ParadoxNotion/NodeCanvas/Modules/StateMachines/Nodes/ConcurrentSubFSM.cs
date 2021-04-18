@@ -26,13 +26,15 @@ namespace NodeCanvas.StateMachines
 
         ///----------------------------------------------------------------------------------------------
 
-        public override void OnGraphStarted() {
-            if ( subGraph == null ) { return; }
+        public override void OnGraphStarted()
+        {
+            if (subGraph == null) { return; }
             status = Status.Running;
             this.TryStartSubGraph(graphAgent, (result) => { status = result ? Status.Success : Status.Failure; });
         }
 
-        void IUpdatable.Update() {
+        void IUpdatable.Update()
+        {
             this.TryUpdateSubGraph();
         }
     }

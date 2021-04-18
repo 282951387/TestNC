@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using NodeCanvas.Framework;
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NodeCanvas.BehaviourTrees
@@ -42,46 +42,59 @@ namespace NodeCanvas.BehaviourTrees
         private int current;
         private int runningIndex;
 
-        public override void OnGraphStarted() {
-            if ( selectionMode == CaseSelectionMode.EnumBased ) {
+        public override void OnGraphStarted()
+        {
+            if (selectionMode == CaseSelectionMode.EnumBased)
+            {
                 enumCasePairing = new Dictionary<int, int>();
-                var enumValues = System.Enum.GetValues(enumCase.value.GetType());
-                for ( var i = 0; i < enumValues.Length; i++ ) {
+                System.Array enumValues = System.Enum.GetValues(enumCase.value.GetType());
+                for (int i = 0; i < enumValues.Length; i++)
+                {
                     enumCasePairing[(int)enumValues.GetValue(i)] = i;
                 }
             }
         }
 
-        protected override Status OnExecute(Component agent, IBlackboard blackboard) {
+        protected override Status OnExecute(Component agent, IBlackboard blackboard)
+        {
 
-            if ( outConnections.Count == 0 ) {
+            if (outConnections.Count == 0)
+            {
                 return Status.Optional;
             }
 
-            if ( status == Status.Resting || dynamic ) {
+            if (status == Status.Resting || dynamic)
+            {
 
-                if ( selectionMode == CaseSelectionMode.IndexBased ) {
+                if (selectionMode == CaseSelectionMode.IndexBased)
+                {
                     current = intCase.value;
-                    if ( outOfRangeMode == OutOfRangeMode.LoopIndex ) {
+                    if (outOfRangeMode == OutOfRangeMode.LoopIndex)
+                    {
                         current = Mathf.Abs(current) % outConnections.Count;
                     }
 
-                } else {
+                }
+                else
+                {
                     current = enumCasePairing[(int)enumCase.value];
                 }
 
-                if ( runningIndex != current ) {
+                if (runningIndex != current)
+                {
                     outConnections[runningIndex].Reset();
                 }
 
-                if ( current < 0 || current >= outConnections.Count ) {
+                if (current < 0 || current >= outConnections.Count)
+                {
                     return Status.Failure;
                 }
             }
 
             status = outConnections[current].Execute(agent, blackboard);
 
-            if ( status == Status.Running ) {
+            if (status == Status.Running)
+            {
                 runningIndex = current;
             }
 
@@ -93,13 +106,17 @@ namespace NodeCanvas.BehaviourTrees
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
 
-        public override string GetConnectionInfo(int i) {
-            if ( selectionMode == CaseSelectionMode.EnumBased ) {
-                if ( enumCase.value == null ) {
+        public override string GetConnectionInfo(int i)
+        {
+            if (selectionMode == CaseSelectionMode.EnumBased)
+            {
+                if (enumCase.value == null)
+                {
                     return "Null Enum".FormatError();
                 }
-                var enumNames = System.Enum.GetNames(enumCase.value.GetType());
-                if ( i >= enumNames.Length ) {
+                string[] enumNames = System.Enum.GetNames(enumCase.value.GetType());
+                if (i >= enumNames.Length)
+                {
                     return "Never".FormatError();
                 }
                 return enumNames[i];
@@ -107,19 +124,25 @@ namespace NodeCanvas.BehaviourTrees
             return i.ToString();
         }
 
-        protected override void OnNodeGUI() {
-            if ( dynamic ) {
+        protected override void OnNodeGUI()
+        {
+            if (dynamic)
+            {
                 GUILayout.Label("<b>DYNAMIC</b>");
             }
-            GUILayout.Label(selectionMode == CaseSelectionMode.IndexBased ? ( "Current = " + intCase.ToString() ) : enumCase.ToString());
+            GUILayout.Label(selectionMode == CaseSelectionMode.IndexBased ? ("Current = " + intCase.ToString()) : enumCase.ToString());
         }
 
-        protected override void OnNodeInspectorGUI() {
+        protected override void OnNodeInspectorGUI()
+        {
             base.OnNodeInspectorGUI();
-            if ( selectionMode == CaseSelectionMode.EnumBased ) {
-                if ( enumCase.value != null ) {
+            if (selectionMode == CaseSelectionMode.EnumBased)
+            {
+                if (enumCase.value != null)
+                {
                     GUILayout.BeginVertical("box");
-                    foreach ( var s in System.Enum.GetNames(enumCase.value.GetType()) ) {
+                    foreach (string s in System.Enum.GetNames(enumCase.value.GetType()))
+                    {
                         GUILayout.Label(s);
                     }
                     GUILayout.EndVertical();

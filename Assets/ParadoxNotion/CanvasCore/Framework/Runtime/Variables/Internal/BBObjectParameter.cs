@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ParadoxNotion;
+using System;
 using UnityEngine;
-using ParadoxNotion;
 
 namespace NodeCanvas.Framework.Internal
 {
@@ -10,11 +10,13 @@ namespace NodeCanvas.Framework.Internal
     public class BBObjectParameter : BBParameter<object>, ISerializationCallbackReceiver
     {
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize() {
-            if ( type != null ) { _type = type.FullName; }
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (type != null) { _type = type.FullName; }
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize() {
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
             type = ReflectionTools.GetType(_type, /*fallback?*/ true);
         }
 
@@ -27,8 +29,10 @@ namespace NodeCanvas.Framework.Internal
 
         public BBObjectParameter() { SetType(typeof(object)); }
         public BBObjectParameter(Type t) { SetType(t); }
-        public BBObjectParameter(BBParameter source) {
-            if ( source != null ) {
+        public BBObjectParameter(BBParameter source)
+        {
+            if (source != null)
+            {
                 type = source.varType;
                 _value = source.value;
                 name = source.name;
@@ -36,9 +40,11 @@ namespace NodeCanvas.Framework.Internal
             }
         }
 
-        public void SetType(Type t) {
-            if ( t == null ) { t = typeof(object); }
-            if ( t != type || ( t.RTIsValueType() && _value == null ) ) {
+        public void SetType(Type t)
+        {
+            if (t == null) { t = typeof(object); }
+            if (t != type || (t.RTIsValueType() && _value == null))
+            {
                 _value = t.RTIsValueType() ? Activator.CreateInstance(t) : null;
             }
             type = t;

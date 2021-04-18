@@ -11,12 +11,14 @@ namespace NodeCanvas.Framework.Internal
         [UnityEngine.SerializeField]
         private string _recoveryState;
 
-        public string missingType {
+        public string missingType
+        {
             get { return _missingType; }
             set { _missingType = value; }
         }
 
-        public string recoveryState {
+        public string recoveryState
+        {
             get { return _recoveryState; }
             set { _recoveryState = value; }
         }

@@ -10,12 +10,14 @@ namespace NodeCanvas.Editor
     public class DialogueTreeControllerInspector : GraphOwnerInspector
     {
 
-        private DialogueTreeController controller {
+        private DialogueTreeController controller
+        {
             get { return target as DialogueTreeController; }
         }
 
-        protected override void OnPostExtraGraphOptions() {
-            if ( controller.graph != null ) { DialogueTreeInspector.ShowActorParameters((DialogueTree)controller.graph); }
+        protected override void OnPostExtraGraphOptions()
+        {
+            if (controller.graph != null) { DialogueTreeInspector.ShowActorParameters((DialogueTree)controller.graph); }
         }
     }
 }

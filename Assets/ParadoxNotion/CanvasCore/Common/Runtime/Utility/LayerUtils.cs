@@ -1,7 +1,7 @@
-﻿/// Modified version of https://wiki.unity3d.com/index.php/LayerMaskExtensions
+﻿using System.Collections.Generic;
+/// Modified version of https://wiki.unity3d.com/index.php/LayerMaskExtensions
 
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace ParadoxNotion
 {
@@ -14,19 +14,23 @@ namespace ParadoxNotion
         public static LayerMask CreateFromNumbers(params int[] layerNumbers) { return LayerNumbersToMask(layerNumbers); }
 
         ///Layer names to LayerMask
-        public static LayerMask LayerNamesToMask(params string[] layerNames) {
-            LayerMask ret = (LayerMask)0;
-            foreach ( var name in layerNames ) {
-                ret |= ( 1 << LayerMask.NameToLayer(name) );
+        public static LayerMask LayerNamesToMask(params string[] layerNames)
+        {
+            LayerMask ret = 0;
+            foreach (string name in layerNames)
+            {
+                ret |= (1 << LayerMask.NameToLayer(name));
             }
             return ret;
         }
 
         ///Layer numbers to LayerMask
-        public static LayerMask LayerNumbersToMask(params int[] layerNumbers) {
-            LayerMask ret = (LayerMask)0;
-            foreach ( var layer in layerNumbers ) {
-                ret |= ( 1 << layer );
+        public static LayerMask LayerNumbersToMask(params int[] layerNumbers)
+        {
+            LayerMask ret = 0;
+            foreach (int layer in layerNumbers)
+            {
+                ret |= (1 << layer);
             }
             return ret;
         }
@@ -38,16 +42,20 @@ namespace ParadoxNotion
         public static LayerMask AddToMask(this LayerMask mask, params string[] layerNames) { return mask | LayerNamesToMask(layerNames); }
 
         ///Remove layer names from LayerMask
-        public static LayerMask RemoveFromMask(this LayerMask mask, params string[] layerNames) {
+        public static LayerMask RemoveFromMask(this LayerMask mask, params string[] layerNames)
+        {
             LayerMask invertedOriginal = ~mask;
-            return ~( invertedOriginal | LayerNamesToMask(layerNames) );
+            return ~(invertedOriginal | LayerNamesToMask(layerNames));
         }
 
         ///Does LayerMask contain any target layers (by name)
-        public static bool ContainsAnyLayer(this LayerMask mask, params string[] layerNames) {
-            if ( layerNames == null ) { return false; }
-            for ( var i = 0; i < layerNames.Length; i++ ) {
-                if ( mask == ( mask | ( 1 << LayerMask.NameToLayer(layerNames[i]) ) ) ) {
+        public static bool ContainsAnyLayer(this LayerMask mask, params string[] layerNames)
+        {
+            if (layerNames == null) { return false; }
+            for (int i = 0; i < layerNames.Length; i++)
+            {
+                if (mask == (mask | (1 << LayerMask.NameToLayer(layerNames[i]))))
+                {
                     return true;
                 }
             }
@@ -55,10 +63,13 @@ namespace ParadoxNotion
         }
 
         ///Does LayerMask contain all target layers (by name)
-        public static bool ContainsAllLayers(this LayerMask mask, params string[] layerNames) {
-            if ( layerNames == null ) { return false; }
-            for ( var i = 0; i < layerNames.Length; i++ ) {
-                if ( !( mask == ( mask | ( 1 << LayerMask.NameToLayer(layerNames[i]) ) ) ) ) {
+        public static bool ContainsAllLayers(this LayerMask mask, params string[] layerNames)
+        {
+            if (layerNames == null) { return false; }
+            for (int i = 0; i < layerNames.Length; i++)
+            {
+                if (!(mask == (mask | (1 << LayerMask.NameToLayer(layerNames[i])))))
+                {
                     return false;
                 }
             }
@@ -66,14 +77,18 @@ namespace ParadoxNotion
         }
 
         ///Return layer names in/from LayerMask
-        public static string[] MaskToNames(this LayerMask mask) {
-            var output = new List<string>();
+        public static string[] MaskToNames(this LayerMask mask)
+        {
+            List<string> output = new List<string>();
 
-            for ( int i = 0; i < 32; ++i ) {
+            for (int i = 0; i < 32; ++i)
+            {
                 int shifted = 1 << i;
-                if ( ( mask & shifted ) == shifted ) {
+                if ((mask & shifted) == shifted)
+                {
                     string layerName = LayerMask.LayerToName(i);
-                    if ( !string.IsNullOrEmpty(layerName) ) {
+                    if (!string.IsNullOrEmpty(layerName))
+                    {
                         output.Add(layerName);
                     }
                 }

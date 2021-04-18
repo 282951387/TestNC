@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -27,11 +27,13 @@ namespace NodeCanvas.Tasks.Actions
 
         private RaycastHit2D[] hits;
 
-        protected override void OnExecute() {
+        protected override void OnExecute()
+        {
 
             hits = Physics2D.LinecastAll(agent.position, target.value.transform.position, mask);
 
-            if ( hits.Length > 0 ) {
+            if (hits.Length > 0)
+            {
                 saveHitGameObjectsAs.value = hits.Select(h => h.collider.gameObject).ToList();
                 saveDistancesAs.value = hits.Select(h => h.fraction).ToList();
                 savePointsAs.value = hits.Select(h => new Vector3(h.point.x, h.point.y, target.value.transform.position.z)).ToList();
@@ -43,9 +45,12 @@ namespace NodeCanvas.Tasks.Actions
             EndAction(false);
         }
 
-        public override void OnDrawGizmosSelected() {
-            if ( agent && target.value )
+        public override void OnDrawGizmosSelected()
+        {
+            if (agent && target.value)
+            {
                 Gizmos.DrawLine(agent.position, target.value.transform.position);
+            }
         }
     }
 }

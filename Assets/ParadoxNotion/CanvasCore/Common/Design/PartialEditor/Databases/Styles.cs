@@ -10,10 +10,12 @@ namespace ParadoxNotion.Design
     {
 
         private static GUIStyle _centerLabel;
-        public static GUIStyle centerLabel {
+        public static GUIStyle centerLabel
+        {
             get
             {
-                if ( _centerLabel == null ) {
+                if (_centerLabel == null)
+                {
                     _centerLabel = new GUIStyle(GUI.skin.label);
                     _centerLabel.richText = true;
                     _centerLabel.fontSize = 11;
@@ -24,10 +26,12 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _topCenterLabel;
-        public static GUIStyle topCenterLabel {
+        public static GUIStyle topCenterLabel
+        {
             get
             {
-                if ( _topCenterLabel == null ) {
+                if (_topCenterLabel == null)
+                {
                     _topCenterLabel = new GUIStyle(GUI.skin.label);
                     _topCenterLabel.richText = true;
                     _topCenterLabel.fontSize = 11;
@@ -39,10 +43,12 @@ namespace ParadoxNotion.Design
 
 
         private static GUIStyle _leftLabel;
-        public static GUIStyle leftLabel {
+        public static GUIStyle leftLabel
+        {
             get
             {
-                if ( _leftLabel == null ) {
+                if (_leftLabel == null)
+                {
                     _leftLabel = new GUIStyle(GUI.skin.label);
                     _leftLabel.richText = true;
                     _leftLabel.fontSize = 11;
@@ -54,10 +60,12 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _rightLabel;
-        public static GUIStyle rightLabel {
+        public static GUIStyle rightLabel
+        {
             get
             {
-                if ( _rightLabel == null ) {
+                if (_rightLabel == null)
+                {
                     _rightLabel = new GUIStyle(GUI.skin.label);
                     _rightLabel.richText = true;
                     _rightLabel.fontSize = 11;
@@ -69,10 +77,12 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _topLeftLabel;
-        public static GUIStyle topLeftLabel {
+        public static GUIStyle topLeftLabel
+        {
             get
             {
-                if ( _topLeftLabel == null ) {
+                if (_topLeftLabel == null)
+                {
                     _topLeftLabel = new GUIStyle(GUI.skin.label);
                     _topLeftLabel.richText = true;
                     _topLeftLabel.fontSize = 11;
@@ -84,10 +94,12 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _topRight;
-        public static GUIStyle topRightLabel {
+        public static GUIStyle topRightLabel
+        {
             get
             {
-                if ( _topRight == null ) {
+                if (_topRight == null)
+                {
                     _topRight = new GUIStyle(GUI.skin.label);
                     _topRight.richText = true;
                     _topRight.fontSize = 11;
@@ -99,10 +111,12 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _bottomCenter;
-        public static GUIStyle bottomCenterLabel {
+        public static GUIStyle bottomCenterLabel
+        {
             get
             {
-                if ( _bottomCenter == null ) {
+                if (_bottomCenter == null)
+                {
                     _bottomCenter = new GUIStyle(GUI.skin.label);
                     _bottomCenter.richText = true;
                     _bottomCenter.fontSize = 11;
@@ -115,10 +129,12 @@ namespace ParadoxNotion.Design
         ///----------------------------------------------------------------------------------------------
 
         private static GUIStyle _portContentImage;
-        public static GUIStyle proxyContentImage {
+        public static GUIStyle proxyContentImage
+        {
             get
             {
-                if ( _portContentImage == null ) {
+                if (_portContentImage == null)
+                {
                     _portContentImage = new GUIStyle(GUI.skin.label);
                     _portContentImage.alignment = TextAnchor.MiddleCenter;
                     _portContentImage.padding = new RectOffset(0, 0, _portContentImage.padding.top, _portContentImage.padding.bottom);
@@ -129,10 +145,12 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _proxyRightContentLabel;
-        public static GUIStyle proxyRightContentLabel {
+        public static GUIStyle proxyRightContentLabel
+        {
             get
             {
-                if ( _proxyRightContentLabel == null ) {
+                if (_proxyRightContentLabel == null)
+                {
                     _proxyRightContentLabel = new GUIStyle(ParadoxNotion.Design.Styles.rightLabel);
                     _proxyRightContentLabel.margin = new RectOffset(0, 0, _proxyRightContentLabel.margin.top, _proxyRightContentLabel.margin.bottom);
                     _proxyRightContentLabel.padding = new RectOffset(8, 0, _proxyRightContentLabel.padding.top, _proxyRightContentLabel.padding.bottom);
@@ -142,10 +160,12 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _proxyLeftContentLabel;
-        public static GUIStyle proxyLeftContentLabel {
+        public static GUIStyle proxyLeftContentLabel
+        {
             get
             {
-                if ( _proxyLeftContentLabel == null ) {
+                if (_proxyLeftContentLabel == null)
+                {
                     _proxyLeftContentLabel = new GUIStyle(ParadoxNotion.Design.Styles.leftLabel);
                     _proxyLeftContentLabel.margin = new RectOffset(0, 0, _proxyLeftContentLabel.margin.top, _proxyLeftContentLabel.margin.bottom);
                     _proxyLeftContentLabel.padding = new RectOffset(0, 8, _proxyLeftContentLabel.padding.top, _proxyLeftContentLabel.padding.bottom);
@@ -157,10 +177,12 @@ namespace ParadoxNotion.Design
         ///----------------------------------------------------------------------------------------------
 
         private static GUIStyle _wrapTextArea;
-        public static GUIStyle wrapTextArea {
+        public static GUIStyle wrapTextArea
+        {
             get
             {
-                if ( _wrapTextArea == null ) {
+                if (_wrapTextArea == null)
+                {
                     _wrapTextArea = new GUIStyle(GUI.skin.textArea);
                     _wrapTextArea.wordWrap = true;
                 }
@@ -171,12 +193,14 @@ namespace ParadoxNotion.Design
         ///----------------------------------------------------------------------------------------------
 
         private static GUIStyle _roundedBox;
-        public static GUIStyle roundedBox {
+        public static GUIStyle roundedBox
+        {
             get
             {
-                if ( _roundedBox != null ) { return _roundedBox; }
-                _roundedBox = new GUIStyle((GUIStyle)"ShurikenEffectBg");
-                if ( !UnityEditor.EditorGUIUtility.isProSkin ) {
+                if (_roundedBox != null) { return _roundedBox; }
+                _roundedBox = new GUIStyle("ShurikenEffectBg");
+                if (!UnityEditor.EditorGUIUtility.isProSkin)
+                {
                     _roundedBox.normal.background = null;
                 }
                 return _roundedBox;
@@ -184,56 +208,64 @@ namespace ParadoxNotion.Design
         }
 
         private static GUIStyle _buttonLeft;
-        public static GUIStyle buttonLeft {
+        public static GUIStyle buttonLeft
+        {
 #if UNITY_2019_3_OR_NEWER
-            get { return _buttonLeft ?? ( _buttonLeft = new GUIStyle((GUIStyle)"AppCommandLeft") ); }
+            get { return _buttonLeft ?? (_buttonLeft = new GUIStyle("AppCommandLeft")); }
 #else
             get { return _buttonLeft ?? ( _buttonLeft = new GUIStyle((GUIStyle)"ButtonLeft") ); }
 #endif
         }
 
         private static GUIStyle _buttonMid;
-        public static GUIStyle buttonMid {
+        public static GUIStyle buttonMid
+        {
 #if UNITY_2019_3_OR_NEWER
-            get { return _buttonMid ?? ( _buttonMid = new GUIStyle((GUIStyle)"AppCommandMid") ); }
+            get { return _buttonMid ?? (_buttonMid = new GUIStyle("AppCommandMid")); }
 #else
             get { return _buttonMid ?? ( _buttonMid = new GUIStyle((GUIStyle)"ButtonMid") ); }
 #endif
         }
 
         private static GUIStyle _buttonRight;
-        public static GUIStyle buttonRight {
+        public static GUIStyle buttonRight
+        {
 #if UNITY_2019_3_OR_NEWER
-            get { return _buttonRight ?? ( _buttonRight = new GUIStyle((GUIStyle)"AppCommandRight") ); }
+            get { return _buttonRight ?? (_buttonRight = new GUIStyle("AppCommandRight")); }
 #else
             get { return _buttonRight ?? ( _buttonRight = new GUIStyle((GUIStyle)"ButtonRight") ); }
 #endif
         }
 
         private static GUIStyle _highlightBox;
-        public static GUIStyle highlightBox {
-            get { return _highlightBox ?? ( _highlightBox = new GUIStyle((GUIStyle)"LightmapEditorSelectedHighlight") ); }
+        public static GUIStyle highlightBox
+        {
+            get { return _highlightBox ?? (_highlightBox = new GUIStyle("LightmapEditorSelectedHighlight")); }
         }
 
         private static GUIStyle _toolbarSearchField;
-        public static GUIStyle toolbarSearchTextField {
-            get { return _toolbarSearchField ?? ( _toolbarSearchField = new GUIStyle((GUIStyle)"ToolbarSeachTextField") ); }
+        public static GUIStyle toolbarSearchTextField
+        {
+            get { return _toolbarSearchField ?? (_toolbarSearchField = new GUIStyle("ToolbarSeachTextField")); }
         }
 
         private static GUIStyle _toolbarSearchButton;
-        public static GUIStyle toolbarSearchCancelButton {
-            get { return _toolbarSearchButton ?? ( _toolbarSearchButton = new GUIStyle((GUIStyle)"ToolbarSeachCancelButton") ); }
+        public static GUIStyle toolbarSearchCancelButton
+        {
+            get { return _toolbarSearchButton ?? (_toolbarSearchButton = new GUIStyle("ToolbarSeachCancelButton")); }
         }
 
         private static GUIStyle _shadowedBackground;
-        public static GUIStyle shadowedBackground {
-            get { return _shadowedBackground ?? ( _shadowedBackground = new GUIStyle((GUIStyle)"CurveEditorBackground") ); }
+        public static GUIStyle shadowedBackground
+        {
+            get { return _shadowedBackground ?? (_shadowedBackground = new GUIStyle("CurveEditorBackground")); }
         }
 
         ///----------------------------------------------------------------------------------------------
 
         ///Same as box, but saves me the trouble of writing string.empty all the time
-        public static void Draw(Rect position, GUIStyle style) {
+        public static void Draw(Rect position, GUIStyle style)
+        {
             GUI.Box(position, string.Empty, style);
         }
 

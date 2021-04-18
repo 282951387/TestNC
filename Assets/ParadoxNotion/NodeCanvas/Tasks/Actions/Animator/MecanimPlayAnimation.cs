@@ -21,41 +21,53 @@ namespace NodeCanvas.Tasks.Actions
         private AnimatorStateInfo stateInfo;
         private bool played;
 
-        protected override string info {
+        protected override string info
+        {
             get { return "Anim '" + stateName.ToString() + "'"; }
         }
 
-        protected override void OnExecute() {
-            if ( string.IsNullOrEmpty(stateName.value) ) {
+        protected override void OnExecute()
+        {
+            if (string.IsNullOrEmpty(stateName.value))
+            {
                 EndAction();
                 return;
             }
             played = false;
-            var current = agent.GetCurrentAnimatorStateInfo(layerIndex.value);
+            AnimatorStateInfo current = agent.GetCurrentAnimatorStateInfo(layerIndex.value);
             agent.CrossFade(stateName.value, transitTime / current.length, layerIndex.value);
         }
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
 
             stateInfo = agent.GetCurrentAnimatorStateInfo(layerIndex.value);
 
-            if ( waitUntilFinish ) {
+            if (waitUntilFinish)
+            {
 
-                if ( stateInfo.IsName(stateName.value) ) {
+                if (stateInfo.IsName(stateName.value))
+                {
 
                     played = true;
-                    if ( elapsedTime >= ( stateInfo.length / agent.speed ) ) {
+                    if (elapsedTime >= (stateInfo.length / agent.speed))
+                    {
                         EndAction();
                     }
 
-                } else if ( played ) {
+                }
+                else if (played)
+                {
 
                     EndAction();
                 }
 
-            } else {
+            }
+            else
+            {
 
-                if ( elapsedTime >= transitTime ) {
+                if (elapsedTime >= transitTime)
+                {
                     EndAction();
                 }
             }

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using UnityEngine;
 using NavMeshAgent = UnityEngine.AI.NavMeshAgent;
 
 namespace NodeCanvas.Tasks.Actions
@@ -17,37 +17,45 @@ namespace NodeCanvas.Tasks.Actions
         public BBParameter<float> fledDistance = 10f;
         public BBParameter<float> lookAhead = 2f;
 
-        protected override string info {
+        protected override string info
+        {
             get { return string.Format("Flee from {0}", target); }
         }
 
-        protected override void OnExecute() {
-            if ( target.value == null ) { EndAction(false); return; }
+        protected override void OnExecute()
+        {
+            if (target.value == null) { EndAction(false); return; }
             agent.speed = speed.value;
-            if ( ( agent.transform.position - target.value.transform.position ).magnitude >= fledDistance.value ) {
+            if ((agent.transform.position - target.value.transform.position).magnitude >= fledDistance.value)
+            {
                 EndAction(true);
                 return;
             }
         }
 
-        protected override void OnUpdate() {
-            if ( target.value == null ) { EndAction(false); return; }
-            var targetPos = target.value.transform.position;
-            if ( ( agent.transform.position - targetPos ).magnitude >= fledDistance.value ) {
+        protected override void OnUpdate()
+        {
+            if (target.value == null) { EndAction(false); return; }
+            Vector3 targetPos = target.value.transform.position;
+            if ((agent.transform.position - targetPos).magnitude >= fledDistance.value)
+            {
                 EndAction(true);
                 return;
             }
 
-            var fleePos = targetPos + ( agent.transform.position - targetPos ).normalized * ( fledDistance.value + lookAhead.value + agent.stoppingDistance );
-            if ( !agent.SetDestination(fleePos) ) {
+            Vector3 fleePos = targetPos + (agent.transform.position - targetPos).normalized * (fledDistance.value + lookAhead.value + agent.stoppingDistance);
+            if (!agent.SetDestination(fleePos))
+            {
                 EndAction(false);
             }
         }
 
 
         protected override void OnPause() { OnStop(); }
-        protected override void OnStop() {
-            if ( agent.gameObject.activeSelf ) {
+        protected override void OnStop()
+        {
+            if (agent.gameObject.activeSelf)
+            {
                 agent.Warp(agent.transform.position);
                 agent.ResetPath();
             }
