@@ -23,7 +23,7 @@ namespace NodeCanvas.Framework
         ///there is still the old one to fallback to.
 
         [Tooltip("An optional Parent Blackboard Asset to 'inherit' variables from.")]
-        [SerializeField] private readonly AssetBlackboard _parentBlackboard = null;
+        [SerializeField] private AssetBlackboard _parentBlackboard = null;
         [SerializeField] private string _serializedBlackboard;
         [SerializeField] private List<UnityEngine.Object> _objectReferences;
         [SerializeField] private SerializationPair[] _serializedVariables;
@@ -174,12 +174,12 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         [ContextMenu("Show Json")]
-        private void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, name); }
+        private void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, this.name); }
 
         ///----------------------------------------------------------------------------------------------
 
         ///Saves the Blackboard in PlayerPrefs with saveKey being it's name. You can use this for a Save system
-        public string Save() { return Save(name); }
+        public string Save() { return Save(this.name); }
         ///Saves the Blackboard in PlayerPrefs in the provided saveKey. You can use this for a Save system
         public string Save(string saveKey)
         {
@@ -189,7 +189,7 @@ namespace NodeCanvas.Framework
         }
 
         ///Loads back the Blackboard from PlayerPrefs saveKey same as it's name. You can use this for a Save system
-        public bool Load() { return Load(name); }
+        public bool Load() { return Load(this.name); }
         ///Loads back the Blackboard from PlayerPrefs of the provided saveKey. You can use this for a Save system
         public bool Load(string saveKey)
         {
