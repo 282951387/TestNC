@@ -1,0 +1,15 @@
+{
+    "name": "ParadoxNotion",
+    "references": [
+        "GUID:0e2eb2d2c46663a4698eace5486d8f0a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
