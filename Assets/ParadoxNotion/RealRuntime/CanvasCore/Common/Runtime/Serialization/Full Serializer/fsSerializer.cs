@@ -1,4 +1,5 @@
 ﻿using ParadoxNotion.Serialization.FullSerializer.Internal;
+//FF 2021年5月5日11:55:52
 //using ParadoxNotion.Serialization.FullSerializer.Internal.DirectConverters;
 using System;
 using System.Collections.Generic;
@@ -274,18 +275,19 @@ namespace ParadoxNotion.Serialization.FullSerializer
             _processors = new List<fsObjectProcessor>();
 
             //DirectConverters. Add manually for performance
-            AddConverter(new AnimationCurve_DirectConverter());
-            AddConverter(new Bounds_DirectConverter());
-            AddConverter(new GUIStyleState_DirectConverter());
-            AddConverter(new GUIStyle_DirectConverter());
-            AddConverter(new Gradient_DirectConverter());
-            AddConverter(new Keyframe_DirectConverter());
-            AddConverter(new LayerMask_DirectConverter());
-            AddConverter(new RectOffset_DirectConverter());
-            AddConverter(new Rect_DirectConverter());
+            //FF 2021年5月5日11:56:11
+            //AddConverter(new AnimationCurve_DirectConverter());
+            //AddConverter(new Bounds_DirectConverter());
+            //AddConverter(new GUIStyleState_DirectConverter());
+            //AddConverter(new GUIStyle_DirectConverter());
+            //AddConverter(new Gradient_DirectConverter());
+            //AddConverter(new Keyframe_DirectConverter());
+            //AddConverter(new LayerMask_DirectConverter());
+            //AddConverter(new RectOffset_DirectConverter());
+            //AddConverter(new Rect_DirectConverter());
 
-            AddConverter(new Vector2Int_DirectConverter());
-            AddConverter(new Vector3Int_DirectConverter());
+            //AddConverter(new Vector2Int_DirectConverter());
+            //AddConverter(new Vector3Int_DirectConverter());
         }
 
         ///----------------------------------------------------------------------------------------------

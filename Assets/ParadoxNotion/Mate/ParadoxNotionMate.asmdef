@@ -1,9 +1,6 @@
 {
-    "name": "ParadoxNotion",
-    "references": [
-        "GUID:0e2eb2d2c46663a4698eace5486d8f0a",
-        "GUID:af5bfcf73eb543649bb99ec738556ea1"
-    ],
+    "name": "ParadoxNotionMate",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

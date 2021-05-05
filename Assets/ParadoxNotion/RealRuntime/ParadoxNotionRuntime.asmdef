@@ -1,6 +1,8 @@
 {
     "name": "ParadoxNotionRuntime",
-    "references": [],
+    "references": [
+        "GUID:af5bfcf73eb543649bb99ec738556ea1"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
