@@ -6,6 +6,8 @@ using UnityEngine;
 using Logger = ParadoxNotion.Services.Logger;
 using UndoUtility = ParadoxNotion.Design.UndoUtility;
 
+//±à¼­Æ÷°æ±¾
+
 namespace NodeCanvas.Framework
 {
 
@@ -14,65 +16,65 @@ namespace NodeCanvas.Framework
 #endif
 
     ///Base class for connections between nodes in a graph
-    [ParadoxNotion.Design.SpoofAOT]
-    [System.Serializable, fsDeserializeOverwrite]
+    //[ParadoxNotion.Design.SpoofAOT]
+    //[System.Serializable, fsDeserializeOverwrite]
     public abstract partial class Connection : IGraphElement, ISerializationCollectable
     {
 
-        [SerializeField, fsSerializeAsReference] private Node _sourceNode;
-        [SerializeField, fsSerializeAsReference] private Node _targetNode;
-        [SerializeField] private string _UID;
-        [SerializeField] private bool _isDisabled;
+        //[SerializeField, fsSerializeAsReference] private Node _sourceNode;
+        //[SerializeField, fsSerializeAsReference] private Node _targetNode;
+        //[SerializeField] private string _UID;
+        //[SerializeField] private bool _isDisabled;
 
-        [System.NonSerialized] private Status _status = Status.Resting;
+        //[System.NonSerialized] private Status _status = Status.Resting;
 
         ///The Unique ID of the node. One is created only if requested.
-        public string UID => (string.IsNullOrEmpty(_UID) ? _UID = System.Guid.NewGuid().ToString() : _UID);
+        //public string UID => (string.IsNullOrEmpty(_UID) ? _UID = System.Guid.NewGuid().ToString() : _UID);
 
         ///The source node of the connection
-        public Node sourceNode
-        {
-            get { return _sourceNode; }
-            protected set { _sourceNode = value; }
-        }
+        //public Node sourceNode
+        //{
+        //    get { return _sourceNode; }
+        //    protected set { _sourceNode = value; }
+        //}
 
         ///The target node of the connection
-        public Node targetNode
-        {
-            get { return _targetNode; }
-            protected set { _targetNode = value; }
-        }
+        //public Node targetNode
+        //{
+        //    get { return _targetNode; }
+        //    protected set { _targetNode = value; }
+        //}
 
-        string IGraphElement.name => "Connection";
+        //string IGraphElement.name => "Connection";
 
         ///Is the connection active?
-        public bool isActive
-        {
-            get { return !_isDisabled; }
-            set
-            {
-                if (!_isDisabled && value == false)
-                {
-                    Reset();
-                }
-                _isDisabled = !value;
-            }
-        }
+        //public bool isActive
+        //{
+        //    get { return !_isDisabled; }
+        //    set
+        //    {
+        //        if (!_isDisabled && value == false)
+        //        {
+        //            Reset();
+        //        }
+        //        _isDisabled = !value;
+        //    }
+        //}
 
         ///The connection status
-        public Status status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
+        //public Status status
+        //{
+        //    get { return _status; }
+        //    set { _status = value; }
+        //}
 
         ///The graph this connection belongs to taken from the source node.
-        public Graph graph => (sourceNode != null ? sourceNode.graph : null);
+        //public Graph graph => (sourceNode != null ? sourceNode.graph : null);
 
         ///----------------------------------------------------------------------------------------------
 
         //required
-        public Connection() { }
+        //public Connection() { }
 
         ///Create a new Connection. Use this for constructor
         public static Connection Create(Node source, Node target, int sourceIndex = -1, int targetIndex = -1)
@@ -214,20 +216,20 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Execute the connection for the specified agent and blackboard.
-        public Status Execute(Component agent, IBlackboard blackboard)
-        {
-            if (!isActive) { return Status.Optional; }
-            status = targetNode.Execute(agent, blackboard);
-            return status;
-        }
+        //public Status Execute(Component agent, IBlackboard blackboard)
+        //{
+        //    if (!isActive) { return Status.Optional; }
+        //    status = targetNode.Execute(agent, blackboard);
+        //    return status;
+        //}
 
         ///Resets the connection and its targetNode, optionaly recursively
-        public void Reset(bool recursively = true)
-        {
-            if (status == Status.Resting) { return; }
-            status = Status.Resting;
-            if (recursively) { targetNode.Reset(recursively); }
-        }
+        //public void Reset(bool recursively = true)
+        //{
+        //    if (status == Status.Resting) { return; }
+        //    status = Status.Resting;
+        //    if (recursively) { targetNode.Reset(recursively); }
+        //}
 
         ///----------------------------------------------------------------------------------------------
 
@@ -240,9 +242,9 @@ namespace NodeCanvas.Framework
 
         ///----------------------------------------------------------------------------------------------
 
-        public override string ToString()
-        {
-            return GetType().FriendlyName();
-        }
+        //public override string ToString()
+        //{
+        //    return GetType().FriendlyName();
+        //}
     }
 }

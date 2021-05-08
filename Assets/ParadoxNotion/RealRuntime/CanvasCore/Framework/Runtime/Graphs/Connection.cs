@@ -77,141 +77,141 @@ namespace NodeCanvas.Framework
         public Connection() { }
 
         ///Create a new Connection. Use this for constructor
-        public static Connection Create(Node source, Node target, int sourceIndex = -1, int targetIndex = -1)
-        {
+        //public static Connection Create(Node source, Node target, int sourceIndex = -1, int targetIndex = -1)
+        //{
 
-            if (source == null || target == null)
-            {
-                Logger.LogError("Can't Create a Connection without providing Source and Target Nodes");
-                return null;
-            }
+        //    if (source == null || target == null)
+        //    {
+        //        Logger.LogError("Can't Create a Connection without providing Source and Target Nodes");
+        //        return null;
+        //    }
 
-            if (source is MissingNode)
-            {
-                Logger.LogError("Creating new Connections from a 'MissingNode' is not allowed. Please resolve the MissingNode node first");
-                return null;
-            }
+        //    if (source is MissingNode)
+        //    {
+        //        Logger.LogError("Creating new Connections from a 'MissingNode' is not allowed. Please resolve the MissingNode node first");
+        //        return null;
+        //    }
 
-            Connection newConnection = (Connection)System.Activator.CreateInstance(source.outConnectionType);
+        //    Connection newConnection = (Connection)System.Activator.CreateInstance(source.outConnectionType);
 
-            UndoUtility.RecordObject(source.graph, "Create Connection");
+        //    UndoUtility.RecordObject(source.graph, "Create Connection");
 
-            int resultSourceIndex = newConnection.SetSourceNode(source, sourceIndex);
-            int resultTargetIndex = newConnection.SetTargetNode(target, targetIndex);
+        //    int resultSourceIndex = newConnection.SetSourceNode(source, sourceIndex);
+        //    int resultTargetIndex = newConnection.SetTargetNode(target, targetIndex);
 
-            newConnection.OnValidate(resultSourceIndex, resultTargetIndex);
-            newConnection.OnCreate(resultSourceIndex, resultTargetIndex);
-            UndoUtility.SetDirty(source.graph);
+        //    newConnection.OnValidate(resultSourceIndex, resultTargetIndex);
+        //    newConnection.OnCreate(resultSourceIndex, resultTargetIndex);
+        //    UndoUtility.SetDirty(source.graph);
 
-            return newConnection;
-        }
+        //    return newConnection;
+        //}
 
         ///Duplicate the connection providing a new source and target
-        public Connection Duplicate(Node newSource, Node newTarget)
-        {
+        //public Connection Duplicate(Node newSource, Node newTarget)
+        //{
 
-            if (newSource == null || newTarget == null)
-            {
-                Logger.LogError("Can't Duplicate a Connection without providing NewSource and NewTarget Nodes");
-                return null;
-            }
+        //    if (newSource == null || newTarget == null)
+        //    {
+        //        Logger.LogError("Can't Duplicate a Connection without providing NewSource and NewTarget Nodes");
+        //        return null;
+        //    }
 
-            //deep clone
-            Connection newConnection = JSONSerializer.Clone<Connection>(this);
+        //    //deep clone
+        //    Connection newConnection = JSONSerializer.Clone<Connection>(this);
 
-            UndoUtility.RecordObject(newSource.graph, "Duplicate Connection");
+        //    UndoUtility.RecordObject(newSource.graph, "Duplicate Connection");
 
-            newConnection._UID = null;
-            newConnection.sourceNode = newSource;
-            newConnection.targetNode = newTarget;
-            newSource.outConnections.Add(newConnection);
-            newTarget.inConnections.Add(newConnection);
+        //    newConnection._UID = null;
+        //    newConnection.sourceNode = newSource;
+        //    newConnection.targetNode = newTarget;
+        //    newSource.outConnections.Add(newConnection);
+        //    newTarget.inConnections.Add(newConnection);
 
-            if (newSource.graph != null)
-            {
-                foreach (Task task in Graph.GetTasksInElement(newConnection))
-                {
-                    task.Validate(newSource.graph);
-                }
-            }
-            //--
+        //    if (newSource.graph != null)
+        //    {
+        //        foreach (Task task in Graph.GetTasksInElement(newConnection))
+        //        {
+        //            task.Validate(newSource.graph);
+        //        }
+        //    }
+        //    //--
 
-            newConnection.OnValidate(newSource.outConnections.Count - 1, newTarget.inConnections.Count - 1);
-            UndoUtility.SetDirty(newSource.graph);
-            return newConnection;
-        }
+        //    newConnection.OnValidate(newSource.outConnections.Count - 1, newTarget.inConnections.Count - 1);
+        //    UndoUtility.SetDirty(newSource.graph);
+        //    return newConnection;
+        //}
 
         ///Sets the source node of the connection
-        public int SetSourceNode(Node newSource, int index = -1)
-        {
+//        public int SetSourceNode(Node newSource, int index = -1)
+//        {
 
-            if (sourceNode == newSource)
-            {
-                return -1;
-            }
+//            if (sourceNode == newSource)
+//            {
+//                return -1;
+//            }
 
-            UndoUtility.RecordObject(graph, "Set Source");
+//            UndoUtility.RecordObject(graph, "Set Source");
 
-            //relink
-            if (sourceNode != null && sourceNode.outConnections.Contains(this))
-            {
-                int i = sourceNode.outConnections.IndexOf(this);
-                sourceNode.OnChildDisconnected(i);
-                sourceNode.outConnections.Remove(this);
-            }
+//            //relink
+//            if (sourceNode != null && sourceNode.outConnections.Contains(this))
+//            {
+//                int i = sourceNode.outConnections.IndexOf(this);
+//                sourceNode.OnChildDisconnected(i);
+//                sourceNode.outConnections.Remove(this);
+//            }
 
-            index = index == -1 ? newSource.outConnections.Count : index;
-            newSource.outConnections.Insert(index, this);
-            newSource.OnChildConnected(index);
-            sourceNode = newSource;
+//            index = index == -1 ? newSource.outConnections.Count : index;
+//            newSource.outConnections.Insert(index, this);
+//            newSource.OnChildConnected(index);
+//            sourceNode = newSource;
 
-#if UNITY_EDITOR
-            if (sourceNode != null && targetNode != null)
-            {
-                targetNode.TrySortConnectionsByPositionX();
-            }
-#endif
+//#if UNITY_EDITOR
+//            if (sourceNode != null && targetNode != null)
+//            {
+//                targetNode.TrySortConnectionsByPositionX();
+//            }
+//#endif
 
-            OnValidate(index, targetNode != null ? targetNode.inConnections.IndexOf(this) : -1);
-            UndoUtility.SetDirty(graph);
-            return index;
-        }
+//            OnValidate(index, targetNode != null ? targetNode.inConnections.IndexOf(this) : -1);
+//            UndoUtility.SetDirty(graph);
+//            return index;
+//        }
 
         ///Sets the target node of the connection
-        public int SetTargetNode(Node newTarget, int index = -1)
-        {
+//        public int SetTargetNode(Node newTarget, int index = -1)
+//        {
 
-            if (targetNode == newTarget)
-            {
-                return -1;
-            }
+//            if (targetNode == newTarget)
+//            {
+//                return -1;
+//            }
 
-            UndoUtility.RecordObject(graph, "Set Target");
+//            UndoUtility.RecordObject(graph, "Set Target");
 
-            //relink
-            if (targetNode != null && targetNode.inConnections.Contains(this))
-            {
-                int i = targetNode.inConnections.IndexOf(this);
-                targetNode.OnParentDisconnected(i);
-                targetNode.inConnections.Remove(this);
-            }
+//            //relink
+//            if (targetNode != null && targetNode.inConnections.Contains(this))
+//            {
+//                int i = targetNode.inConnections.IndexOf(this);
+//                targetNode.OnParentDisconnected(i);
+//                targetNode.inConnections.Remove(this);
+//            }
 
-            index = index == -1 ? newTarget.inConnections.Count : index;
-            newTarget.inConnections.Insert(index, this);
-            newTarget.OnParentConnected(index);
-            targetNode = newTarget;
+//            index = index == -1 ? newTarget.inConnections.Count : index;
+//            newTarget.inConnections.Insert(index, this);
+//            newTarget.OnParentConnected(index);
+//            targetNode = newTarget;
 
-#if UNITY_EDITOR
-            if (sourceNode != null && targetNode != null)
-            {
-                targetNode.TrySortConnectionsByPositionX();
-            }
-#endif
+//#if UNITY_EDITOR
+//            if (sourceNode != null && targetNode != null)
+//            {
+//                targetNode.TrySortConnectionsByPositionX();
+//            }
+//#endif
 
-            OnValidate(sourceNode != null ? sourceNode.outConnections.IndexOf(this) : -1, index);
-            UndoUtility.SetDirty(graph);
-            return index;
-        }
+//            OnValidate(sourceNode != null ? sourceNode.outConnections.IndexOf(this) : -1, index);
+//            UndoUtility.SetDirty(graph);
+//            return index;
+//        }
 
         ///----------------------------------------------------------------------------------------------
 
@@ -233,12 +233,12 @@ namespace NodeCanvas.Framework
 
         ///----------------------------------------------------------------------------------------------
 
-        ///Called once when the connection is created.
-        public virtual void OnCreate(int sourceIndex, int targetIndex) { }
-        ///Called when the Connection is created, duplicated or otherwise needs validation.
-        public virtual void OnValidate(int sourceIndex, int targetIndex) { }
-        ///Called when the connection is destroyed (always through graph.RemoveConnection or when a node is removed through graph.RemoveNode)
-        public virtual void OnDestroy() { }
+        /////Called once when the connection is created.
+        //public virtual void OnCreate(int sourceIndex, int targetIndex) { }
+        /////Called when the Connection is created, duplicated or otherwise needs validation.
+        //public virtual void OnValidate(int sourceIndex, int targetIndex) { }
+        /////Called when the connection is destroyed (always through graph.RemoveConnection or when a node is removed through graph.RemoveNode)
+        //public virtual void OnDestroy() { }
 
         ///----------------------------------------------------------------------------------------------
 
