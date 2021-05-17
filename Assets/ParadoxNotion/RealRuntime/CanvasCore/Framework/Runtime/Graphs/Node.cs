@@ -99,12 +99,12 @@ namespace NodeCanvas.Framework
         //    set { _name = value; }
         //}
 
-        /////The node tag. Useful for finding nodes through code.
-        //public string tag
-        //{
-        //    get { return _tag; }
-        //    set { _tag = value; }
-        //}
+        ///The node tag. Useful for finding nodes through code.
+        public string tag
+        {
+            get { return _tag; }
+            set { _tag = value; }
+        }
 
         /////The comments of the node if any.
         //public string comments
