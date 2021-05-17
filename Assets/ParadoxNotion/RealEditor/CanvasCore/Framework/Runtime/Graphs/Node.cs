@@ -155,18 +155,18 @@ namespace NodeCanvas.Framework
         }
 
         ///The execution priority order of the node when it matters to the graph system
-        public virtual int priority
-        {
-            get
-            {
-                if (_priorityCache == int.MinValue)
-                {
-                    ExecutionPriorityAttribute prioAtt = GetType().RTGetAttribute<ExecutionPriorityAttribute>(true);
-                    _priorityCache = prioAtt != null ? prioAtt.priority : 0;
-                }
-                return _priorityCache;
-            }
-        }
+        //public virtual int priority
+        //{
+        //    get
+        //    {
+        //        if (_priorityCache == int.MinValue)
+        //        {
+        //            ExecutionPriorityAttribute prioAtt = GetType().RTGetAttribute<ExecutionPriorityAttribute>(true);
+        //            _priorityCache = prioAtt != null ? prioAtt.priority : 0;
+        //        }
+        //        return _priorityCache;
+        //    }
+        //}
 
         ///The numer of possible inputs. -1 for infinite.
         //public abstract int maxInConnections { get; }
