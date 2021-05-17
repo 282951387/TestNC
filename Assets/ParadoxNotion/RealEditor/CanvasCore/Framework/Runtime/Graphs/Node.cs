@@ -121,24 +121,24 @@ namespace NodeCanvas.Framework
         }
 
         ///The title name of the node shown in the window if editor is not in Icon Mode. This is a property so title name may change instance wise
-        public virtual string name
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(customName))
-                {
-                    return customName;
-                }
+        //public virtual string name
+        //{
+        //    get
+        //    {
+        //        if (!string.IsNullOrEmpty(customName))
+        //        {
+        //            return customName;
+        //        }
 
-                if (string.IsNullOrEmpty(_nameCache))
-                {
-                    NameAttribute nameAtt = GetType().RTGetAttribute<NameAttribute>(true);
-                    _nameCache = nameAtt != null ? nameAtt.name : GetType().FriendlyName().SplitCamelCase();
-                }
-                return _nameCache;
-            }
-            set { customName = value; }
-        }
+        //        if (string.IsNullOrEmpty(_nameCache))
+        //        {
+        //            NameAttribute nameAtt = GetType().RTGetAttribute<NameAttribute>(true);
+        //            _nameCache = nameAtt != null ? nameAtt.name : GetType().FriendlyName().SplitCamelCase();
+        //        }
+        //        return _nameCache;
+        //    }
+        //    set { customName = value; }
+        //}
 
         ///The description info of the node
         public virtual string description
