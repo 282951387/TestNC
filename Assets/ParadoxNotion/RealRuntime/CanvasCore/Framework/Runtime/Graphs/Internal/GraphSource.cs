@@ -138,6 +138,11 @@ namespace NodeCanvas.Framework.Internal
         ///Sets only the meta-data from another GraphSource and returns itself
         public GraphSource SetMetaData(GraphSource source)
         {
+            if (source == null)
+            {
+                return this;
+            }
+
             version = source.version;
             category = source.category;
             comments = source.comments;

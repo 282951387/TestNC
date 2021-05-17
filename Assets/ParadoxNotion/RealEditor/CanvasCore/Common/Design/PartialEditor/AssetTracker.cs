@@ -20,6 +20,8 @@ namespace ParadoxNotion.Design
         ///Call this to start tracking assets of specified type (and assignables to that)
         public static void BeginTrackingAssetsOfType(System.Type type)
         {
+            return;
+
             if (trackedAssets == null) { trackedAssets = new Dictionary<string, UnityEngine.Object>(); }
             if (trackedTypes == null) { trackedTypes = new List<System.Type>(); }
 
@@ -44,6 +46,8 @@ namespace ParadoxNotion.Design
         //unity callback
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
+            return;
+
             AssetsImported(importedAssets);
             if (onAssetsImported != null) { onAssetsImported(importedAssets); }
 

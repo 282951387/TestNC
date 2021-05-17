@@ -9,23 +9,23 @@ namespace NodeCanvas.Tasks.Actions
 
     [Category("✫ Blackboard")]
     [Description("Use this to set a variable on any blackboard by overriding the agent")]
-    public class SetOtherBlackboardVariable : ActionTask<Blackboard>
+    public partial class SetOtherBlackboardVariable : ActionTask<Blackboard>
     {
 
-        [RequiredField]
-        public BBParameter<string> targetVariableName;
-        public BBObjectParameter newValue;
+        //[RequiredField]
+        //public BBParameter<string> targetVariableName;
+        //public BBObjectParameter newValue;
 
         protected override string info
         {
             get { return string.Format("<b>{0}</b> = {1}", targetVariableName.ToString(), newValue != null ? newValue.ToString() : ""); }
         }
 
-        protected override void OnExecute()
-        {
-            agent.SetVariableValue(targetVariableName.value, newValue.value);
-            EndAction();
-        }
+        //protected override void OnExecute()
+        //{
+        //    agent.SetVariableValue(targetVariableName.value, newValue.value);
+        //    EndAction();
+        //}
 
         ////////////////////////////////////////
         ///////////GUI AND EDITOR STUFF/////////

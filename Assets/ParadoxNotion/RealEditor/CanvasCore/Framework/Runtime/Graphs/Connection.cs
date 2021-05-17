@@ -1,3 +1,4 @@
+//±à¼­Æ÷²¿·Ö
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Serialization;
@@ -6,7 +7,6 @@ using UnityEngine;
 using Logger = ParadoxNotion.Services.Logger;
 using UndoUtility = ParadoxNotion.Design.UndoUtility;
 
-//±à¼­Æ÷°æ±¾
 
 namespace NodeCanvas.Framework
 {

@@ -8,7 +8,7 @@ namespace NodeCanvas.Framework.Internal
     {
         public GraphSource source;
         public string json;
-        public List<UnityEngine.Object> references;
+        //public List<UnityEngine.Object> references;
         public UnityEngine.Component agent;
         public IBlackboard parentBlackboard;
         public bool preInitializeSubGraphs;

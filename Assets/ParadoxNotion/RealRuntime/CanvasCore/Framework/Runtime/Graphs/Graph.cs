@@ -1,3 +1,4 @@
+//运行时部分
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Serialization;
@@ -7,14 +8,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Logger = ParadoxNotion.Services.Logger;
+#if UNITY_EDITOR
 using UndoUtility = ParadoxNotion.Design.UndoUtility;
+#endif
+
 
 namespace NodeCanvas.Framework
 {
 
     ///This is the base and main class of NodeCanvas and graphs. All graph System are deriving from this.
     [System.Serializable]
-    public abstract partial class Graph : ScriptableObject, ITaskSystem, ISerializationCallbackReceiver
+    public abstract partial class Graph : ScriptableObject, ITaskSystem
     {
         ///Update mode of the graph (see 'StartGraph')
         public enum UpdateMode
@@ -36,16 +40,16 @@ namespace NodeCanvas.Framework
         //used to halt self-serialization when something went wrong in deserialization
         [SerializeField] private bool _haltSerialization;
 
-        [System.NonSerialized] private bool haltForUndo;
+        //[System.NonSerialized] private bool haltForUndo;
 
         ///Invoked after graph serialization.
-        public static event System.Action<Graph> onGraphSerialized;
+        //public static event System.Action<Graph> onGraphSerialized;
         ///Invoked after graph deserialization.
         public static event System.Action<Graph> onGraphDeserialized;
 
         ///----------------------------------------------------------------------------------------------
-        void ISerializationCallbackReceiver.OnBeforeSerialize() { SelfSerialize(); }
-        void ISerializationCallbackReceiver.OnAfterDeserialize() { SelfDeserialize(); }
+        //void ISerializationCallbackReceiver.OnBeforeSerialize() { SelfSerialize(); }
+        //void ISerializationCallbackReceiver.OnAfterDeserialize() { SelfDeserialize(); }
         ///----------------------------------------------------------------------------------------------
 
         ///----------------------------------------------------------------------------------------------
@@ -57,59 +61,59 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Serialize the Graph. Return if serialization changed
-        public bool SelfSerialize()
-        {
+//        public bool SelfSerialize()
+//        {
 
-            //if something went wrong on deserialization, dont serialize back, but rather keep what we had until a deserialization attempt is successful.
-            if (_haltSerialization)
-            {
-                return false;
-            }
+//            //if something went wrong on deserialization, dont serialize back, but rather keep what we had until a deserialization attempt is successful.
+//            if (_haltSerialization)
+//            {
+//                return false;
+//            }
 
-            if (haltForUndo /*|| Threader.applicationIsPlaying || Application.isPlaying*/ )
-            {
-                return false;
-            }
+//            if (haltForUndo /*|| Threader.applicationIsPlaying || Application.isPlaying*/ )
+//            {
+//                return false;
+//            }
 
-            List<Object> newReferences = new List<UnityEngine.Object>();
-            string newSerialization = Serialize(newReferences);
-            if (newSerialization != _serializedGraph || !newReferences.SequenceEqual(_objectReferences))
-            {
+//            List<Object> newReferences = new List<UnityEngine.Object>();
+//            string newSerialization = Serialize(newReferences);
+//            if (newSerialization != _serializedGraph || !newReferences.SequenceEqual(_objectReferences))
+//            {
 
-                haltForUndo = true;
-                UndoUtility.RecordObjectComplete(this, UndoUtility.GetLastOperationNameOr("Graph Change"));
-                haltForUndo = false;
+//                haltForUndo = true;
+//                UndoUtility.RecordObjectComplete(this, UndoUtility.GetLastOperationNameOr("Graph Change"));
+//                haltForUndo = false;
 
-                //store
-                _serializedGraph = newSerialization;
-                _objectReferences = newReferences;
+//                //store
+//                _serializedGraph = newSerialization;
+//                _objectReferences = newReferences;
 
-#if UNITY_EDITOR
-                //notify owner (this is basically used for bound graphs)
-                GraphOwner owner = agent as GraphOwner;
-                if (owner != null)
-                {
-                    owner.OnAfterGraphSerialized(this);
-                }
-#endif
+//#if UNITY_EDITOR
+//                //notify owner (this is basically used for bound graphs)
+//                GraphOwner owner = agent as GraphOwner;
+//                if (owner != null)
+//                {
+//                    owner.OnAfterGraphSerialized(this);
+//                }
+//#endif
 
-                //raise event
-                if (onGraphSerialized != null)
-                {
-                    onGraphSerialized(this);
-                }
+//                //raise event
+//                if (onGraphSerialized != null)
+//                {
+//                    onGraphSerialized(this);
+//                }
 
-                //purge cache and refs
-                graphSource.PurgeRedundantReferences();
-                flatMetaGraph = null;
-                fullMetaGraph = null;
-                nestedMetaGraph = null;
+//                //purge cache and refs
+//                graphSource.PurgeRedundantReferences();
+//                flatMetaGraph = null;
+//                fullMetaGraph = null;
+//                nestedMetaGraph = null;
 
-                return true;
-            }
+//                return true;
+//            }
 
-            return false;
-        }
+//            return false;
+//        }
 
         ///Deserialize the Graph. Return if that succeed
         public bool SelfDeserialize()
@@ -134,13 +138,13 @@ namespace NodeCanvas.Framework
 
         ///Serialize the graph and returns the serialized json string.
         ///The provided objectReferences list will be cleared and populated with the found unity object references.
-        public string Serialize(List<UnityEngine.Object> references)
-        {
-            if (references == null) { references = new List<Object>(); }
-            UpdateNodeIDs(true);
-            string result = JSONSerializer.Serialize(typeof(GraphSource), graphSource.Pack(this), references);
-            return result;
-        }
+        //public string Serialize(List<UnityEngine.Object> references)
+        //{
+        //    if (references == null) { references = new List<Object>(); }
+        //    UpdateNodeIDs(true);
+        //    string result = JSONSerializer.Serialize(typeof(GraphSource), graphSource.Pack(this), references);
+        //    return result;
+        //}
 
         ///Deserialize the json serialized graph provided. Returns the data or null if failed.
         ///The provided references list will be used to read serialized unity object references.
@@ -194,11 +198,11 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Serialize the local blackboard of the graph alone. The provided references list will be cleared and populated anew.
-        public string SerializeLocalBlackboard(ref List<UnityEngine.Object> references)
-        {
-            if (references != null) { references.Clear(); }
-            return JSONSerializer.Serialize(typeof(BlackboardSource), localBlackboard, references);
-        }
+        //public string SerializeLocalBlackboard(ref List<UnityEngine.Object> references)
+        //{
+        //    if (references != null) { references.Clear(); }
+        //    return JSONSerializer.Serialize(typeof(BlackboardSource), localBlackboard, references);
+        //}
 
         ///Deserialize the local blackboard of the graph alone.
         public bool DeserializeLocalBlackboard(string json, List<UnityEngine.Object> references)
@@ -237,6 +241,11 @@ namespace NodeCanvas.Framework
             {
                 try { allNodes[i].Validate(this); } //validation could be critical. we always continue
                 catch (System.Exception e) { Logger.LogException(e, LogTag.VALIDATION, allNodes[i]); continue; }
+            }
+
+            if(allTasks == null)
+            {
+                Debug.Log("null allTask");
             }
 
             for (int i = 0; i < allTasks.Count; i++)
@@ -286,32 +295,32 @@ namespace NodeCanvas.Framework
         }
 
         ///Graph category
-        public string category
-        {
-            get { return graphSource.category; }
-            set { graphSource.category = value; }
-        }
+        //public string category
+        //{
+        //    get { return graphSource.category; }
+        //    set { graphSource.category = value; }
+        //}
 
         ///Graph Comments
-        public string comments
-        {
-            get { return graphSource.comments; }
-            set { graphSource.comments = value; }
-        }
+        //public string comments
+        //{
+        //    get { return graphSource.comments; }
+        //    set { graphSource.comments = value; }
+        //}
 
         ///The translation of the graph in the total canvas
-        public Vector2 translation
-        {
-            get { return graphSource.translation; }
-            set { graphSource.translation = value; }
-        }
+        //public Vector2 translation
+        //{
+        //    get { return graphSource.translation; }
+        //    set { graphSource.translation = value; }
+        //}
 
         ///The zoom of the graph
-        public float zoomFactor
-        {
-            get { return graphSource.zoomFactor; }
-            set { graphSource.zoomFactor = value; }
-        }
+        //public float zoomFactor
+        //{
+        //    get { return graphSource.zoomFactor; }
+        //    set { graphSource.zoomFactor = value; }
+        //}
 
         ///All nodes assigned to this graph
         public List<Node> allNodes
@@ -321,11 +330,11 @@ namespace NodeCanvas.Framework
         }
 
         ///The canvas groups of the graph
-        public List<CanvasGroup> canvasGroups
-        {
-            get { return graphSource.canvasGroups; }
-            set { graphSource.canvasGroups = value; }
-        }
+        //public List<CanvasGroup> canvasGroups
+        //{
+        //    get { return graphSource.canvasGroups; }
+        //    set { graphSource.canvasGroups = value; }
+        //}
 
         ///The local blackboard of the graph
         private BlackboardSource localBlackboard
@@ -355,7 +364,7 @@ namespace NodeCanvas.Framework
         }
 
         ///Is serialization halted? (could be in case of deserialization error)
-        public bool serializationHalted => _haltSerialization;
+        //public bool serializationHalted => _haltSerialization;
 
         ///All currently running graphs
         public static IEnumerable<Graph> runningGraphs => _runningGraphs;
@@ -399,11 +408,15 @@ namespace NodeCanvas.Framework
                             if (primeNode != null) { primeNode.Reset(); }
                             value.Reset();
                         }
+#if UNITY_EDITOR
                         UndoUtility.RecordObjectComplete(this, "Set Start");
+#endif
                         allNodes.Remove(value);
                         allNodes.Insert(0, value);
                         UpdateNodeIDs(true);
+#if UNITY_EDITOR
                         UndoUtility.SetDirty(this);
+#endif
                     }
                 }
             }
@@ -543,7 +556,7 @@ namespace NodeCanvas.Framework
         public void LoadOverwrite(GraphLoadData data)
         {
             SetGraphSourceMetaData(data.source);
-            Deserialize(data.json, data.references, false);
+            Deserialize(data.json, null/*data.references*/, false);
             UpdateReferences(data.agent, data.parentBlackboard);
             Validate();
             OnGraphInitialize();
@@ -1153,157 +1166,157 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Add a new node to this graph
-        public T AddNode<T>() where T : Node { return (T)AddNode(typeof(T)); }
-        public T AddNode<T>(Vector2 pos) where T : Node { return (T)AddNode(typeof(T), pos); }
-        public Node AddNode(System.Type nodeType) { return AddNode(nodeType, new Vector2(-translation.x + 100, -translation.y + 100)); }
-        public Node AddNode(System.Type nodeType, Vector2 pos)
-        {
+//        public T AddNode<T>() where T : Node { return (T)AddNode(typeof(T)); }
+//        public T AddNode<T>(Vector2 pos) where T : Node { return (T)AddNode(typeof(T), pos); }
+//        public Node AddNode(System.Type nodeType) { return AddNode(nodeType, new Vector2(-translation.x + 100, -translation.y + 100)); }
+//        public Node AddNode(System.Type nodeType, Vector2 pos)
+//        {
 
-            if (nodeType.IsGenericTypeDefinition)
-            {
-                nodeType = nodeType.RTMakeGenericType(nodeType.GetFirstGenericParameterConstraintType());
-            }
+//            if (nodeType.IsGenericTypeDefinition)
+//            {
+//                nodeType = nodeType.RTMakeGenericType(nodeType.GetFirstGenericParameterConstraintType());
+//            }
 
-            if (!nodeType.RTIsSubclassOf(baseNodeType))
-            {
-                Logger.LogWarning(nodeType + " can't be added to " + GetType().FriendlyName() + " graph.", LogTag.GRAPH, this);
-                return null;
-            }
+//            if (!nodeType.RTIsSubclassOf(baseNodeType))
+//            {
+//                Logger.LogWarning(nodeType + " can't be added to " + GetType().FriendlyName() + " graph.", LogTag.GRAPH, this);
+//                return null;
+//            }
 
-            Node newNode = Node.Create(this, nodeType, pos);
+//            Node newNode = Node.Create(this, nodeType, pos);
 
-            UndoUtility.RecordObject(this, "New Node");
+//            UndoUtility.RecordObject(this, "New Node");
 
-            allNodes.Add(newNode);
+//            allNodes.Add(newNode);
 
-            if (primeNode == null)
-            {
-                primeNode = newNode;
-            }
+//            if (primeNode == null)
+//            {
+//                primeNode = newNode;
+//            }
 
-            UpdateNodeIDs(false);
-            UndoUtility.SetDirty(this);
+//            UpdateNodeIDs(false);
+//            UndoUtility.SetDirty(this);
 
-            return newNode;
-        }
+//            return newNode;
+//        }
 
-        ///Disconnects and then removes a node from this graph
-        public void RemoveNode(Node node, bool recordUndo = true, bool force = false)
-        {
+//        ///Disconnects and then removes a node from this graph
+//        public void RemoveNode(Node node, bool recordUndo = true, bool force = false)
+//        {
 
-            if (!force && node.GetType().RTIsDefined<ParadoxNotion.Design.ProtectedSingletonAttribute>(true))
-            {
-                if (allNodes.Where(n => n.GetType() == node.GetType()).Count() == 1)
-                {
-                    return;
-                }
-            }
+//            if (!force && node.GetType().RTIsDefined<ParadoxNotion.Design.ProtectedSingletonAttribute>(true))
+//            {
+//                if (allNodes.Where(n => n.GetType() == node.GetType()).Count() == 1)
+//                {
+//                    return;
+//                }
+//            }
 
-            if (!allNodes.Contains(node))
-            {
-                Logger.LogWarning("Node is not part of this graph.", "NodeCanvas", this);
-                return;
-            }
+//            if (!allNodes.Contains(node))
+//            {
+//                Logger.LogWarning("Node is not part of this graph.", "NodeCanvas", this);
+//                return;
+//            }
 
-            if (!Application.isPlaying)
-            {
-                //auto reconnect parent & child of deleted node. Just a workflow convenience
-                if (isTree && node.inConnections.Count == 1 && node.outConnections.Count == 1)
-                {
-                    Node relinkNode = node.outConnections[0].targetNode;
-                    if (relinkNode != node.inConnections[0].sourceNode)
-                    {
-                        RemoveConnection(node.outConnections[0]);
-                        node.inConnections[0].SetTargetNode(relinkNode);
-                    }
-                }
-            }
+//            if (!Application.isPlaying)
+//            {
+//                //auto reconnect parent & child of deleted node. Just a workflow convenience
+//                if (isTree && node.inConnections.Count == 1 && node.outConnections.Count == 1)
+//                {
+//                    Node relinkNode = node.outConnections[0].targetNode;
+//                    if (relinkNode != node.inConnections[0].sourceNode)
+//                    {
+//                        RemoveConnection(node.outConnections[0]);
+//                        node.inConnections[0].SetTargetNode(relinkNode);
+//                    }
+//                }
+//            }
 
-#if UNITY_EDITOR
-            if (NodeCanvas.Editor.GraphEditorUtility.activeElement == node)
-            {
-                NodeCanvas.Editor.GraphEditorUtility.activeElement = null;
-            }
-#endif
+//#if UNITY_EDITOR
+//            if (NodeCanvas.Editor.GraphEditorUtility.activeElement == node)
+//            {
+//                NodeCanvas.Editor.GraphEditorUtility.activeElement = null;
+//            }
+//#endif
 
-            //callback
-            node.OnDestroy();
+//            //callback
+//            node.OnDestroy();
 
-            //disconnect parents
-            for (int i = node.inConnections.Count; i-- > 0;)
-            {
-                RemoveConnection(node.inConnections[i]);
-            }
+//            //disconnect parents
+//            for (int i = node.inConnections.Count; i-- > 0;)
+//            {
+//                RemoveConnection(node.inConnections[i]);
+//            }
 
-            //disconnect children
-            for (int i = node.outConnections.Count; i-- > 0;)
-            {
-                RemoveConnection(node.outConnections[i]);
-            }
+//            //disconnect children
+//            for (int i = node.outConnections.Count; i-- > 0;)
+//            {
+//                RemoveConnection(node.outConnections[i]);
+//            }
 
-            if (recordUndo) { UndoUtility.RecordObject(this, "Delete Node"); }
+//            if (recordUndo) { UndoUtility.RecordObject(this, "Delete Node"); }
 
-            allNodes.Remove(node);
+//            allNodes.Remove(node);
 
-            if (node == primeNode)
-            {
-                primeNode = GetNodeWithID(primeNode.ID + 1);
-            }
+//            if (node == primeNode)
+//            {
+//                primeNode = GetNodeWithID(primeNode.ID + 1);
+//            }
 
-            UpdateNodeIDs(false);
-            UndoUtility.SetDirty(this);
-        }
+//            UpdateNodeIDs(false);
+//            UndoUtility.SetDirty(this);
+//        }
 
-        ///Connect two nodes together to a specific port index of the source and target node.
-        ///Leave index at -1 to add at the end of the list.
-        public Connection ConnectNodes(Node sourceNode, Node targetNode, int sourceIndex = -1, int targetIndex = -1)
-        {
+//        ///Connect two nodes together to a specific port index of the source and target node.
+//        ///Leave index at -1 to add at the end of the list.
+//        public Connection ConnectNodes(Node sourceNode, Node targetNode, int sourceIndex = -1, int targetIndex = -1)
+//        {
 
-            if (Node.IsNewConnectionAllowed(sourceNode, targetNode) == false)
-            {
-                return null;
-            }
+//            if (Node.IsNewConnectionAllowed(sourceNode, targetNode) == false)
+//            {
+//                return null;
+//            }
 
-            UndoUtility.RecordObject(this, "Add Connection");
+//            UndoUtility.RecordObject(this, "Add Connection");
 
-            Connection newConnection = Connection.Create(sourceNode, targetNode, sourceIndex, targetIndex);
+//            Connection newConnection = Connection.Create(sourceNode, targetNode, sourceIndex, targetIndex);
 
-            UpdateNodeIDs(false);
-            UndoUtility.SetDirty(this);
+//            UpdateNodeIDs(false);
+//            UndoUtility.SetDirty(this);
 
-            return newConnection;
-        }
+//            return newConnection;
+//        }
 
-        ///Removes a connection
-        public void RemoveConnection(Connection connection, bool recordUndo = true)
-        {
+//        ///Removes a connection
+//        public void RemoveConnection(Connection connection, bool recordUndo = true)
+//        {
 
-            //for live editing
-            if (Application.isPlaying)
-            {
-                connection.Reset();
-            }
+//            //for live editing
+//            if (Application.isPlaying)
+//            {
+//                connection.Reset();
+//            }
 
-            if (recordUndo) { UndoUtility.RecordObject(this, "Remove Connection"); }
+//            if (recordUndo) { UndoUtility.RecordObject(this, "Remove Connection"); }
 
-            //callbacks
-            connection.OnDestroy();
-            connection.sourceNode.OnChildDisconnected(connection.sourceNode.outConnections.IndexOf(connection));
-            connection.targetNode.OnParentDisconnected(connection.targetNode.inConnections.IndexOf(connection));
+//            //callbacks
+//            connection.OnDestroy();
+//            connection.sourceNode.OnChildDisconnected(connection.sourceNode.outConnections.IndexOf(connection));
+//            connection.targetNode.OnParentDisconnected(connection.targetNode.inConnections.IndexOf(connection));
 
-            connection.sourceNode.outConnections.Remove(connection);
-            connection.targetNode.inConnections.Remove(connection);
+//            connection.sourceNode.outConnections.Remove(connection);
+//            connection.targetNode.inConnections.Remove(connection);
 
-#if UNITY_EDITOR
-            if (NodeCanvas.Editor.GraphEditorUtility.activeElement == connection)
-            {
-                NodeCanvas.Editor.GraphEditorUtility.activeElement = null;
-            }
-#endif
+//#if UNITY_EDITOR
+//            if (NodeCanvas.Editor.GraphEditorUtility.activeElement == connection)
+//            {
+//                NodeCanvas.Editor.GraphEditorUtility.activeElement = null;
+//            }
+//#endif
 
-            UpdateNodeIDs(false);
-            UndoUtility.SetDirty(this);
-        }
+//            UpdateNodeIDs(false);
+//            UndoUtility.SetDirty(this);
+//        }
 
         ///Makes a copy of provided nodes and if targetGraph is provided, puts those new nodes in that graph.
         public static List<Node> CloneNodes(List<Node> originalNodes, Graph targetGraph = null, Vector2 originPosition = default(Vector2))
@@ -1375,17 +1388,17 @@ namespace NodeCanvas.Framework
             return newNodes;
         }
 
-        ///Clears the whole graph
-        public void ClearGraph()
-        {
-            UndoUtility.RecordObject(this, "Clear");
-            canvasGroups = null;
-            foreach (Node node in allNodes.ToArray())
-            {
-                RemoveNode(node);
-            }
-            UndoUtility.SetDirty(this);
-        }
+        /////Clears the whole graph
+        //public void ClearGraph()
+        //{
+        //    UndoUtility.RecordObject(this, "Clear");
+        //    canvasGroups = null;
+        //    foreach (Node node in allNodes.ToArray())
+        //    {
+        //        RemoveNode(node);
+        //    }
+        //    UndoUtility.SetDirty(this);
+        //}
 
         [System.Obsolete("Use 'Graph.StartGraph' with the 'Graph.UpdateMode' parameter.")]
         public void StartGraph(Component newAgent, IBlackboard newBlackboard, bool autoUpdate, System.Action<bool> callback = null)

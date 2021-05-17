@@ -1,4 +1,5 @@
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
+#if false
 
 using NodeCanvas.BehaviourTrees;
 using ParadoxNotion;

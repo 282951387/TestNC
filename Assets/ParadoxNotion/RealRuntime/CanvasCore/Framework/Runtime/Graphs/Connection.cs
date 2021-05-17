@@ -1,3 +1,4 @@
+//运行时版本
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion;
 using ParadoxNotion.Serialization;
@@ -6,7 +7,6 @@ using UnityEngine;
 using Logger = ParadoxNotion.Services.Logger;
 //using UndoUtility = ParadoxNotion.Design.UndoUtility;
 
-//运行时版本
 
 namespace NodeCanvas.Framework
 {

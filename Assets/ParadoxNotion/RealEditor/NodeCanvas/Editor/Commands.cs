@@ -3,6 +3,7 @@
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEditor;
+using UnityEngine;
 
 namespace NodeCanvas.Editor
 {
@@ -29,6 +30,16 @@ namespace NodeCanvas.Editor
         public static void ShowPrefTypes()
         {
             TypePrefsEditorWindow.ShowWindow();
+        }
+
+        [MenuItem("Assets/Open With Graph Editor")]
+        public static void OpenEditor()
+        {
+            string assetPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+            TextAsset t = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
+
+            Graph g = GraphManager.LoadGraph(t.text, new GameObject("ForEditor"));
+            GraphEditor.OpenWindow(g);
         }
 
         [MenuItem("Tools/ParadoxNotion/NodeCanvas/Graph Console")]

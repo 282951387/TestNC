@@ -8,31 +8,31 @@ namespace NodeCanvas.Tasks.Actions
 
     [Category("✫ Blackboard")]
     [Description("Use this to get a variable on any blackboard by overriding the agent")]
-    public class GetOtherBlackboardVariable : ActionTask<Blackboard>
+    public partial class GetOtherBlackboardVariable : ActionTask<Blackboard>
     {
 
-        [RequiredField]
-        public BBParameter<string> targetVariableName;
-        [BlackboardOnly]
-        public BBObjectParameter saveAs;
+        //[RequiredField]
+        //public BBParameter<string> targetVariableName;
+        //[BlackboardOnly]
+        //public BBObjectParameter saveAs;
 
         protected override string info
         {
             get { return string.Format("{0} = {1}", saveAs, targetVariableName); }
         }
 
-        protected override void OnExecute()
-        {
-            Variable targetVar = agent.GetVariable(targetVariableName.value);
-            if (targetVar == null)
-            {
-                EndAction(false);
-                return;
-            }
+        //protected override void OnExecute()
+        //{
+        //    Variable targetVar = agent.GetVariable(targetVariableName.value);
+        //    if (targetVar == null)
+        //    {
+        //        EndAction(false);
+        //        return;
+        //    }
 
-            saveAs.value = targetVar.value;
-            EndAction(true);
-        }
+        //    saveAs.value = targetVar.value;
+        //    EndAction(true);
+        //}
 
         ////////////////////////////////////////
         ///////////GUI AND EDITOR STUFF/////////

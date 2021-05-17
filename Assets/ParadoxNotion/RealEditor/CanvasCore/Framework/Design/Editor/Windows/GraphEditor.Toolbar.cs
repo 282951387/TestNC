@@ -60,6 +60,7 @@ namespace NodeCanvas.Editor
             GUILayout.Space(10);
 
             EditorGUIUtility.SetIconSize(new Vector2(15, 15));
+
             if (GUILayout.Button(new GUIContent(StyleSheet.log, "Open Graph Console"), EditorStyles.toolbarButton))
             {
                 GraphConsole.ShowWindow();

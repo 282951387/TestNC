@@ -1,14 +1,14 @@
 using NodeCanvas.Framework.Internal;
 using ParadoxNotion.Serialization;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Serialization;
+//using UnityEngine;
+//using UnityEngine.Serialization;
 
 namespace NodeCanvas.Framework
 {
 
     /// A component that is used to control a Graph in respects to the gameobject attached to
-	public abstract class GraphOwner : MonoBehaviour, ISerializationCallbackReceiver
+	public abstract class GraphOwner : UnityEngine.Component// : MonoBehaviour, ISerializationCallbackReceiver
     {
 
         ///----------------------------------------------------------------------------------------------
@@ -34,40 +34,41 @@ namespace NodeCanvas.Framework
         }
 
         ///----------------------------------------------------------------------------------------------
-        [SerializeField] private SerializationPair[] _serializedExposedParameters;
-        internal List<ExposedParameter> exposedParameters { get; set; }
+        //[SerializeField]
+        //private SerializationPair[] _serializedExposedParameters;
+        //internal List<ExposedParameter> exposedParameters { get; set; }
 
-        //serialize exposed parameters
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-            if (exposedParameters == null || exposedParameters.Count == 0)
-            {
-                _serializedExposedParameters = null;
-                return;
-            }
-            _serializedExposedParameters = new SerializationPair[exposedParameters.Count];
-            for (int i = 0; i < _serializedExposedParameters.Length; i++)
-            {
-                SerializationPair serializedParam = new SerializationPair();
-                serializedParam._json = JSONSerializer.Serialize(typeof(ExposedParameter), exposedParameters[i], serializedParam._references);
-                _serializedExposedParameters[i] = serializedParam;
-            }
-        }
+        ////serialize exposed parameters
+        //void ISerializationCallbackReceiver.OnBeforeSerialize()
+        //{
+        //    if (exposedParameters == null || exposedParameters.Count == 0)
+        //    {
+        //        _serializedExposedParameters = null;
+        //        return;
+        //    }
+        //    _serializedExposedParameters = new SerializationPair[exposedParameters.Count];
+        //    for (int i = 0; i < _serializedExposedParameters.Length; i++)
+        //    {
+        //        SerializationPair serializedParam = new SerializationPair();
+        //        serializedParam._json = JSONSerializer.Serialize(typeof(ExposedParameter), exposedParameters[i], serializedParam._references);
+        //        _serializedExposedParameters[i] = serializedParam;
+        //    }
+        //}
 
-        //deserialize exposed parameters
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-            if (_serializedExposedParameters != null)
-            {
-                if (exposedParameters == null) { exposedParameters = new List<ExposedParameter>(); } else { exposedParameters.Clear(); }
-                for (int i = 0; i < _serializedExposedParameters.Length; i++)
-                {
-                    ExposedParameter exposedParam = JSONSerializer.Deserialize<ExposedParameter>(_serializedExposedParameters[i]._json, _serializedExposedParameters[i]._references);
-                    exposedParameters.Add(exposedParam);
-                }
-            }
-        }
-        ///----------------------------------------------------------------------------------------------
+        ////deserialize exposed parameters
+        //void ISerializationCallbackReceiver.OnAfterDeserialize()
+        //{
+        //    if (_serializedExposedParameters != null)
+        //    {
+        //        if (exposedParameters == null) { exposedParameters = new List<ExposedParameter>(); } else { exposedParameters.Clear(); }
+        //        for (int i = 0; i < _serializedExposedParameters.Length; i++)
+        //        {
+        //            ExposedParameter exposedParam = JSONSerializer.Deserialize<ExposedParameter>(_serializedExposedParameters[i]._json, _serializedExposedParameters[i]._references);
+        //            exposedParameters.Add(exposedParam);
+        //        }
+        //    }
+        //}
+        /////----------------------------------------------------------------------------------------------
 
 
         ///Raised when the assigned behaviour state is changed (start/pause/stop)
@@ -75,27 +76,28 @@ namespace NodeCanvas.Framework
         ///Raised only once when "Start" is called, then is set to null
         public event System.Action onMonoBehaviourStart;
 
-        [SerializeField, FormerlySerializedAs("boundGraphSerialization")]
+        //[SerializeField, FormerlySerializedAs("boundGraphSerialization")]
         private string _boundGraphSerialization;
-        [SerializeField, FormerlySerializedAs("boundGraphObjectReferences")]
+        //[SerializeField, FormerlySerializedAs("boundGraphObjectReferences")]
         private List<UnityEngine.Object> _boundGraphObjectReferences;
-        [SerializeField]
+        //[SerializeField]
         private GraphSource _boundGraphSource = new GraphSource();
 
-        [SerializeField, FormerlySerializedAs("firstActivation")]
-        [Tooltip("When the graph will first activate. Async mode will load the graph on a separate thread (thus no spikes), but the graph will activate a few frames later.")]
-        private FirstActivation _firstActivation = FirstActivation.OnEnable;
-        [SerializeField, FormerlySerializedAs("enableAction")]
-        [Tooltip("What will happen when the GraphOwner is enabled")]
-        private EnableAction _enableAction = EnableAction.EnableBehaviour;
-        [SerializeField, FormerlySerializedAs("disableAction")]
-        [Tooltip("What will happen when the GraphOwner is disabled")]
-        private DisableAction _disableAction = DisableAction.DisableBehaviour;
-        [SerializeField, Tooltip("If enabled, bound graph prefab overrides in instances will not be possible")]
+        //[SerializeField, FormerlySerializedAs("firstActivation")]
+        //[Tooltip("When the graph will first activate. Async mode will load the graph on a separate thread (thus no spikes), but the graph will activate a few frames later.")]
+        //private FirstActivation _firstActivation = FirstActivation.OnEnable;
+        //[SerializeField, FormerlySerializedAs("enableAction")]
+        //[Tooltip("What will happen when the GraphOwner is enabled")]
+        //private EnableAction _enableAction = EnableAction.EnableBehaviour;
+        //[SerializeField, FormerlySerializedAs("disableAction")]
+        //[Tooltip("What will happen when the GraphOwner is disabled")]
+        //private DisableAction _disableAction = DisableAction.DisableBehaviour;
+        
+        //[SerializeField, Tooltip("If enabled, bound graph prefab overrides in instances will not be possible")]
         private bool _lockBoundGraphPrefabOverrides = true;
-        [SerializeField, Tooltip("If enabled, all subgraphs will be pre-initialized in Awake along with the root graph, but this may have a loading performance cost")]
+        //[SerializeField, Tooltip("If enabled, all subgraphs will be pre-initialized in Awake along with the root graph, but this may have a loading performance cost")]
         private bool _preInitializeSubGraphs;
-        [SerializeField, Tooltip("Specify when (if) the behaviour is updated. Changes to this only work when the behaviour starts, or re-starts")]
+        //[SerializeField, Tooltip("Specify when (if) the behaviour is updated. Changes to this only work when the behaviour starts, or re-starts")]
         private Graph.UpdateMode _updateMode = Graph.UpdateMode.NormalUpdate;
 
         private Dictionary<Graph, Graph> instances = new Dictionary<Graph, Graph>();
@@ -149,25 +151,25 @@ namespace NodeCanvas.Framework
         }
 
         ///When will the first activation be (if EnableBehaviour at all)
-        public FirstActivation firstActivation
-        {
-            get { return _firstActivation; }
-            set { _firstActivation = value; }
-        }
+        //public FirstActivation firstActivation
+        //{
+        //    get { return _firstActivation; }
+        //    set { _firstActivation = value; }
+        //}
 
-        ///What will happen OnEnable
-        public EnableAction enableAction
-        {
-            get { return _enableAction; }
-            set { _enableAction = value; }
-        }
+        /////What will happen OnEnable
+        //public EnableAction enableAction
+        //{
+        //    get { return _enableAction; }
+        //    set { _enableAction = value; }
+        //}
 
-        ///What will happen OnDisable
-        public DisableAction disableAction
-        {
-            get { return _disableAction; }
-            set { _disableAction = value; }
-        }
+        /////What will happen OnDisable
+        //public DisableAction disableAction
+        //{
+        //    get { return _disableAction; }
+        //    set { _disableAction = value; }
+        //}
 
         ///When is the behaviour updated? Changes to this only work when the behaviour starts (or re-starts)
         public Graph.UpdateMode updateMode
@@ -200,10 +202,10 @@ namespace NodeCanvas.Framework
             }
 
             //in editor the instance is always the original!
-            if (!Application.isPlaying)
-            {
-                return originalGraph;
-            }
+            //if (!Application.isPlaying)
+            //{
+            //    return originalGraph;
+            //}
 
             //if its already a stored instance, return the instance
             if (instances.ContainsValue(originalGraph))
@@ -295,18 +297,18 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Return an exposed parameter value
-        public T GetExposedParameterValue<T>(string name)
-        {
-            ExposedParameter param = exposedParameters.Find(x => x.varRefBoxed != null && x.varRefBoxed.name == name);
-            return param != null ? (param as ExposedParameter<T>).value : default(T);
-        }
+        //public T GetExposedParameterValue<T>(string name)
+        //{
+        //    ExposedParameter param = exposedParameters.Find(x => x.varRefBoxed != null && x.varRefBoxed.name == name);
+        //    return param != null ? (param as ExposedParameter<T>).value : default(T);
+        //}
 
-        ///Set an exposed parameter value
-        public void SetExposedParameterValue<T>(string name, T value)
-        {
-            ExposedParameter param = exposedParameters.Find(x => x.varRefBoxed != null && x.varRefBoxed.name == name);
-            if (param != null) { (param as ExposedParameter<T>).value = value; }
-        }
+        /////Set an exposed parameter value
+        //public void SetExposedParameterValue<T>(string name, T value)
+        //{
+        //    ExposedParameter param = exposedParameters.Find(x => x.varRefBoxed != null && x.varRefBoxed.name == name);
+        //    if (param != null) { (param as ExposedParameter<T>).value = value; }
+        //}
 
         ///----------------------------------------------------------------------------------------------
 
@@ -321,7 +323,7 @@ namespace NodeCanvas.Framework
         public void Initialize()
         {
 
-            Debug.Assert(Application.isPlaying, "GraphOwner Initialize should have been called in runtime only");
+            //Debug.Assert(Application.isPlaying, "GraphOwner Initialize should have been called in runtime only");
 
             if (initialized)
             {
@@ -337,7 +339,7 @@ namespace NodeCanvas.Framework
             string finalJson;
             List<UnityEngine.Object> finalReferences;
 
-            Graph newGraph = (Graph)ScriptableObject.CreateInstance(graphType);
+            Graph newGraph = (Graph)UnityEngine.ScriptableObject.CreateInstance(graphType);
 
             if (graphIsBound)
             {
@@ -363,25 +365,25 @@ namespace NodeCanvas.Framework
             GraphLoadData loadData = new GraphLoadData();
             loadData.source = finalSource;
             loadData.json = finalJson;
-            loadData.references = finalReferences;
+            //loadData.references = finalReferences;
             loadData.agent = this;
             loadData.parentBlackboard = blackboard;
             loadData.preInitializeSubGraphs = preInitializeSubGraphs;
 
-            if (firstActivation == FirstActivation.Async)
-            {
-                graph.LoadOverwriteAsync(loadData, () =>
-                {
-                    BindExposedParameters();
-                    //remark: activeInHierarchy is checked in case user instantiate and disable gameobject instantly for pooling reasons
-                    if (!isRunning && enableAction == EnableAction.EnableBehaviour && gameObject.activeInHierarchy)
-                    {
-                        StartBehaviour();
-                        InvokeStartEvent();
-                    }
-                });
-            }
-            else
+            //if (firstActivation == FirstActivation.Async)
+            //{
+            //    graph.LoadOverwriteAsync(loadData, () =>
+            //    {
+            //        BindExposedParameters();
+            //        //remark: activeInHierarchy is checked in case user instantiate and disable gameobject instantly for pooling reasons
+            //        if (!isRunning && enableAction == EnableAction.EnableBehaviour && gameObject.activeInHierarchy)
+            //        {
+            //            StartBehaviour();
+            //            InvokeStartEvent();
+            //        }
+            //    });
+            //}
+            //else
             {
                 graph.LoadOverwrite(loadData);
                 BindExposedParameters();
@@ -393,25 +395,25 @@ namespace NodeCanvas.Framework
         ///Bind exposed parameters to local graph blackboard variables
         public void BindExposedParameters()
         {
-            if (exposedParameters != null && graph != null)
-            {
-                for (int i = 0; i < exposedParameters.Count; i++)
-                {
-                    exposedParameters[i].Bind(graph.blackboard);
-                }
-            }
+            //if (exposedParameters != null && graph != null)
+            //{
+            //    for (int i = 0; i < exposedParameters.Count; i++)
+            //    {
+            //        exposedParameters[i].Bind(graph.blackboard);
+            //    }
+            //}
         }
 
         //handle enable behaviour setting
         protected void OnEnable()
         {
-            if (firstActivation == FirstActivation.OnEnable || enableCalled)
-            {
-                if ((!isRunning || isPaused) && enableAction == EnableAction.EnableBehaviour)
+            //if (firstActivation == FirstActivation.OnEnable || enableCalled)
+            //{
+            //    if ((!isRunning || isPaused) && enableAction == EnableAction.EnableBehaviour)
                 {
                     StartBehaviour();
                 }
-            }
+            //}
 
             enableCalled = true;
         }
@@ -419,16 +421,16 @@ namespace NodeCanvas.Framework
         //...
         protected void Start()
         {
-            if (firstActivation == FirstActivation.OnStart)
-            {
-                if (!isRunning && enableAction == EnableAction.EnableBehaviour)
-                {
-                    StartBehaviour();
-                }
-            }
+            //if (firstActivation == FirstActivation.OnStart)
+            //{
+            //    if (!isRunning && enableAction == EnableAction.EnableBehaviour)
+            //    {
+            //        StartBehaviour();
+            //    }
+            //}
 
-            InvokeStartEvent();
-            startCalled = true;
+            //InvokeStartEvent();
+            //startCalled = true;
         }
 
         //This can actually be invoked in Start but if loading async it also needs to be called.
@@ -447,15 +449,15 @@ namespace NodeCanvas.Framework
         protected void OnDisable()
         {
 
-            if (disableAction == DisableAction.DisableBehaviour)
+            //if (disableAction == DisableAction.DisableBehaviour)
             {
                 StopBehaviour();
             }
 
-            if (disableAction == DisableAction.PauseBehaviour)
-            {
-                PauseBehaviour();
-            }
+            //if (disableAction == DisableAction.PauseBehaviour)
+            //{
+            //    PauseBehaviour();
+            //}
         }
 
         //Destroy instanced graphs as well
@@ -531,7 +533,7 @@ namespace NodeCanvas.Framework
 
                     if (boundGraphInstance == null)
                     {
-                        boundGraphInstance = (Graph)ScriptableObject.CreateInstance(graphType);
+                        boundGraphInstance = (Graph)UnityEngine.ScriptableObject.CreateInstance(graphType);
                     }
 
                     boundGraphInstance.name = graphType.Name;
@@ -558,7 +560,7 @@ namespace NodeCanvas.Framework
 
             if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                Debug.LogError("SetBoundGraphReference method is an Editor only method!");
+                //UnityEngine.Debug.LogError("SetBoundGraphReference method is an Editor only method!");
                 return;
             }
 
@@ -594,7 +596,7 @@ namespace NodeCanvas.Framework
         //...
         protected void OnDrawGizmos()
         {
-            Gizmos.DrawIcon(transform.position, "GraphOwnerGizmo.png", true);
+            //Gizmos.DrawIcon(transform.position, "GraphOwnerGizmo.png", true);
         }
 
         ///Forward Gizmos callback
@@ -623,8 +625,10 @@ namespace NodeCanvas.Framework
     public abstract class GraphOwner<T> : GraphOwner where T : Graph
     {
 
-        [SerializeField] private T _graph;
-        [SerializeField] private Object _blackboard;
+        //[SerializeField]
+        private T _graph;
+        //[SerializeField]
+        private UnityEngine.Object _blackboard;
 
         ///The current behaviour Graph assigned
         public sealed override Graph graph
@@ -660,7 +664,7 @@ namespace NodeCanvas.Framework
             {
                 if (!ReferenceEquals(_blackboard, value))
                 {
-                    _blackboard = (Object)value;
+                    _blackboard = (UnityEngine.Object)value;
                     if (graph != null)
                     {
                         graph.UpdateReferences(this, value);
