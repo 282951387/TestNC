@@ -74,7 +74,7 @@ namespace ParadoxNotion
 
         public static float RandomFloatLess1()
         {
-            Random r = new Random(DateTime.Now.Millisecond);
+            System.Random r = new System.Random(DateTime.Now.Millisecond);
             double rr = r.NextDouble();
             return (float)rr;
         }

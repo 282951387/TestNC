@@ -94,20 +94,20 @@ namespace NodeCanvas.Tasks.Actions
 
         /////----------------------------------------------------------------------------------------------
         /////---------------------------------------UNITY EDITOR-------------------------------------------
-#if UNITY_EDITOR
-        private void OnGUI()
-        {
-            if (Camera.main == null) { return; }
-            Vector3 point = Camera.main.WorldToScreenPoint(agent.position + new Vector3(0, labelYOffset, 0));
-            Vector2 size = GUI.skin.label.CalcSize(new GUIContent(log.value));
-            Rect r = new Rect(point.x - size.x / 2, Screen.height - point.y, size.x + 10, size.y);
-            GUI.color = Color.white.WithAlpha(0.5f);
-            GUI.DrawTexture(r, Texture2D.whiteTexture);
-            GUI.color = new Color(0.2f, 0.2f, 0.2f);
-            r.x += 4;
-            GUI.Label(r, log.value);
-            GUI.color = Color.white;
-        }
-#endif
+//#if UNITY_EDITOR
+//        private void OnGUI()
+//        {
+//            if (Camera.main == null) { return; }
+//            Vector3 point = Camera.main.WorldToScreenPoint(agent.position + new Vector3(0, labelYOffset, 0));
+//            Vector2 size = GUI.skin.label.CalcSize(new GUIContent(log.value));
+//            Rect r = new Rect(point.x - size.x / 2, Screen.height - point.y, size.x + 10, size.y);
+//            GUI.color = Color.white.WithAlpha(0.5f);
+//            GUI.DrawTexture(r, Texture2D.whiteTexture);
+//            GUI.color = new Color(0.2f, 0.2f, 0.2f);
+//            r.x += 4;
+//            GUI.Label(r, log.value);
+//            GUI.color = Color.white;
+//        }
+//#endif
     }
 }

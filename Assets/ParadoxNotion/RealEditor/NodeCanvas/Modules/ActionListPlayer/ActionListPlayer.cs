@@ -104,7 +104,9 @@ namespace NodeCanvas
             if (Application.isPlaying)
             {
                 timeStarted = Time.time;
+#if UNITY_EDITOR
                 actionList.ExecuteIndependent(agent, blackboard, OnFinish);
+#endif
             }
         }
 

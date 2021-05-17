@@ -49,9 +49,9 @@ namespace NodeCanvas.Framework
         //private List<Connection> _outConnections = new List<Connection>();
 
         //[System.NonSerialized] private Status _status = Status.Resting;
-        [System.NonSerialized] private string _nameCache;
+        //[System.NonSerialized] private string _nameCache;
         [System.NonSerialized] private string _descriptionCache;
-        [System.NonSerialized] private int _priorityCache = int.MinValue;
+        //[System.NonSerialized] private int _priorityCache = int.MinValue;
         /////
 
         ///The graph this node belongs to.
@@ -93,11 +93,11 @@ namespace NodeCanvas.Framework
         }
 
         ///The custom title name of the node if any.
-        private string customName
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        //private string customName
+        //{
+        //    get { return _name; }
+        //    set { _name = value; }
+        //}
 
         /////The node tag. Useful for finding nodes through code.
         //public string tag
@@ -556,16 +556,16 @@ namespace NodeCanvas.Framework
         ///Called when the Node is removed from the graph (always through graph.RemoveNode)
         public virtual void OnDestroy() { }
 
-        ///Called when an input connection is connected
-        public virtual void OnParentConnected(int connectionIndex) { }
-        ///Called when an input connection is disconnected but before it actually does
-        public virtual void OnParentDisconnected(int connectionIndex) { }
-        ///Called when an output connection is connected
-        public virtual void OnChildConnected(int connectionIndex) { }
-        ///Called when an output connection is disconnected but before it actually does
-        public virtual void OnChildDisconnected(int connectionIndex) { }
-        ///Called when child connection are sorted
-        public virtual void OnChildrenConnectionsSorted(int[] oldIndeces) { }
+        /////Called when an input connection is connected
+        //public virtual void OnParentConnected(int connectionIndex) { }
+        /////Called when an input connection is disconnected but before it actually does
+        //public virtual void OnParentDisconnected(int connectionIndex) { }
+        /////Called when an output connection is connected
+        //public virtual void OnChildConnected(int connectionIndex) { }
+        /////Called when an output connection is disconnected but before it actually does
+        //public virtual void OnChildDisconnected(int connectionIndex) { }
+        /////Called when child connection are sorted
+        //public virtual void OnChildrenConnectionsSorted(int[] oldIndeces) { }
         
         /////Called when the parent graph is started. Use to init values or otherwise.
         //public virtual void OnGraphStarted() { }

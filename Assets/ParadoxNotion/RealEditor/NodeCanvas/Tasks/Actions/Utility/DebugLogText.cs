@@ -11,7 +11,7 @@ namespace NodeCanvas.Tasks.Actions
     [Name("Debug Log")]
     [Category("✫ Utility")]
     [Description("Display a UI label on the agent's position if seconds to run is not 0 and also logs the message, which can also be mapped to any variable.")]
-    public partial class DebugLogText : ActionTask<Transform>
+    public partial class DebugLogText : ActionTask<Component>
     {
 
         //public enum LogMode
@@ -94,7 +94,7 @@ namespace NodeCanvas.Tasks.Actions
         private void OnGUI()
         {
             if (Camera.main == null) { return; }
-            Vector3 point = Camera.main.WorldToScreenPoint(agent.position + new Vector3(0, labelYOffset, 0));
+            Vector3 point = Camera.main.WorldToScreenPoint(/*agent.position +*/ new Vector3(0, labelYOffset, 0));
             Vector2 size = GUI.skin.label.CalcSize(new GUIContent(log.value));
             Rect r = new Rect(point.x - size.x / 2, Screen.height - point.y, size.x + 10, size.y);
             GUI.color = Color.white.WithAlpha(0.5f);

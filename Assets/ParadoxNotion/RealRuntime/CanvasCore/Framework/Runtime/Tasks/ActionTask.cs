@@ -48,10 +48,12 @@ namespace NodeCanvas.Framework
         ///Be careful! *This will make the action execute as a coroutine*
         
         //TODO!!!
-        //public void ExecuteIndependent(Component agent, IBlackboard blackboard, Action<Status> callback)
-        //{
-        //    if (!isRunning) { MonoManager.current.StartCoroutine(IndependentActionUpdater(agent, blackboard, callback)); }
-        //}
+        public void ExecuteIndependent(Component agent, IBlackboard blackboard, Action<Status> callback)
+        {
+#if UNITY_EDITOR
+            if (!isRunning) { MonoManager.current.StartCoroutine(IndependentActionUpdater(agent, blackboard, callback)); }
+#endif
+        }
 
         //The internal updater for when an action has been called with a callback parameter and only then.
         //This is only used and usefull if user needs to execute an action task completely as standalone.
