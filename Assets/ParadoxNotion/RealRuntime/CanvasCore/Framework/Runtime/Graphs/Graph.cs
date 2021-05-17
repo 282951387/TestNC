@@ -266,9 +266,9 @@ namespace NodeCanvas.Framework
         private static List<Graph> _runningGraphs;
 
         private bool hasInitialized { get; set; }
-        private HierarchyTree.Element flatMetaGraph { get; set; }
-        private HierarchyTree.Element fullMetaGraph { get; set; }
-        private HierarchyTree.Element nestedMetaGraph { get; set; }
+        //private HierarchyTree.Element flatMetaGraph { get; set; }
+        //private HierarchyTree.Element fullMetaGraph { get; set; }
+        //private HierarchyTree.Element nestedMetaGraph { get; set; }
 
         ///----------------------------------------------------------------------------------------------
 
@@ -1006,140 +1006,140 @@ namespace NodeCanvas.Framework
 
         ///----------------------------------------------------------------------------------------------
 
-        ///Returns a structure of the graph that includes Nodes, Connections, Tasks and BBParameters,
-        ///but with nodes elements all being root to the graph (instead of respective parent connections).
-        public HierarchyTree.Element GetFlatMetaGraph()
-        {
+        /////Returns a structure of the graph that includes Nodes, Connections, Tasks and BBParameters,
+        /////but with nodes elements all being root to the graph (instead of respective parent connections).
+        //public HierarchyTree.Element GetFlatMetaGraph()
+        //{
 
-            if (flatMetaGraph != null)
-            {
-                return flatMetaGraph;
-            }
+        //    if (flatMetaGraph != null)
+        //    {
+        //        return flatMetaGraph;
+        //    }
 
-            HierarchyTree.Element root = new HierarchyTree.Element(this);
-            int lastID = 0;
-            for (int i = 0; i < allNodes.Count; i++)
-            {
-                root.AddChild(GetTreeNodeElement(allNodes[i], false, ref lastID));
-            }
-            return flatMetaGraph = root;
-        }
+        //    HierarchyTree.Element root = new HierarchyTree.Element(this);
+        //    int lastID = 0;
+        //    for (int i = 0; i < allNodes.Count; i++)
+        //    {
+        //        root.AddChild(GetTreeNodeElement(allNodes[i], false, ref lastID));
+        //    }
+        //    return flatMetaGraph = root;
+        //}
 
-        ///Returns a structure of the graph that includes Nodes, Connections, Tasks and BBParameters,
-        ///but where node elements are parent to their respetive connections. Only possible for tree-like graphs.
-        public HierarchyTree.Element GetFullMetaGraph()
-        {
+        /////Returns a structure of the graph that includes Nodes, Connections, Tasks and BBParameters,
+        /////but where node elements are parent to their respetive connections. Only possible for tree-like graphs.
+        //public HierarchyTree.Element GetFullMetaGraph()
+        //{
 
-            if (fullMetaGraph != null)
-            {
-                return fullMetaGraph;
-            }
+        //    if (fullMetaGraph != null)
+        //    {
+        //        return fullMetaGraph;
+        //    }
 
-            HierarchyTree.Element root = new HierarchyTree.Element(this);
-            int lastID = 0;
-            if (primeNode != null)
-            {
-                root.AddChild(GetTreeNodeElement(primeNode, true, ref lastID));
-            }
-            for (int i = 0; i < allNodes.Count; i++)
-            {
-                Node node = allNodes[i];
-                if (node.ID > lastID && node.inConnections.Count == 0)
-                {
-                    root.AddChild(GetTreeNodeElement(node, true, ref lastID));
-                }
-            }
-            return fullMetaGraph = root;
-        }
+        //    HierarchyTree.Element root = new HierarchyTree.Element(this);
+        //    int lastID = 0;
+        //    if (primeNode != null)
+        //    {
+        //        root.AddChild(GetTreeNodeElement(primeNode, true, ref lastID));
+        //    }
+        //    for (int i = 0; i < allNodes.Count; i++)
+        //    {
+        //        Node node = allNodes[i];
+        //        if (node.ID > lastID && node.inConnections.Count == 0)
+        //        {
+        //            root.AddChild(GetTreeNodeElement(node, true, ref lastID));
+        //        }
+        //    }
+        //    return fullMetaGraph = root;
+        //}
 
-        ///Returns a structure of all nested graphs recursively, contained within this graph.
-        public HierarchyTree.Element GetNestedMetaGraph()
-        {
+        /////Returns a structure of all nested graphs recursively, contained within this graph.
+        //public HierarchyTree.Element GetNestedMetaGraph()
+        //{
 
-            if (nestedMetaGraph != null)
-            {
-                return nestedMetaGraph;
-            }
+        //    if (nestedMetaGraph != null)
+        //    {
+        //        return nestedMetaGraph;
+        //    }
 
-            HierarchyTree.Element root = new HierarchyTree.Element(this);
-            DigNestedGraphs(this, root);
-            return nestedMetaGraph = root;
-        }
+        //    HierarchyTree.Element root = new HierarchyTree.Element(this);
+        //    DigNestedGraphs(this, root);
+        //    return nestedMetaGraph = root;
+        //}
 
-        //Used above
-        private static void DigNestedGraphs(Graph currentGraph, HierarchyTree.Element currentElement)
-        {
-            for (int i = 0; i < currentGraph.allNodes.Count; i++)
-            {
-                IGraphAssignable assignable = currentGraph.allNodes[i] as IGraphAssignable;
-                if (assignable != null && assignable.subGraph != null)
-                {
-                    DigNestedGraphs(assignable.subGraph, currentElement.AddChild(new HierarchyTree.Element(assignable)));
-                }
-            }
-        }
+        ////Used above
+        //private static void DigNestedGraphs(Graph currentGraph, HierarchyTree.Element currentElement)
+        //{
+        //    for (int i = 0; i < currentGraph.allNodes.Count; i++)
+        //    {
+        //        IGraphAssignable assignable = currentGraph.allNodes[i] as IGraphAssignable;
+        //        if (assignable != null && assignable.subGraph != null)
+        //        {
+        //            DigNestedGraphs(assignable.subGraph, currentElement.AddChild(new HierarchyTree.Element(assignable)));
+        //        }
+        //    }
+        //}
 
-        ///Used above. Returns a node hierarchy element optionaly along with all it's children recursively
-        private static HierarchyTree.Element GetTreeNodeElement(Node node, bool recurse, ref int lastID)
-        {
-            HierarchyTree.Element nodeElement = CollectSubElements(node);
-            for (int i = 0; i < node.outConnections.Count; i++)
-            {
-                HierarchyTree.Element connectionElement = CollectSubElements(node.outConnections[i]);
-                nodeElement.AddChild(connectionElement);
-                if (recurse)
-                {
-                    Node targetNode = node.outConnections[i].targetNode;
-                    if (targetNode.ID > node.ID)
-                    { //ensure no recursion loop
-                        connectionElement.AddChild(GetTreeNodeElement(targetNode, recurse, ref lastID));
-                    }
-                }
-            }
-            lastID = node.ID;
-            return nodeElement;
-        }
+        /////Used above. Returns a node hierarchy element optionaly along with all it's children recursively
+        //private static HierarchyTree.Element GetTreeNodeElement(Node node, bool recurse, ref int lastID)
+        //{
+        //    HierarchyTree.Element nodeElement = CollectSubElements(node);
+        //    for (int i = 0; i < node.outConnections.Count; i++)
+        //    {
+        //        HierarchyTree.Element connectionElement = CollectSubElements(node.outConnections[i]);
+        //        nodeElement.AddChild(connectionElement);
+        //        if (recurse)
+        //        {
+        //            Node targetNode = node.outConnections[i].targetNode;
+        //            if (targetNode.ID > node.ID)
+        //            { //ensure no recursion loop
+        //                connectionElement.AddChild(GetTreeNodeElement(targetNode, recurse, ref lastID));
+        //            }
+        //        }
+        //    }
+        //    lastID = node.ID;
+        //    return nodeElement;
+        //}
 
-        ///Returns an element that includes tasks and parameters for target object recursively
-        private static HierarchyTree.Element CollectSubElements(IGraphElement obj)
-        {
-            HierarchyTree.Element parentElement = null;
-            Stack<HierarchyTree.Element> stack = new Stack<HierarchyTree.Element>();
+        /////Returns an element that includes tasks and parameters for target object recursively
+        //private static HierarchyTree.Element CollectSubElements(IGraphElement obj)
+        //{
+        //    HierarchyTree.Element parentElement = null;
+        //    Stack<HierarchyTree.Element> stack = new Stack<HierarchyTree.Element>();
 
-            JSONSerializer.SerializeAndExecuteNoCycles(obj.GetType(), obj, (o) =>
-            {
-                if (o is ISerializationCollectable)
-                {
-                    HierarchyTree.Element e = new HierarchyTree.Element(o);
-                    if (stack.Count > 0) { stack.Peek().AddChild(e); }
-                    stack.Push(e);
-                }
-            }, (o, d) =>
-            {
-                if (o is ISerializationCollectable)
-                {
-                    parentElement = stack.Pop();
-                }
-            });
+        //    JSONSerializer.SerializeAndExecuteNoCycles(obj.GetType(), obj, (o) =>
+        //    {
+        //        if (o is ISerializationCollectable)
+        //        {
+        //            HierarchyTree.Element e = new HierarchyTree.Element(o);
+        //            if (stack.Count > 0) { stack.Peek().AddChild(e); }
+        //            stack.Push(e);
+        //        }
+        //    }, (o, d) =>
+        //    {
+        //        if (o is ISerializationCollectable)
+        //        {
+        //            parentElement = stack.Pop();
+        //        }
+        //    });
 
-            return parentElement;
-        }
+        //    return parentElement;
+        //}
 
         ///----------------------------------------------------------------------------------------------
 
-        ///Get the parent graph element (node/connection) from target Task.
-        public IGraphElement GetTaskParentElement(Task targetTask)
-        {
-            HierarchyTree.Element targetElement = GetFlatMetaGraph().FindReferenceElement(targetTask);
-            return targetElement != null ? targetElement.GetFirstParentReferenceOfType<IGraphElement>() : null;
-        }
+        /////Get the parent graph element (node/connection) from target Task.
+        //public IGraphElement GetTaskParentElement(Task targetTask)
+        //{
+        //    HierarchyTree.Element targetElement = GetFlatMetaGraph().FindReferenceElement(targetTask);
+        //    return targetElement != null ? targetElement.GetFirstParentReferenceOfType<IGraphElement>() : null;
+        //}
 
-        ///Get the parent graph element (node/connection) from target BBParameter
-        public IGraphElement GetParameterParentElement(BBParameter targetParameter)
-        {
-            HierarchyTree.Element targetElement = GetFlatMetaGraph().FindReferenceElement(targetParameter);
-            return targetElement != null ? targetElement.GetFirstParentReferenceOfType<IGraphElement>() : null;
-        }
+        /////Get the parent graph element (node/connection) from target BBParameter
+        //public IGraphElement GetParameterParentElement(BBParameter targetParameter)
+        //{
+        //    HierarchyTree.Element targetElement = GetFlatMetaGraph().FindReferenceElement(targetParameter);
+        //    return targetElement != null ? targetElement.GetFirstParentReferenceOfType<IGraphElement>() : null;
+        //}
 
         ///Get all Tasks found in target
         public static IEnumerable<Task> GetTasksInElement(IGraphElement target)
@@ -1319,74 +1319,74 @@ namespace NodeCanvas.Framework
 //        }
 
         ///Makes a copy of provided nodes and if targetGraph is provided, puts those new nodes in that graph.
-        public static List<Node> CloneNodes(List<Node> originalNodes, Graph targetGraph = null, Vector2 originPosition = default(Vector2))
-        {
+        //public static List<Node> CloneNodes(List<Node> originalNodes, Graph targetGraph = null, Vector2 originPosition = default(Vector2))
+        //{
 
-            if (targetGraph != null)
-            {
-                if (originalNodes.Any(n => n.GetType().IsSubclassOf(targetGraph.baseNodeType) == false))
-                {
-                    return null;
-                }
-            }
+        //    if (targetGraph != null)
+        //    {
+        //        if (originalNodes.Any(n => n.GetType().IsSubclassOf(targetGraph.baseNodeType) == false))
+        //        {
+        //            return null;
+        //        }
+        //    }
 
-            List<Node> newNodes = new List<Node>();
-            Dictionary<Connection, KeyValuePair<int, int>> linkInfo = new Dictionary<Connection, KeyValuePair<int, int>>();
+        //    List<Node> newNodes = new List<Node>();
+        //    Dictionary<Connection, KeyValuePair<int, int>> linkInfo = new Dictionary<Connection, KeyValuePair<int, int>>();
 
-            //duplicate all nodes first
-            foreach (Node original in originalNodes)
-            {
-                Node newNode = targetGraph != null ? original.Duplicate(targetGraph) : JSONSerializer.Clone<Node>(original);
-                newNodes.Add(newNode);
-                //store the out connections that need dulpicate along with the indeces of source and target
-                foreach (Connection c in original.outConnections)
-                {
-                    int sourceIndex = originalNodes.IndexOf(c.sourceNode);
-                    int targetIndex = originalNodes.IndexOf(c.targetNode);
-                    linkInfo[c] = new KeyValuePair<int, int>(sourceIndex, targetIndex);
-                }
-            }
+        //    //duplicate all nodes first
+        //    foreach (Node original in originalNodes)
+        //    {
+        //        Node newNode = targetGraph != null ? original.Duplicate(targetGraph) : JSONSerializer.Clone<Node>(original);
+        //        newNodes.Add(newNode);
+        //        //store the out connections that need dulpicate along with the indeces of source and target
+        //        foreach (Connection c in original.outConnections)
+        //        {
+        //            int sourceIndex = originalNodes.IndexOf(c.sourceNode);
+        //            int targetIndex = originalNodes.IndexOf(c.targetNode);
+        //            linkInfo[c] = new KeyValuePair<int, int>(sourceIndex, targetIndex);
+        //        }
+        //    }
 
-            //duplicate all connections that we stored as 'need duplicating' providing new source and target
-            foreach (KeyValuePair<Connection, KeyValuePair<int, int>> linkPair in linkInfo)
-            {
-                if (linkPair.Value.Value != -1)
-                { //we check this to see if the target node is part of the duplicated nodes since IndexOf returns -1 if element is not part of the list
-                    Node newSource = newNodes[linkPair.Value.Key];
-                    Node newTarget = newNodes[linkPair.Value.Value];
-                    linkPair.Key.Duplicate(newSource, newTarget);
-                }
-            }
+        //    //duplicate all connections that we stored as 'need duplicating' providing new source and target
+        //    foreach (KeyValuePair<Connection, KeyValuePair<int, int>> linkPair in linkInfo)
+        //    {
+        //        if (linkPair.Value.Value != -1)
+        //        { //we check this to see if the target node is part of the duplicated nodes since IndexOf returns -1 if element is not part of the list
+        //            Node newSource = newNodes[linkPair.Value.Key];
+        //            Node newTarget = newNodes[linkPair.Value.Value];
+        //            linkPair.Key.Duplicate(newSource, newTarget);
+        //        }
+        //    }
 
-            //position nodes nicely
-            if (originPosition != default(Vector2) && newNodes.Count > 0)
-            {
-                if (newNodes.Count == 1)
-                {
-                    newNodes[0].position = originPosition;
-                }
-                else
-                {
-                    Vector2 diff = newNodes[0].position - originPosition;
-                    newNodes[0].position = originPosition;
-                    for (int i = 1; i < newNodes.Count; i++)
-                    {
-                        newNodes[i].position -= diff;
-                    }
-                }
-            }
+        //    //position nodes nicely
+        //    if (originPosition != default(Vector2) && newNodes.Count > 0)
+        //    {
+        //        if (newNodes.Count == 1)
+        //        {
+        //            newNodes[0].position = originPosition;
+        //        }
+        //        else
+        //        {
+        //            Vector2 diff = newNodes[0].position - originPosition;
+        //            newNodes[0].position = originPosition;
+        //            for (int i = 1; i < newNodes.Count; i++)
+        //            {
+        //                newNodes[i].position -= diff;
+        //            }
+        //        }
+        //    }
 
-            //revalidate all new nodes in their new graph
-            if (targetGraph != null)
-            {
-                for (int i = 0; i < newNodes.Count; i++)
-                {
-                    newNodes[i].Validate(targetGraph);
-                }
-            }
+        //    //revalidate all new nodes in their new graph
+        //    if (targetGraph != null)
+        //    {
+        //        for (int i = 0; i < newNodes.Count; i++)
+        //        {
+        //            newNodes[i].Validate(targetGraph);
+        //        }
+        //    }
 
-            return newNodes;
-        }
+        //    return newNodes;
+        //}
 
         /////Clears the whole graph
         //public void ClearGraph()
