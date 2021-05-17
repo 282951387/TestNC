@@ -33,10 +33,15 @@ namespace NodeCanvas.Framework
         [NonSerialized] private string _identifier;
 
         ///----------------------------------------------------------------------------------------------
-        void ISerializationCallbackReceiver.OnBeforeSerialize() { SelfSerialize(); }
+        void ISerializationCallbackReceiver.OnBeforeSerialize() 
+        {
+#if UNITY_EDITOR
+            SelfSerialize(); 
+#endif
+        }
         void ISerializationCallbackReceiver.OnAfterDeserialize() { SelfDeserialize(); }
         ///----------------------------------------------------------------------------------------------
-
+#if UNITY_EDITOR
         ///Self Serialize blackboard
         public void SelfSerialize()
         {
@@ -67,7 +72,7 @@ namespace NodeCanvas.Framework
                 _objectReferences = newReferences;
             }
         }
-
+#endif
         ///Self Deserialize blackboard
         public void SelfDeserialize()
         {
@@ -172,8 +177,9 @@ namespace NodeCanvas.Framework
         public Variable SetValue(string name, object value) { return SetVariableValue(name, value); }
 
         ///----------------------------------------------------------------------------------------------
-
+#if UNITY_EDITOR
         [ContextMenu("Show Json")]
+#endif
         private void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, this.name); }
 
         ///----------------------------------------------------------------------------------------------
@@ -184,7 +190,8 @@ namespace NodeCanvas.Framework
         public string Save(string saveKey)
         {
             string json = Serialize(null);
-            PlayerPrefs.SetString(saveKey, json);
+            //TODO: 确定要不要这个机制，以及替代方法
+            //PlayerPrefs.SetString(saveKey, json);
             return json;
         }
 
@@ -193,13 +200,15 @@ namespace NodeCanvas.Framework
         ///Loads back the Blackboard from PlayerPrefs of the provided saveKey. You can use this for a Save system
         public bool Load(string saveKey)
         {
-            string json = PlayerPrefs.GetString(saveKey);
-            if (string.IsNullOrEmpty(json))
-            {
-                Debug.Log("No data to load blackboard variables from key " + saveKey);
-                return false;
-            }
-            return Deserialize(json, null, true);
+            //string json = PlayerPrefs.GetString(saveKey);
+            //if (string.IsNullOrEmpty(json))
+            //{
+            //    Debug.Log("No data to load blackboard variables from key " + saveKey);
+            //    return false;
+            //}
+            //return Deserialize(json, null, true);
+            
+            return false;
         }
 
         ///----------------------------------------------------------------------------------------------

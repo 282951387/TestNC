@@ -81,7 +81,7 @@ namespace NodeCanvas.Framework
                 return false;
             }
 
-            Debug.Assert(isRuntimeEnabled, "Condition.Check when enabled = false");
+            //Debug.Assert(isRuntimeEnabled, "Condition.Check when enabled = false");
 
             if (yieldReturn != -1)
             {
@@ -108,7 +108,8 @@ namespace NodeCanvas.Framework
             if (isRuntimeEnabled)
             {
                 yieldReturn = value ? 1 : 0;
-                StartCoroutine(Flip());
+                //TODO!!!!!
+                //StartCoroutine(Flip());
             }
         }
 

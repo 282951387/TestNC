@@ -60,7 +60,7 @@ namespace NodeCanvas.Framework
 
         //required
         public Task() { }
-
+#if UNITY_EDITOR
         ///Create a new Task of type assigned to the target ITaskSystem
         public static T Create<T>(ITaskSystem newOwnerSystem) where T : Task { return (T)Create(typeof(T), newOwnerSystem); }
         public static Task Create(Type type, ITaskSystem newOwnerSystem)
@@ -82,7 +82,7 @@ namespace NodeCanvas.Framework
             newTask.Validate(newOwnerSystem);
             return newTask;
         }
-
+#endif
         ///Validate the task in respects to the target ITaskSystem
         public void Validate(ITaskSystem ownerSystem)
         {
@@ -98,7 +98,7 @@ namespace NodeCanvas.Framework
         ///Sets the system in which this task lives in
         public void SetOwnerSystem(ITaskSystem newOwnerSystem)
         {
-            Debug.Assert(newOwnerSystem != null, "Null ITaskSystem set");
+            //Debug.Assert(newOwnerSystem != null, "Null ITaskSystem set");
             ownerSystem = newOwnerSystem;
         }
 
@@ -244,7 +244,7 @@ namespace NodeCanvas.Framework
         protected bool Set(Component newAgent, IBlackboard newBB)
         {
 
-            Debug.Assert(ReferenceEquals(newBB, ownerSystemBlackboard), "Set Blackboard != Owner Blackboard");
+            //Debug.Assert(ReferenceEquals(newBB, ownerSystemBlackboard), "Set Blackboard != Owner Blackboard");
 
             if (agentIsOverride)
             {
@@ -353,17 +353,17 @@ namespace NodeCanvas.Framework
 
         ///----------------------------------------------------------------------------------------------
 
-        ///Tasks can start coroutine through MonoManager
-        protected Coroutine StartCoroutine(IEnumerator routine)
-        {
-            return MonoManager.current != null ? MonoManager.current.StartCoroutine(routine) : null;
-        }
+        /////Tasks can start coroutine through MonoManager
+        //protected Coroutine StartCoroutine(IEnumerator routine)
+        //{
+        //    return MonoManager.current != null ? MonoManager.current.StartCoroutine(routine) : null;
+        //}
 
-        ///Tasks can start coroutine through MonoManager
-        protected void StopCoroutine(Coroutine routine)
-        {
-            if (MonoManager.current != null) { MonoManager.current.StopCoroutine(routine); }
-        }
+        /////Tasks can start coroutine through MonoManager
+        //protected void StopCoroutine(Coroutine routine)
+        //{
+        //    if (MonoManager.current != null) { MonoManager.current.StopCoroutine(routine); }
+        //}
 
         ///----------------------------------------------------------------------------------------------
 
