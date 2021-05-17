@@ -18,7 +18,7 @@ namespace NodeCanvas.Framework
 
     ///This is the base and main class of NodeCanvas and graphs. All graph System are deriving from this.
     [System.Serializable]
-    public abstract partial class Graph : ScriptableObject, ITaskSystem
+    public abstract partial class Graph : Object, ITaskSystem
     {
         ///Update mode of the graph (see 'StartGraph')
         public enum UpdateMode
@@ -214,10 +214,12 @@ namespace NodeCanvas.Framework
         ///Clones the graph as child of parentGraph and returns the new one.
         public static T Clone<T>(T graph, Graph parentGraph) where T : Graph
         {
-            T newGraph = Instantiate<T>(graph);
-            newGraph.name = newGraph.name.Replace("(Clone)", string.Empty);
-            newGraph.parentGraph = parentGraph;
-            return newGraph;
+            Logger.LogError("Not implemented!!!!!!!");
+            return null;
+            //T newGraph = Instantiate<T>(graph);
+            //newGraph.name = newGraph.name.Replace("(Clone)", string.Empty);
+            //newGraph.parentGraph = parentGraph;
+            //return newGraph;
         }
 
         ///Validate the graph, it's nodes and tasks. Also called from OnEnable callback.
@@ -243,10 +245,10 @@ namespace NodeCanvas.Framework
                 catch (System.Exception e) { Logger.LogException(e, LogTag.VALIDATION, allNodes[i]); continue; }
             }
 
-            if(allTasks == null)
-            {
-                Debug.Log("null allTask");
-            }
+            //if(allTasks == null)
+            //{
+            //    Debug.Log("null allTask");
+            //}
 
             for (int i = 0; i < allTasks.Count; i++)
             {
@@ -570,8 +572,8 @@ namespace NodeCanvas.Framework
         ///This is called from StartGraph as well if Initialize has not been called before.
         public void Initialize(Component newAgent, IBlackboard newParentBlackboard, bool preInitializeSubGraphs)
         {
-            Debug.Assert(Threader.applicationIsPlaying, "Initialize should have been called in play mode only.");
-            Debug.Assert(!hasInitialized, "Graph is already initialized.");
+            //Debug.Assert(Threader.applicationIsPlaying, "Initialize should have been called in play mode only.");
+            //Debug.Assert(!hasInitialized, "Graph is already initialized.");
             UpdateReferences(newAgent, newParentBlackboard);
             OnGraphInitialize();
             if (preInitializeSubGraphs) { PreInitializeSubGraphs(); }
@@ -604,7 +606,7 @@ namespace NodeCanvas.Framework
             Debug.Assert(!UnityEditor.EditorUtility.IsPersistent(this), "You have tried to start a graph which is an asset, not an instance! You should Instantiate the graph first.");
 #endif
 
-            Debug.Assert(newParentBlackboard != blackboard, "StartGraph called with blackboard parameter being the same as the graph blackboard");
+            //Debug.Assert(newParentBlackboard != blackboard, "StartGraph called with blackboard parameter being the same as the graph blackboard");
 
             if (newAgent == null && requiresAgent)
             {
