@@ -49,9 +49,9 @@ namespace NodeCanvas.Framework
         private List<Connection> _outConnections = new List<Connection>();
 
         [System.NonSerialized] private Status _status = Status.Resting;
-        [System.NonSerialized] private string _nameCache;
+        //[System.NonSerialized] private string _nameCache;
         //[System.NonSerialized] private string _descriptionCache;
-        [System.NonSerialized] private int _priorityCache = int.MinValue;
+        //[System.NonSerialized] private int _priorityCache = int.MinValue;
         /////
 
         ///The graph this node belongs to.
@@ -93,11 +93,11 @@ namespace NodeCanvas.Framework
         //}
 
         ///The custom title name of the node if any.
-        private string customName
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        //private string customName
+        //{
+        //    get { return _name; }
+        //    set { _name = value; }
+        //}
 
         ///The node tag. Useful for finding nodes through code.
         public string tag
@@ -465,18 +465,18 @@ namespace NodeCanvas.Framework
         ///----------------------------------------------------------------------------------------------
 
         ///Nodes can use coroutine as normal through MonoManager.
-        ///TODO
-        //public Coroutine StartCoroutine(IEnumerator routine)
-        //{
-        //    return MonoManager.current != null ? MonoManager.current.StartCoroutine(routine) : null;
-        //}
+#if UNITY_EDITOR
+        public Coroutine StartCoroutine(IEnumerator routine)
+        {
+            return MonoManager.current != null ? MonoManager.current.StartCoroutine(routine) : null;
+        }
 
-        /////Nodes can use coroutine as normal through MonoManager.
-        //public void StopCoroutine(Coroutine routine)
-        //{
-        //    if (MonoManager.current != null) { MonoManager.current.StopCoroutine(routine); }
-        //}
-
+        ///Nodes can use coroutine as normal through MonoManager.
+        public void StopCoroutine(Coroutine routine)
+        {
+            if (MonoManager.current != null) { MonoManager.current.StopCoroutine(routine); }
+        }
+#endif
 
         ///Returns all *direct* parent nodes (first depth level)
         public IEnumerable<Node> GetParentNodes()

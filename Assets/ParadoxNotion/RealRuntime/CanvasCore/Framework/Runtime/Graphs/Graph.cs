@@ -18,7 +18,7 @@ namespace NodeCanvas.Framework
 
     ///This is the base and main class of NodeCanvas and graphs. All graph System are deriving from this.
     [System.Serializable]
-    public abstract partial class Graph : Object, ITaskSystem
+    public abstract partial class Graph : ScriptableObject, ITaskSystem
     {
         ///Update mode of the graph (see 'StartGraph')
         public enum UpdateMode
