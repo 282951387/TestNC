@@ -66,6 +66,7 @@ namespace NodeCanvas.BehaviourTrees
             if (random) { outConnections = outConnections.Shuffle(); }
         }
 
+#if UNITY_EDITOR
         public override void OnChildDisconnected(int index)
         {
             if (index != 0 && index == lastRunningNodeIndex)
@@ -73,7 +74,8 @@ namespace NodeCanvas.BehaviourTrees
                 lastRunningNodeIndex--;
             }
         }
-
+#endif
+        
         public override void OnGraphStarted() { OnReset(); }
 
         /////////////////////////////////////////

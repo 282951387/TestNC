@@ -22,8 +22,9 @@ namespace NodeCanvas.BehaviourTrees
         private int succeedIndex;
 
         public override int maxOutConnections { get { return 2; } }
+#if UNITY_EDITOR
         public override Alignment2x2 commentsAlignment { get { return Alignment2x2.Right; } }
-
+#endif
         public override string name
         {
             get { return base.name.ToUpper(); }

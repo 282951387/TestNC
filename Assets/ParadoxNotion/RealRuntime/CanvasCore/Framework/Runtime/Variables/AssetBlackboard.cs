@@ -5,8 +5,9 @@ using UnityEngine;
 
 namespace NodeCanvas.Framework
 {
-
+#if UNITY_EDITOR
     [CreateAssetMenu(menuName = "ParadoxNotion/CanvasCore/Blackboard Asset")]
+#endif
     public class AssetBlackboard : ScriptableObject, ISerializationCallbackReceiver, IGlobalBlackboard
     {
 
@@ -63,8 +64,9 @@ namespace NodeCanvas.Framework
 
         public string identifier => _identifier;
         public string UID => _UID;
-
+#if UNITY_EDITOR
         [ContextMenu("Show Json")]
+#endif
         private void ShowJson() { JSONSerializer.ShowData(_serializedBlackboard, name); }
 
         public override string ToString() { return identifier; }

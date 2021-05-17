@@ -58,7 +58,7 @@ namespace NodeCanvas.Framework
                 return finalText;
             }
         }
-
+#if UNITY_EDITOR
         ///ActionList overrides to duplicate listed actions correctly
         public override Task Duplicate(ITaskSystem newOwnerSystem)
         {
@@ -70,7 +70,7 @@ namespace NodeCanvas.Framework
             }
             return newList;
         }
-
+#endif
         protected override string OnInit()
         {
             finishedIndeces = new bool[actions.Count];

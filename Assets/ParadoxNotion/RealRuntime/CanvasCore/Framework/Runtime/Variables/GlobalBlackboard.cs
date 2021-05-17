@@ -6,7 +6,9 @@ namespace NodeCanvas.Framework
 {
 
     /// Global Blackboards are accessible from any BBParameter.
+#if UNITY_EDITOR
     [ExecuteInEditMode]
+#endif
     public class GlobalBlackboard : Blackboard, IGlobalBlackboard
     {
         public enum SingletonMode

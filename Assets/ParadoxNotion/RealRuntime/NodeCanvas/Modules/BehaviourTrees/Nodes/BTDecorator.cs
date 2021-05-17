@@ -10,8 +10,9 @@ namespace NodeCanvas.BehaviourTrees
     {
 
         public sealed override int maxOutConnections { get { return 1; } }
+#if UNITY_EDITOR
         public sealed override Alignment2x2 commentsAlignment { get { return Alignment2x2.Right; } }
-
+#endif
         ///The decorated connection element
         protected Connection decoratedConnection
         {

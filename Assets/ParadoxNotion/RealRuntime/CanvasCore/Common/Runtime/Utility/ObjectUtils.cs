@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -25,7 +26,8 @@ namespace ParadoxNotion
         {
             for (int i = list.Count - 1; i > 0; i--)
             {
-                int j = (int)Mathf.Floor(Random.value * (i + 1));
+                float rrr = RandomFloatLess1();
+                int j = (int)Mathf.Floor(rrr * (i + 1));
                 T temp = list[i];
                 list[i] = list[j];
                 list[j] = temp;
@@ -70,6 +72,14 @@ namespace ParadoxNotion
             return current;
         }
 
+        public static float RandomFloatLess1()
+        {
+            Random r = new Random(DateTime.Now.Millisecond);
+            double rr = r.NextDouble();
+            return (float)rr;
+        }
+
+#if UNITY_EDITOR
         ///Return all GameObjects within specified LayerMask, optionaly excluding specified GameObject
         public static IEnumerable<GameObject> FindGameObjectsWithinLayerMask(LayerMask mask, GameObject exclude = null)
         {
@@ -81,5 +91,6 @@ namespace ParadoxNotion
         {
             return mask == (mask | (1 << gameObject.layer));
         }
+#endif
     }
 }

@@ -1,3 +1,4 @@
+#if false
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEngine;
@@ -42,3 +43,4 @@ namespace NodeCanvas.BehaviourTrees
 #endif
     }
 }
+#endif

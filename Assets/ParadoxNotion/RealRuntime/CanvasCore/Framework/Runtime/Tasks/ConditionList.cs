@@ -56,7 +56,7 @@ namespace NodeCanvas.Framework
                 return finalText;
             }
         }
-
+#if UNITY_EDITOR
         ///ConditionList overrides to duplicate listed conditions correctly
         public override Task Duplicate(ITaskSystem newOwnerSystem)
         {
@@ -69,7 +69,7 @@ namespace NodeCanvas.Framework
 
             return newList;
         }
-
+#endif
         //Forward Enable call
         protected override void OnEnable()
         {

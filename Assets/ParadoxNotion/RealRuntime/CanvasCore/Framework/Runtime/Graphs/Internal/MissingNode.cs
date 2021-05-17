@@ -39,9 +39,10 @@ namespace NodeCanvas.Framework.Internal
         public override int maxOutConnections { get { return 0; } }
         public override bool allowAsPrime { get { return false; } }
         public override bool canSelfConnect { get { return false; } }
+#if UNITY_EDITOR
         public override Alignment2x2 commentsAlignment { get { return Alignment2x2.Right; } }
         public override Alignment2x2 iconAlignment { get { return Alignment2x2.Default; } }
-
+#endif
 
 
         ////////////////////////////////////////

@@ -80,7 +80,7 @@ namespace ParadoxNotion
             {
                 return (value) => value as Component != null ? (value as Component).gameObject.GetComponent(toType) : null;
             }
-
+#if UNITY_EDITOR
             // GameObject to Vector3 (position).
             if (fromType == typeof(GameObject) && toType == typeof(Vector3))
             {
@@ -116,7 +116,7 @@ namespace ParadoxNotion
             {
                 return (value) => Quaternion.Euler((Vector3)value);
             }
-
+#endif
             // Vector2 to Vector3.
             if (fromType == typeof(Vector2) && toType == typeof(Vector3))
             {
