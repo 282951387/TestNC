@@ -33,7 +33,7 @@ namespace NodeCanvas.Framework
         public ExposedParameter() { }
         public ExposedParameter(Variable target)
         {
-            Debug.Assert(target is Variable<T>, "Target Variable is not typeof T");
+            //Debug.Assert(target is Variable<T>, "Target Variable is not typeof T");
             _targetVariableID = target.ID;
             _value = (T)target.value;
         }
@@ -46,7 +46,10 @@ namespace NodeCanvas.Framework
         ///Value of the parameter
         public T value
         {
-            get { return varRef != null && Application.isPlaying ? varRef.value : _value; }
+            get 
+            { 
+                return varRef != null && Application.isPlaying ? varRef.value : _value; 
+            }
             set
             {
                 if (varRef != null && Application.isPlaying)

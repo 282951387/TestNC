@@ -12,11 +12,13 @@ namespace NodeCanvas.BehaviourTrees
         public sealed override System.Type outConnectionType { get { return typeof(BTConnection); } }
         public sealed override bool allowAsPrime { get { return true; } }
         public sealed override bool canSelfConnect { get { return false; } }
+#if UNITY_EDITOR
         public override Alignment2x2 commentsAlignment { get { return Alignment2x2.Bottom; } }
         public override Alignment2x2 iconAlignment { get { return Alignment2x2.Default; } }
+#endif
         public override int maxInConnections { get { return 1; } }
         public override int maxOutConnections { get { return 0; } }
-
+#if UNITY_EDITOR
         ///Add a child node to this node connected to the specified child index
         public T AddChild<T>(int childIndex) where T : BTNode
         {
@@ -40,7 +42,7 @@ namespace NodeCanvas.BehaviourTrees
             graph.ConnectNodes(this, child);
             return child;
         }
-
+#endif
 
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------

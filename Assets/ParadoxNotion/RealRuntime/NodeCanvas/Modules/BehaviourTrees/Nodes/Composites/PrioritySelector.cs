@@ -1,4 +1,5 @@
-﻿using NodeCanvas.Framework;
+﻿#if false
+using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization.FullSerializer;
 using System.Collections.Generic;
@@ -190,3 +191,4 @@ namespace NodeCanvas.BehaviourTrees
 
     }
 }
+#endif

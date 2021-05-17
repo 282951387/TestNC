@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if false
+using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
@@ -104,3 +105,4 @@ namespace ParadoxNotion.Serialization
         }
     }
 }
+#endif

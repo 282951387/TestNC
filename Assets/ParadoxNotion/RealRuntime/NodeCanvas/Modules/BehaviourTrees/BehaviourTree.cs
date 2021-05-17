@@ -13,7 +13,9 @@ namespace NodeCanvas.BehaviourTrees
         resourcesURL = "https://nodecanvas.paradoxnotion.com/downloads/",
         forumsURL = "https://nodecanvas.paradoxnotion.com/forums-page/"
         )]
+#if UNITY_EDITOR
     [CreateAssetMenu(menuName = "ParadoxNotion/NodeCanvas/Behaviour Tree Asset")]
+#endif
     public class BehaviourTree : Graph
     {
 

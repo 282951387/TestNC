@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace NodeCanvas.BehaviourTrees
 {
-
+#if UNITY_EDITOR
     /// Use this component on a game object to behave based on a BehaviourTree.
     [AddComponentMenu("NodeCanvas/Behaviour Tree Owner")]
+#endif
     public class BehaviourTreeOwner : GraphOwner<BehaviourTree>
     {
 

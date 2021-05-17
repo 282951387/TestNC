@@ -1,7 +1,9 @@
 ﻿using ParadoxNotion;
 using System.Linq;
-using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEngine;
+#endif
 
 namespace NodeCanvas.Framework
 {
@@ -12,19 +14,22 @@ namespace NodeCanvas.Framework
     {
 
         public string name;
+#if UNITY_EDITOR
         public Rect rect;
         public Color color;
+#endif
         public bool autoGroup;
 
         //required
         public CanvasGroup() { }
+#if UNITY_EDITOR
         public CanvasGroup(Rect rect, string name)
         {
             this.rect = rect;
             this.name = name;
         }
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         [System.NonSerialized] public EditState editState;
         [System.NonSerialized] private Node[] containedNodes;
 
